@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lyna Forum - Access</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Registration Form -->
+        <div class="form-container">
+            <h2>Register</h2>
+            <input type="text" id="username" placeholder="Username">
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Password">
+            <button class="reg-btn" onclick="handleRegister()">Sign Up</button>
+            <div id="message" style="margin-top:10px;"></div>
+        </div>
+
+        <!-- Login Form -->
+        <div class="form-container">
+            <h2>Login</h2>
+            <input type="email" id="login-email" placeholder="Email">
+            <input type="password" id="login-password" placeholder="Password">
+            <button class="login-btn" onclick="handleLogin()">Login</button>
+            <div id="login-message" style="margin-top:10px;"></div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

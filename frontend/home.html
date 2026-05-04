@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lyna Forum - Home</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="initHome()">
+    <nav>
+        <a href="home.html">Home</a>
+        <a href="profile.html">Profile</a>
+        <button class="logout-btn" onclick="handleLogout()">Logout</button>
+    </nav>
+
+    <div class="container">
+        <!-- Create Thread Section -->
+        <div class="form-container">
+            <h3>What's happening?</h3>
+            <input type="text" id="thread-title" placeholder="Game title or Topic">
+            <textarea id="thread-content" placeholder="Share your thoughts..." style="height: 100px;"></textarea>
+            <button class="post-btn" onclick="createThread()">Post Thread</button>
+        </div>
+
+        <!-- Feed List -->
+        <div class="form-container">
+            <h3>Recent Discussions</h3>
+            <div id="threads-list"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Check access and load content on startup
+        function initHome() {
+            if (!localStorage.getItem('token')) {
+                window.location.href = 'index.html';
+                return;
+            }
+            updateProfileUI();
+            loadThreads();
+        }
+    </script>
+</body>
+</html>
