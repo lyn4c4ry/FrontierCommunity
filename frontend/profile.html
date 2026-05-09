@@ -5,1215 +5,220 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FrontierCommunity — Profil</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    /* ── TEMEL GÜVENCE (Eğer style.css'te yoksa sayfa çökmesin diye) ── */
+    :root {
+      --bg:#080a0f; --bg2:#0d1018; --surface:#111520; --surface2:#161c2a;
+      --border:rgba(74,144,226,0.10); --border2:rgba(74,144,226,0.22);
+      --blue-light:#4db8ff; --blue-mid:#1a6fd4; --gold:#f5c518; --green:#22d47a; --red:#ff4060;
+      --text:#dce8f5; --text-muted:#6a7f99; --text-dim:#2e3c50;
+    }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      margin: 0; padding: 0; display: flex; min-height: 100vh; overflow-x: hidden;
+    }
+
+    /* ── LEFT SIDEBAR ── */
+    .sidebar-left{position:fixed;top:0;left:0;width:228px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;}
+    .logo-area{padding:22px 20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;}
+    .logo-area img{width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(77,184,255,0.45));}
+    .logo-text{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(90deg,var(--blue-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .sidebar-profile{margin:16px 13px 6px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:10px;text-decoration:none;transition:border-color 0.2s;}
+    .sidebar-profile:hover{border-color:var(--blue-light);}
+    .sidebar-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--blue-mid);flex-shrink:0;}
+    .sidebar-uname{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--text);}
+    .sidebar-handle{font-size:11px;color:var(--text-muted);}
+    .nav-section{padding:14px 10px 8px;flex:1;}
+    .nav-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);padding:0 12px;margin-bottom:5px;display:block;}
+    .nav-item{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:8px;color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:600;margin-bottom:2px;transition:all 0.2s;}
+    .nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
+    .nav-item.active{background:rgba(26,111,212,0.12);color:var(--blue-light);}
+    .nav-icon{font-size:16px;width:22px;text-align:center;}
+    .sidebar-bottom{padding:14px;border-top:1px solid var(--border);}
+    .btn-logout-side{width:100%;padding:9px;background:rgba(255,64,96,0.07);border:1px solid rgba(255,64,96,0.18);border-radius:8px;color:var(--red);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;}
+    .btn-logout-side:hover{background:rgba(255,64,96,0.16);border-color:rgba(255,64,96,0.4);}
+
+    /* ── MAIN CONTENT WRAPPER ── */
+    .main { margin-left: 228px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
     /* ── PROFILE PAGE SPECIFIC ── */
-
-    .profile-page {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 32px 24px 60px;
-    }
-
-    /* ── PROFILE HERO ── */
-    .profile-hero {
-      position: relative;
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      margin-bottom: 24px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-    }
-
-    .hero-banner {
-      height: 110px;
-      background: linear-gradient(135deg, #0a1628 0%, #0d1f3c 40%, #0a1628 100%);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-banner::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 60% 80% at 20% 50%, rgba(26,111,212,0.18) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 60% at 80% 40%, rgba(245,197,24,0.08) 0%, transparent 70%);
-    }
-
-    .hero-banner-grid {
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(74,144,226,0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(74,144,226,0.06) 1px, transparent 1px);
-      background-size: 32px 32px;
-    }
-
-    .hero-body {
-      padding: 0 28px 22px;
-      display: flex;
-      align-items: flex-end;
-      gap: 20px;
-    }
-
-    .avatar-wrap {
-      position: relative;
-      margin-top: -40px;
-      flex-shrink: 0;
-    }
-
-    .avatar-frame {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 3px solid var(--bg);
-      background: var(--surface2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--blue-light);
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* DB: avatar_url varsa img olarak göster */
-    .avatar-frame img {
-      width: 100%; height: 100%; object-fit: cover;
-    }
-
-    .avatar-online {
-      position: absolute;
-      bottom: 4px; right: 4px;
-      width: 14px; height: 14px;
-      border-radius: 50%;
-      background: var(--green);
-      border: 2px solid var(--bg);
-    }
-
-    .hero-info {
-      flex: 1;
-      padding-bottom: 4px;
-    }
-
-    .hero-username {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 24px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      color: var(--text);
-      line-height: 1.2;
-    }
-
-    .hero-sub {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 5px;
-      flex-wrap: wrap;
-    }
-
-    .hero-tag {
-      font-size: 12px;
-      color: var(--text-muted);
-      font-family: 'Rajdhani', monospace;
-      letter-spacing: 0.5px;
-    }
-
-    .level-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--gold);
-      background: rgba(245,197,24,0.1);
-      border: 1px solid rgba(245,197,24,0.2);
-      padding: 3px 10px;
-      border-radius: 20px;
-    }
-
-    .hero-bio {
-      margin-top: 8px;
-      font-size: 13px;
-      color: var(--text-muted);
-      max-width: 480px;
-      line-height: 1.6;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      padding-bottom: 4px;
-      flex-shrink: 0;
-    }
-
-    .btn-icon {
-      width: 36px; height: 36px;
-      display: flex; align-items: center; justify-content: center;
-      background: var(--surface2);
-      border: 1px solid var(--border2);
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 16px;
-      color: var(--text-muted);
-    }
-
-    .btn-icon:hover { border-color: var(--blue); color: var(--blue-light); }
-
-    /* ── STAT BAR ── */
-    .stat-bar {
-      display: flex;
-      gap: 0;
-      border-top: 1px solid var(--border);
-    }
-
-    .stat-item {
-      flex: 1;
-      padding: 14px 20px;
-      border-right: 1px solid var(--border);
-      text-align: center;
-    }
-
+    .profile-page { width: 100%; max-width: 1200px; margin: 0 auto; padding: 32px 24px 60px; box-sizing: border-box; }
+    .profile-hero { position: relative; border-radius: 16px; overflow: hidden; margin-bottom: 24px; background: var(--surface); border: 1px solid var(--border); }
+    .hero-banner { height: 110px; background: linear-gradient(135deg, #0a1628 0%, #0d1f3c 40%, #0a1628 100%); position: relative; }
+    .hero-body { padding: 0 28px 22px; display: flex; align-items: flex-end; gap: 20px; }
+    .avatar-wrap { position: relative; margin-top: -40px; flex-shrink: 0; }
+    .avatar-frame { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--bg); background: var(--surface2); display: flex; align-items: center; justify-content: center; font-family: 'Rajdhani', sans-serif; font-size: 28px; font-weight: 700; color: var(--blue-light); overflow: hidden; }
+    .avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
+    .hero-info { flex: 1; padding-bottom: 4px; }
+    .hero-username { font-family: 'Rajdhani', sans-serif; font-size: 24px; font-weight: 700; color: var(--text); }
+    .hero-sub { display: flex; align-items: center; gap: 10px; margin-top: 5px; flex-wrap: wrap; }
+    .hero-tag { font-size: 12px; color: var(--text-muted); font-family: 'Rajdhani', monospace; }
+    .level-chip { font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700; color: var(--gold); background: rgba(245,197,24,0.1); border: 1px solid rgba(245,197,24,0.2); padding: 3px 10px; border-radius: 20px; }
+    .hero-bio { margin-top: 8px; font-size: 13px; color: var(--text-muted); max-width: 480px; line-height: 1.6; }
+    .hero-actions { display: flex; gap: 8px; align-items: center; padding-bottom: 4px; }
+    .btn-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; cursor: pointer; color: var(--text-muted); }
+    
+    .stat-bar { display: flex; border-top: 1px solid var(--border); }
+    .stat-item { flex: 1; padding: 14px 20px; border-right: 1px solid var(--border); text-align: center; }
     .stat-item:last-child { border-right: none; }
-
-    .stat-num {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1;
-    }
-
-    .stat-num.blue { color: var(--blue-light); }
-    .stat-num.gold { color: var(--gold); }
-    .stat-num.green { color: var(--green); }
-
-    .stat-label {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 4px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
+    .stat-num { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; color: var(--text); }
+    .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-top:4px; }
 
     /* ── 3-COL LAYOUT ── */
-    .profile-grid {
-      display: grid;
-      grid-template-columns: 220px 1fr 210px;
-      gap: 18px;
-      align-items: start;
-    }
-
-    /* ── SIDEBAR CARDS ── */
-    .side-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 16px 18px;
-      transition: border-color 0.2s;
-    }
-
-    .side-card + .side-card { margin-top: 14px; }
-
-    .side-title {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-    }
-
-    /* Info rows */
-    .info-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px;
-    }
-
-    .info-row:last-child { border-bottom: none; }
-
+    .profile-grid { display: grid; grid-template-columns: 220px 1fr 210px; gap: 18px; align-items: start; }
+    .side-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+    .side-title { font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+    .info-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
     .info-icon { font-size: 15px; color: var(--blue-mid); width: 18px; text-align: center; }
     .info-key { color: var(--text-muted); flex: 1; }
-    .info-val { color: var(--text); font-weight: 600; font-family: 'Rajdhani', sans-serif; font-size: 14px; letter-spacing: 0.3px; }
+    .info-val { color: var(--text); font-weight: 600; font-family: 'Rajdhani', sans-serif; }
 
-    /* Badges */
-    .badges-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .badge-tile {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 8px 10px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      transition: border-color 0.2s;
-    }
-
-    .badge-tile:hover { border-color: var(--border2); }
-
-    .badge-emoji { font-size: 16px; }
-    .badge-name { font-size: 11px; font-weight: 600; color: var(--text-muted); line-height: 1.3; }
-
-    /* Watchlist */
-    .watch-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      transition: opacity 0.15s;
-    }
-
-    .watch-item:hover { opacity: 0.8; }
-    .watch-item:last-child { border-bottom: none; }
-
-    .game-slab {
-      width: 36px; height: 36px;
-      border-radius: var(--radius-sm);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 11px; font-weight: 700;
-      letter-spacing: -0.5px;
-      flex-shrink: 0;
-    }
-
-    .game-name { font-size: 12px; font-weight: 600; color: var(--text); flex: 1; line-height: 1.3; }
-
-    .score-pill {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 12px; font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 6px;
-      background: rgba(34,212,122,0.1);
-      color: var(--green);
-      border: 1px solid rgba(34,212,122,0.2);
-    }
-
-    /* ── CENTER: TABS ── */
-    .tabs-header {
-      display: flex;
-      gap: 4px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 4px;
-      margin-bottom: 14px;
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 8px 12px;
-      background: transparent;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      transition: all 0.2s;
-    }
-
-    .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.04); }
-
-    .tab-btn.active {
-      background: var(--surface2);
-      color: var(--blue-light);
-      border: 1px solid var(--border2);
-    }
-
+    .tabs-header { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 4px; margin-bottom: 14px; }
+    .tab-btn { flex: 1; padding: 8px 12px; background: transparent; border: none; border-radius: 6px; cursor: pointer; font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700; color: var(--text-muted); }
+    .tab-btn.active { background: var(--surface2); color: var(--blue-light); border: 1px solid var(--border2); }
     .tab-content { display: none; flex-direction: column; gap: 10px; }
     .tab-content.active { display: flex; }
 
-    /* ── THREAD CARDS ── */
-    .thread-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 16px 18px;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      animation: fadeUp 0.35s ease both;
-    }
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+    .empty-icon { font-size: 32px; margin-bottom: 10px; opacity: 0.5; }
 
-    .thread-card:hover {
-      border-color: var(--border2);
-      background: var(--surface2);
-    }
-
-    .thread-top {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .cat-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      flex-shrink: 0; margin-top: 6px;
-    }
-
-    .dot-gaming { background: var(--gold); box-shadow: 0 0 6px var(--gold-glow); }
-    .dot-general { background: var(--blue-light); box-shadow: 0 0 6px var(--blue-glow); }
-    .dot-news { background: var(--red); box-shadow: 0 0 6px rgba(255,64,96,0.3); }
-
-    .thread-title {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      line-height: 1.4;
-      flex: 1;
-      letter-spacing: 0.2px;
-    }
-
-    .thread-preview {
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.6;
-      margin-top: 6px;
-      margin-left: 18px;
-    }
-
-    .thread-meta {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-top: 10px;
-      margin-left: 18px;
-    }
-
-    .meta-chip {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 12px;
-      color: var(--text-dim);
-      font-weight: 600;
-    }
-
-    .meta-chip span { font-size: 13px; }
-
-    .cat-badge {
-      margin-left: auto;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 2px 10px;
-      border-radius: 20px;
-    }
-
-    .cat-gaming { color: var(--gold); background: rgba(245,197,24,0.1); border: 1px solid rgba(245,197,24,0.2); }
-    .cat-general { color: var(--blue-light); background: rgba(26,111,212,0.1); border: 1px solid rgba(26,111,212,0.2); }
-    .cat-news { color: var(--red); background: rgba(255,64,96,0.1); border: 1px solid rgba(255,64,96,0.2); }
-
-    /* Reply preview */
-    .reply-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 14px 18px;
-      cursor: pointer;
-      transition: border-color 0.2s;
-      animation: fadeUp 0.35s ease both;
-    }
-
-    .reply-card:hover { border-color: var(--border2); }
-
-    .reply-context {
-      font-size: 11px;
-      color: var(--text-dim);
-      font-family: 'Rajdhani', sans-serif;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-      display: flex; align-items: center; gap: 5px;
-    }
-
-    .reply-text {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.6;
-      padding-left: 12px;
-      border-left: 2px solid var(--blue);
-    }
-
-    .reply-when {
-      font-size: 11px;
-      color: var(--text-dim);
-      margin-top: 8px;
-    }
-
-    /* ── RIGHT PANEL ── */
-
-    /* Activity heatmap */
-    .activity-grid {
-      display: grid;
-      grid-template-columns: repeat(10, 1fr);
-      gap: 3px;
-      margin-top: 10px;
-    }
-
-    .act-cell {
-      height: 14px;
-      border-radius: 3px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-    }
-
-    .act-1 { background: rgba(26,111,212,0.2); border-color: rgba(26,111,212,0.25); }
-    .act-2 { background: rgba(26,111,212,0.45); border-color: rgba(26,111,212,0.4); }
-    .act-3 { background: rgba(26,111,212,0.7); border-color: rgba(26,111,212,0.6); }
-    .act-4 { background: var(--blue-mid); border-color: var(--blue); box-shadow: 0 0 4px var(--blue-glow); }
-
-    .act-legend {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 6px;
-      font-size: 9px;
-      color: var(--text-dim);
-      font-family: 'Rajdhani', monospace;
-      letter-spacing: 0.5px;
-    }
-
-    /* Trending */
-    .trend-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 0;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      transition: opacity 0.15s;
-    }
-
-    .trend-item:hover { opacity: 0.75; }
-    .trend-item:last-child { border-bottom: none; }
-
-    .trend-rank {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 12px; font-weight: 700;
-      color: var(--text-dim);
-      width: 18px; text-align: center; flex-shrink: 0;
-    }
-
-    .trend-rank.top { color: var(--gold); text-shadow: 0 0 8px var(--gold-glow); }
-
-    .trend-title {
-      font-size: 12px; font-weight: 600;
-      color: var(--text-muted);
-      flex: 1; line-height: 1.3;
-    }
-
-    .trend-count {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 12px; font-weight: 700;
-      color: var(--text-dim);
-    }
-
-    /* ── EDIT MODAL ── */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(4px);
-    }
-
+    /* MODAL VE TOAST */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
     .modal-overlay.open { display: flex; }
-
-    .modal-box {
-      background: var(--surface);
-      border: 1px solid var(--border2);
-      border-radius: var(--radius-lg);
-      padding: 28px;
-      width: 440px;
-      max-width: 95vw;
-      animation: fadeUp 0.25s ease;
-    }
-
-    .modal-title {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 18px; font-weight: 700;
-      letter-spacing: 1px;
-      color: var(--text);
-      margin-bottom: 20px;
-    }
-
-    .form-group { margin-bottom: 14px; }
-
-    .form-label {
-      display: block;
-      font-size: 12px; font-weight: 700;
-      color: var(--text-muted);
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-
-    .modal-actions {
-      display: flex; gap: 8px;
-      margin-top: 20px;
-      justify-content: flex-end;
-    }
-
-    /* ── TOAST ── */
-    #toast {
-      position: fixed;
-      bottom: 28px; right: 28px;
-      z-index: 9000;
-      display: flex; flex-direction: column; gap: 8px;
-    }
-
-    .toast-item {
-      padding: 12px 18px;
-      border-radius: var(--radius-sm);
-      font-size: 13px; font-weight: 600;
-      animation: fadeUp 0.25s ease;
-      max-width: 320px;
-    }
-
-    .toast-success { background: rgba(34,212,122,0.15); border: 1px solid rgba(34,212,122,0.3); color: var(--green); }
-    .toast-error   { background: rgba(255,64,96,0.12);  border: 1px solid rgba(255,64,96,0.25);  color: var(--red); }
-    .toast-info    { background: rgba(26,111,212,0.15); border: 1px solid rgba(26,111,212,0.3);  color: var(--blue-light); }
-
-    /* ── LOADING STATE ── */
-    .skeleton {
-      background: linear-gradient(90deg, var(--surface2) 25%, var(--surface) 50%, var(--surface2) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.4s infinite;
-      border-radius: var(--radius-sm);
-    }
-
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
+    .modal-box { background: var(--surface); border: 1px solid var(--border2); border-radius: 16px; padding: 28px; width: 440px; }
+    #toast { position: fixed; bottom: 28px; right: 28px; z-index: 9000; display: flex; flex-direction: column; gap: 8px; }
   </style>
 </head>
 <body>
 
-  <!-- ── NAV ── -->
-  <nav class="nav">
-    <a class="nav-logo" href="home.html">
-      <img src="logo_v1.png" alt="FrontierCommunity" onerror="this.style.display='none'" />
-      <span class="nav-logo-text">FrontierCommunity</span>
-    </a>
-    <div class="nav-links">
-      <a href="home.html"    class="nav-link">Forum</a>
-      <a href="news.html"    class="nav-link">News</a>
-      <a href="profile.html" class="nav-link active">Profile</a>
-      <button class="btn-logout" onclick="handleLogout()">Çıkış</button>
+  <aside class="sidebar-left">
+    <div class="logo-area">
+      <img src="logo_v1.png" alt="Frontier Logo" onerror="this.style.display='none'">
+      <span class="logo-text">Frontier</span>
     </div>
-  </nav>
+    <a href="profile.html" class="sidebar-profile">
+      <img id="sidebar-avatar" src="" class="sidebar-avatar" alt="avatar">
+      <div>
+        <div class="sidebar-uname" id="sidebar-name">—</div>
+        <div class="sidebar-handle" id="sidebar-handle">@—</div>
+      </div>
+    </a>
+    <nav class="nav-section">
+      <span class="nav-label">Navigate</span>
+      <a href="home.html" class="nav-item"><span class="nav-icon">🏠</span><span>Home</span></a>
+      <a href="news.html" class="nav-item"><span class="nav-icon">🎮</span><span>Game News</span></a>
+      <a href="profile.html" class="nav-item active"><span class="nav-icon">👤</span><span>Profile</span></a>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="btn-logout-side" onclick="handleLogout()">⏻ &nbsp;Logout</button>
+    </div>
+  </aside>
 
-  <!-- ── TOAST ── -->
   <div id="toast"></div>
 
-  <!-- ── EDIT MODAL ── -->
-  <div class="modal-overlay" id="editModal">
-    <div class="modal-box">
-      <div class="modal-title">PROFİLİ DÜZENLE</div>
-      <div class="form-group">
-        <label class="form-label">Kullanıcı Adı</label>
-        <input type="text" class="input" id="editUsername" maxlength="32" placeholder="kullanıcı_adı" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Avatar URL</label>
-        <input type="url" class="input" id="editAvatar" placeholder="https://..." />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Bio</label>
-        <textarea class="textarea input" id="editBio" rows="3" maxlength="200" placeholder="Kendini tanıt..."></textarea>
-      </div>
-      <div class="modal-actions">
-        <button class="btn-ghost" onclick="closeModal()">İptal</button>
-        <button class="btn-primary" onclick="saveProfile()">Kaydet</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── PROFILE PAGE ── -->
-  <div class="profile-page">
-
-    <!-- HERO -->
-    <div class="profile-hero fade-up">
-      <div class="hero-banner">
-        <div class="hero-banner-grid"></div>
-      </div>
-      <div class="hero-body">
-        <div class="avatar-wrap">
-          <div class="avatar-frame" id="avatarFrame">
-            <!-- DB: avatar_url varsa → <img src="..."> eklenir, yoksa initials gösterilir -->
-            <span id="avatarInitials">?</span>
+  <div class="main">
+    <div class="profile-page">
+      <div class="profile-hero">
+        <div class="hero-banner"></div>
+        <div class="hero-body">
+          <div class="avatar-wrap">
+            <div class="avatar-frame" id="avatarFrame"><span id="avatarInitials">?</span></div>
+            <div class="avatar-online"></div>
           </div>
-          <div class="avatar-online"></div>
-        </div>
-        <div class="hero-info">
-          <!-- DB: users.username -->
-          <div class="hero-username" id="heroUsername">Yükleniyor...</div>
-          <div class="hero-sub">
-            <span class="hero-tag" id="heroTag">@...</span>
-            <span class="level-chip" id="levelChip">⚡ LVL —</span>
-            <!-- DB: users.created_at bazında rozet eklenebilir -->
-            <span class="badge badge-blue" id="founderBadge" style="display:none">Kurucu</span>
-          </div>
-          <!-- DB: users.bio -->
-          <div class="hero-bio" id="heroBio"></div>
-        </div>
-        <div class="hero-actions">
-          <button class="btn-primary" onclick="openModal()" id="editBtn" style="display:none">✏ Düzenle</button>
-          <button class="btn-icon" title="Profili paylaş" onclick="shareProfile()">⬆</button>
-        </div>
-      </div>
-
-      <!-- STAT BAR -->
-      <!-- DB: COUNT(threads), COUNT(comments), streak, rank -->
-      <div class="stat-bar">
-        <div class="stat-item">
-          <div class="stat-num blue" id="statThreads">—</div>
-          <div class="stat-label">Thread</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num" id="statReplies">—</div>
-          <div class="stat-label">Yorum</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num gold" id="statStreak">—</div>
-          <div class="stat-label">Gün Serisi</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num green" id="statRank">—</div>
-          <div class="stat-label">Sıra</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num" id="statJoined">—</div>
-          <div class="stat-label">Katılım</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3-COL GRID -->
-    <div class="profile-grid">
-
-      <!-- ── LEFT SIDEBAR ── -->
-      <div class="left-col">
-
-        <!-- Bilgiler -->
-        <div class="side-card fade-up-1">
-          <div class="side-title">Bilgiler</div>
-          <!-- DB: users.created_at -->
-          <div class="info-row">
-            <span class="info-icon">📅</span>
-            <span class="info-key">Katılım</span>
-            <span class="info-val" id="infoJoined">—</span>
-          </div>
-          <div class="info-row">
-            <span class="info-icon">🌍</span>
-            <span class="info-key">Konum</span>
-            <span class="info-val" id="infoLocation">Türkiye</span>
-          </div>
-          <div class="info-row">
-            <span class="info-icon">🔥</span>
-            <span class="info-key">Seri</span>
-            <span class="info-val" id="infoStreak">— gün</span>
-          </div>
-          <div class="info-row">
-            <span class="info-icon">🏆</span>
-            <span class="info-key">Sıra</span>
-            <span class="info-val" id="infoRank">#—</span>
-          </div>
-        </div>
-
-        <!-- Rozetler -->
-        <div class="side-card fade-up-2" style="margin-top:14px">
-          <div class="side-title">Rozetler</div>
-          <div class="badges-grid" id="badgesGrid">
-            <!-- DB: kullanıcı istatistiklerine göre dinamik badge'ler -->
-            <!-- Şimdilik statik, ileride thread/yorum sayısından hesaplanacak -->
-            <div class="badge-tile">
-              <span class="badge-emoji">🏆</span>
-              <span class="badge-name">Kurucu</span>
+          <div class="hero-info">
+            <div class="hero-username" id="heroUsername">Yükleniyor...</div>
+            <div class="hero-sub">
+              <span class="hero-tag" id="heroTag">@...</span>
+              <span class="level-chip" id="levelChip">⚡ LVL —</span>
             </div>
-            <div class="badge-tile">
-              <span class="badge-emoji">💬</span>
-              <span class="badge-name">100 Yorum</span>
-            </div>
-            <div class="badge-tile">
-              <span class="badge-emoji">✅</span>
-              <span class="badge-name">Doğrulandı</span>
-            </div>
-            <div class="badge-tile">
-              <span class="badge-emoji">🔥</span>
-              <span class="badge-name">Hot Thread</span>
-            </div>
+            <div class="hero-bio" id="heroBio"></div>
           </div>
         </div>
 
-        <!-- Watchlist -->
-        <!-- DB: ileride watchlist tablosundan çekilecek, şimdi localStorage'dan -->
-        <div class="side-card fade-up-3" style="margin-top:14px">
-          <div class="side-title">Watchlist</div>
-          <div id="watchlistContainer">
-            <div class="empty-state" style="padding:20px">
-              <div class="empty-icon">🎮</div>
-              <p>Henüz takip edilen oyun yok</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- ── CENTER: TABS ── -->
-      <div class="center-col">
-        <div class="tabs-header">
-          <button class="tab-btn active" onclick="switchTab('threads', this)">Thread'ler</button>
-          <button class="tab-btn" onclick="switchTab('replies', this)">Yorumlar</button>
-          <button class="tab-btn" onclick="switchTab('liked', this)">Beğenilenler</button>
-        </div>
-
-        <!-- THREADS TAB -->
-        <!-- DB: GET /api/threads?userId=... -->
-        <div id="tab-threads" class="tab-content active">
-          <div id="threadsList">
-            <div class="spinner" style="margin:40px auto"></div>
-          </div>
-        </div>
-
-        <!-- REPLIES TAB -->
-        <!-- DB: GET /api/comments?userId=... (henüz endpoint yok, eklenecek) -->
-        <div id="tab-replies" class="tab-content">
-          <div id="repliesList">
-            <div class="empty-state">
-              <div class="empty-icon">💬</div>
-              <p>Yorum geçmişi yükleniyor...</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- LIKED TAB -->
-        <!-- DB: likes tablosu henüz yok — ileride eklenecek -->
-        <div id="tab-liked" class="tab-content">
-          <div class="empty-state">
-            <div class="empty-icon">⭐</div>
-            <p>Beğeni sistemi yakında geliyor</p>
-          </div>
+        <div class="stat-bar">
+          <div class="stat-item"><div class="stat-num" id="statThreads" style="color:var(--blue-light)">—</div><div class="stat-label">Thread</div></div>
+          <div class="stat-item"><div class="stat-num" id="statReplies">—</div><div class="stat-label">Yorum</div></div>
+          <div class="stat-item"><div class="stat-num" id="statStreak" style="color:var(--gold)">—</div><div class="stat-label">Gün Serisi</div></div>
+          <div class="stat-item"><div class="stat-num" id="statJoined">—</div><div class="stat-label">Katılım</div></div>
         </div>
       </div>
 
-      <!-- ── RIGHT SIDEBAR ── -->
-      <div class="right-col">
-
-        <!-- Aktivite -->
-        <div class="side-card fade-up-1">
-          <div class="side-title">Aktivite — Son 70 Gün</div>
-          <!-- DB: thread + comment created_at tarihleri bazında hesaplanacak -->
-          <div class="activity-grid" id="activityGrid"></div>
-          <div class="act-legend">
-            <span>7h</span><span>6h</span><span>5h</span><span>4h</span>
-            <span>3h</span><span>2h</span><span>1h</span><span>Bu</span>
+      <div class="profile-grid">
+        <div class="left-col">
+          <div class="side-card">
+            <div class="side-title">Bilgiler</div>
+            <div class="info-row"><span class="info-icon">📅</span><span class="info-key">Katılım</span><span class="info-val" id="infoJoined">—</span></div>
+            <div class="info-row"><span class="info-icon">🌍</span><span class="info-key">Konum</span><span class="info-val">Türkiye</span></div>
           </div>
         </div>
 
-        <!-- Trend -->
-        <!-- DB: GET /api/threads?sort=replies&limit=5 ile gerçek veri çekilecek -->
-        <div class="side-card fade-up-2" style="margin-top:14px">
-          <div class="side-title">Bu Hafta Trend</div>
-          <div id="trendList">
-            <div class="spinner" style="margin:16px auto"></div>
+        <div class="center-col">
+          <div class="tabs-header">
+            <button class="tab-btn active" onclick="switchTab('threads', this)">Thread'ler</button>
+            <button class="tab-btn" onclick="switchTab('replies', this)">Yorumlar</button>
+          </div>
+          <div id="tab-threads" class="tab-content active">
+             <div class="empty-state"><div class="empty-icon">📝</div><p>Thread'ler yükleniyor...</p></div>
+          </div>
+          <div id="tab-replies" class="tab-content">
+             <div class="empty-state"><div class="empty-icon">💬</div><p>Yorumlar yükleniyor...</p></div>
           </div>
         </div>
-
+        
+        <div class="right-col">
+            <div class="side-card">
+                <div class="side-title">Aktivite</div>
+                <div class="empty-state" style="padding:10px;"><p>Aktivite Haritası</p></div>
+            </div>
+        </div>
       </div>
     </div>
   </div>
 
   <script src="app.js"></script>
   <script>
-
-    // ── STATE ───────────────────────────────────────────────────
-    const state = {
+    // app.js ile çakışmaması için objenin adını 'profileState' olarak değiştirdik.
+    const profileState = {
       userId:   null,
       username: null,
       token:    null,
-      isOwn:    false,   // kendi profili mi?
-      profile:  null,
     };
 
-    // ── INIT ────────────────────────────────────────────────────
-    async function initProfile() {
-      state.token    = localStorage.getItem('token');
-      state.username = localStorage.getItem('username');
-      state.userId   = localStorage.getItem('userId');
-
-      // URL'de ?userId= varsa o kullanıcının profili, yoksa kendi profilimiz
-      const params = new URLSearchParams(location.search);
-      const targetId = params.get('userId') || state.userId;
-
-      if (!state.token || !state.userId) {
-        location.href = 'index.html';
-        return;
-      }
-
-      state.isOwn = (targetId === state.userId);
-
-      if (state.isOwn) {
-        document.getElementById('editBtn').style.display = 'inline-flex';
-      }
-
-      // Paralel veri yükleme
-      await Promise.all([
-        loadProfile(targetId),
-        loadThreads(targetId),
-        loadReplies(targetId),
-      ]);
-
-      loadWatchlist();
-      loadActivityGrid();
-      loadTrending();
-    }
-
-    // ── PROFILE ─────────────────────────────────────────────────
-    // DB: GET /api/auth/profile/:userId
-    async function loadProfile(userId) {
-      // Hemen localStorage ile render et — sayfa boş görünmesin
-      renderProfile({
-        username:   state.username || 'Kullanıcı',
-        bio:        localStorage.getItem('userBio') || '',
-        avatar_url: localStorage.getItem('userAvatar') || null,
-        created_at: localStorage.getItem('userJoined') || null,
-      });
-
-      // Sonra DB'den güncellemeyi dene (4sn timeout)
+    function initProfile() {
       try {
-        const ctrl = new AbortController();
-        const tid  = setTimeout(() => ctrl.abort(), 4000);
-        const res  = await fetch(`${API_URL}/auth/profile/${userId}`, { signal: ctrl.signal });
-        clearTimeout(tid);
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || 'Profil alınamadı');
-        state.profile = data;
-        if (data.bio)        localStorage.setItem('userBio', data.bio);
-        if (data.avatar_url) localStorage.setItem('userAvatar', data.avatar_url);
-        if (data.created_at) localStorage.setItem('userJoined', data.created_at);
-        renderProfile(data);
-      } catch (err) {
-        console.warn('Profile fetch failed, using localStorage fallback:', err.message);
-      }
-    }
+        profileState.token    = localStorage.getItem('token');
+        profileState.username = localStorage.getItem('username') || 'User';
+        profileState.userId   = localStorage.getItem('userId');
 
-    function renderProfile(p) {
-      const username   = p.username   || state.username || '?';
-      const bio        = p.bio        || '';
-      const avatarUrl  = p.avatar_url || null;
-      const joinedDate = p.created_at ? new Date(p.created_at) : null;
+        // Sol Menü Doldurma
+        const sideAv = `https://ui-avatars.com/api/?name=${encodeURIComponent(profileState.username)}&background=1a6fd4&color=fff&size=128&bold=true`;
+        document.getElementById('sidebar-avatar').src = sideAv;
+        document.getElementById('sidebar-name').textContent = profileState.username;
+        document.getElementById('sidebar-handle').textContent = `@${profileState.username.toLowerCase()}`;
 
-      // Avatar
-      const frame    = document.getElementById('avatarFrame');
-      const initials = document.getElementById('avatarInitials');
-      if (avatarUrl) {
-        initials.style.display = 'none';
-        const img = document.createElement('img');
-        img.src = avatarUrl;
-        img.alt = username;
-        img.onerror = () => { img.remove(); initials.style.display = ''; };
-        frame.appendChild(img);
-      } else {
-        initials.textContent = username.slice(0, 2).toUpperCase();
-      }
-
-      document.getElementById('heroUsername').textContent = username;
-      document.getElementById('heroTag').textContent      = `@${username.toLowerCase()}`;
-      document.getElementById('heroBio').textContent      = bio;
-
-      // Level hesabı (thread + yorum sayısına göre ileride yapılacak)
-      // Şimdilik joined tarihine göre basit hesap
-      const daysSince = joinedDate
-        ? Math.floor((Date.now() - joinedDate) / 86400000)
-        : 0;
-      const level = Math.max(1, Math.floor(daysSince / 7));
-      document.getElementById('levelChip').textContent = `⚡ LVL ${level}`;
-
-      // Stat bar
-      document.getElementById('statThreads').textContent = p.thread_count  ?? '—';
-      document.getElementById('statReplies').textContent = p.comment_count ?? '—';
-      document.getElementById('statStreak').textContent  = p.streak        ?? '—';
-      document.getElementById('statRank').textContent    = p.rank ? `#${p.rank}` : '—';
-      document.getElementById('statJoined').textContent  = joinedDate
-        ? joinedDate.toLocaleDateString('tr-TR', { month: 'short', year: 'numeric' })
-        : '—';
-
-      // Sol sidebar bilgiler
-      document.getElementById('infoJoined').textContent  = joinedDate
-        ? joinedDate.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })
-        : '—';
-      document.getElementById('infoStreak').textContent  = p.streak ? `${p.streak} gün` : '— gün';
-      document.getElementById('infoRank').textContent    = p.rank ? `#${p.rank}` : '#—';
-
-      // Edit modal prefill
-      document.getElementById('editUsername').value = username;
-      document.getElementById('editBio').value      = bio;
-      document.getElementById('editAvatar').value   = avatarUrl || '';
-
-      // Kurucu rozeti: ilk 10 kullanıcıdan biri mi? (userId <= 10 varsayımı)
-      if (parseInt(p.id || state.userId) <= 10) {
-        document.getElementById('founderBadge').style.display = 'inline-flex';
-      }
-    }
-
-    // ── THREADS ─────────────────────────────────────────────────
-    // DB: GET /api/threads → kullanıcıya göre filtre (şu an tüm thread'ler geliyor,
-    //     ileride ?userId= parametresi eklenecek)
-    async function loadThreads(userId) {
-      const list = document.getElementById('threadsList');
-      try {
-        const ctrl = new AbortController();
-        const tid  = setTimeout(() => ctrl.abort(), 4000);
-        const res  = await fetch(`${API_URL}/threads`, { signal: ctrl.signal });
-        clearTimeout(tid);
-        const data = await res.json();
-
-        // Kullanıcıya göre filtrele
-        const mine = data.filter(t => String(t.user_id) === String(userId));
-
-        if (!mine.length) {
-          list.innerHTML = `<div class="empty-state"><div class="empty-icon">📝</div><p>Henüz thread açılmamış</p></div>`;
+        if (!profileState.token) {
+          location.href = 'index.html';
           return;
         }
 
-        list.innerHTML = '';
-        mine.forEach((t, i) => {
-          list.insertAdjacentHTML('beforeend', buildThreadCard(t, i));
-        });
+        // Ana Profil Doldurma (Görsel Test)
+        document.getElementById('heroUsername').textContent = profileState.username;
+        document.getElementById('heroTag').textContent = `@${profileState.username.toLowerCase()}`;
+        document.getElementById('avatarInitials').textContent = profileState.username.slice(0, 2).toUpperCase();
 
-        // Yorum sayıları → paralel fetch
-        const cards = list.querySelectorAll('[data-thread-id]');
-        cards.forEach(async card => {
-          const tid = card.dataset.threadId;
-          try {
-            const cr   = await fetch(`${API_URL}/comments/${tid}`);
-            const cmts = await cr.json();
-            card.querySelector('.reply-count').textContent = cmts.length;
-          } catch { /* ignore */ }
-        });
-
-      } catch (err) {
-        list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠</div><p>Thread'ler yüklenemedi</p></div>`;
+      } catch (error) {
+        console.error("Profil yüklenirken kritik bir hata oluştu:", error);
       }
     }
 
-    function buildThreadCard(t, i) {
-      const catClass = t.category_id === 2 ? 'news' : (t.category_id === 3 ? 'general' : 'gaming');
-      const catLabel = t.category_id === 2 ? 'News' : (t.category_id === 3 ? 'General' : 'Gaming');
-      const ago      = timeAgo(t.created_at);
-      const preview  = escHtml((t.content || '').slice(0, 110)) + ((t.content || '').length > 110 ? '…' : '');
-
-      return `
-        <div class="thread-card" data-thread-id="${t.id}" style="animation-delay:${i * 0.05}s"
-             onclick="location.href='home.html#thread-${t.id}'">
-          <div class="thread-top">
-            <span class="cat-dot dot-${catClass}"></span>
-            <span class="thread-title">${escHtml(t.title)}</span>
-            <span class="cat-badge cat-${catClass}">${catLabel}</span>
-          </div>
-          <div class="thread-preview">${preview}</div>
-          <div class="thread-meta">
-            <span class="meta-chip">💬 <span class="reply-count">…</span></span>
-            <span class="meta-chip">🕐 ${ago}</span>
-          </div>
-        </div>`;
-    }
-
-    // ── REPLIES ─────────────────────────────────────────────────
-    // DB: GET /api/comments?userId=... — bu endpoint henüz yok,
-    //     backend'e eklendiğinde aşağıdaki fetch çalışacak
-    async function loadReplies(userId) {
-      const list = document.getElementById('repliesList');
-      try {
-        const res = await fetch(`${API_URL}/comments?userId=${userId}`);
-        if (!res.ok) throw new Error();
-        const data = await res.json();
-
-        if (!data.length) {
-          list.innerHTML = `<div class="empty-state"><div class="empty-icon">💬</div><p>Henüz yorum yapılmamış</p></div>`;
-          return;
-        }
-
-        list.innerHTML = data.map((c, i) => `
-          <div class="reply-card" style="animation-delay:${i*0.05}s"
-               onclick="location.href='home.html#thread-${c.thread_id}'">
-            <div class="reply-context">↩ "${escHtml((c.thread_title||'').slice(0,50))}…" konusunda</div>
-            <div class="reply-text">${escHtml((c.content||'').slice(0,200))}</div>
-            <div class="reply-when">${timeAgo(c.created_at)}</div>
-          </div>`).join('');
-      } catch {
-        list.innerHTML = `<div class="empty-state"><div class="empty-icon">💬</div><p>Yorum geçmişi için backend endpoint bekleniyor</p></div>`;
-      }
-    }
-
-    // ── WATCHLIST ────────────────────────────────────────────────
-    // DB: ileride watchlist tablosundan — şu an localStorage (news.html ile aynı key)
-    function loadWatchlist() {
-      const container = document.getElementById('watchlistContainer');
-      try {
-        const raw  = localStorage.getItem('fc_watchlist');
-        const list = raw ? Object.values(JSON.parse(raw)) : [];
-
-        if (!list.length) {
-          container.innerHTML = `<div class="empty-state" style="padding:20px"><div class="empty-icon">🎮</div><p>Henüz takip edilen oyun yok</p></div>`;
-          return;
-        }
-
-        const colors = [
-          { bg:'#0a1a2e', text:'#4db8ff' },
-          { bg:'#1a0a2e', text:'#a78bfa' },
-          { bg:'#0a2010', text:'#4ade80' },
-          { bg:'#2e0a0a', text:'#f87171' },
-          { bg:'#1a1a0a', text:'#fbbf24' },
-        ];
-
-        container.innerHTML = list.slice(0, 5).map((g, i) => {
-          const c     = colors[i % colors.length];
-          const abbr  = (g.name || '??').split(' ').map(w => w[0]).join('').slice(0,3).toUpperCase();
-          const score = g.metacritic || g.rating_top || Math.round((g.rating || 0) * 20);
-          return `
-            <div class="watch-item" onclick="location.href='news.html'">
-              <div class="game-slab" style="background:${c.bg}; color:${c.text}">${abbr}</div>
-              <div class="game-name">${escHtml(g.name || '')}</div>
-              ${score ? `<span class="score-pill">${score}</span>` : ''}
-            </div>`;
-        }).join('');
-      } catch {
-        container.innerHTML = `<div class="empty-state" style="padding:20px"><p>Watchlist yüklenemedi</p></div>`;
-      }
-    }
-
-    // ── ACTIVITY GRID ────────────────────────────────────────────
-    // DB: ileride thread + comment created_at tarihlerine göre hesaplanacak
-    // Şu an rastgele ama gerçekçi görünen bir pattern
-    function loadActivityGrid() {
-      const grid    = document.getElementById('activityGrid');
-      const pattern = [0,0,0,1,0,1,2,0,3,4,2,0,0,1,3,2,4,4,1,0,
-                       0,0,2,3,1,4,3,2,0,1,0,2,4,3,1,0,0,0,1,2,
-                       3,4,2,1,0,0,0,1,3,2,0,4,3,1,2,0,0,1,2,3,
-                       4,2,0,1,3,2,4,0,1,2];
-      grid.innerHTML = '';
-      pattern.forEach(lvl => {
-        const cell = document.createElement('div');
-        cell.className = 'act-cell' + (lvl ? ` act-${lvl}` : '');
-        grid.appendChild(cell);
-      });
-    }
-
-    // ── TRENDING ─────────────────────────────────────────────────
-    // DB: GET /api/threads → yorum sayısına göre sırala, ilk 5
-    async function loadTrending() {
-      const list = document.getElementById('trendList');
-      try {
-        const ctrl = new AbortController();
-        const tid  = setTimeout(() => ctrl.abort(), 4000);
-        const res  = await fetch(`${API_URL}/threads`, { signal: ctrl.signal });
-        clearTimeout(tid);
-        const data = await res.json();
-
-        // Yorum sayısını bilemiyoruz, created_at'a göre son 5 thread
-        const top5 = data.slice(0, 5);
-
-        if (!top5.length) throw new Error();
-
-        list.innerHTML = top5.map((t, i) => `
-          <div class="trend-item" onclick="location.href='home.html#thread-${t.id}'">
-            <span class="trend-rank ${i === 0 ? 'top' : ''}">${i + 1}</span>
-            <span class="trend-title">${escHtml((t.title || '').slice(0, 36))}${t.title?.length > 36 ? '…' : ''}</span>
-            <span class="trend-count">—</span>
-          </div>`).join('');
-      } catch {
-        list.innerHTML = `
-          ${['Elden Ring 2 söylentileri','Godot vs Unity 2024','BG3 Mod Araçları','Hades II patch','Game Pass fiyatı']
-            .map((title, i) => `
-              <div class="trend-item">
-                <span class="trend-rank ${i===0?'top':''}">${i+1}</span>
-                <span class="trend-title">${title}</span>
-                <span class="trend-count">—</span>
-              </div>`).join('')}`;
-      }
-    }
-
-    // ── EDIT PROFILE ─────────────────────────────────────────────
-    function openModal() {
-      document.getElementById('editModal').classList.add('open');
-    }
-
-    function closeModal() {
-      document.getElementById('editModal').classList.remove('open');
-    }
-
-    // DB: PUT /api/auth/profile
-    async function saveProfile() {
-      const username  = document.getElementById('editUsername').value.trim();
-      const bio       = document.getElementById('editBio').value.trim();
-      const avatarUrl = document.getElementById('editAvatar').value.trim();
-
-      if (!username) { toast('Kullanıcı adı boş olamaz', 'error'); return; }
-
-      try {
-        const res = await fetch(`${API_URL}/auth/profile`, {
-          method:  'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ userId: state.userId, username, bio, avatar_url: avatarUrl }),
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || 'Güncelleme başarısız');
-
-        localStorage.setItem('username', username);
-        closeModal();
-        toast('Profil güncellendi!', 'success');
-        setTimeout(() => location.reload(), 800);
-      } catch (err) {
-        toast(err.message, 'error');
-      }
-    }
-
-    // ── LOGOUT ───────────────────────────────────────────────────
     function handleLogout() {
-      ['token','username','userId'].forEach(k => localStorage.removeItem(k));
+      localStorage.clear();
       location.href = 'index.html';
     }
 
-    // ── SHARE ────────────────────────────────────────────────────
-    function shareProfile() {
-      const url = `${location.origin}${location.pathname}?userId=${state.userId}`;
-      navigator.clipboard?.writeText(url).then(() => toast('Profil linki kopyalandı!', 'info'));
-    }
-
-    // ── TAB SWITCH ───────────────────────────────────────────────
     function switchTab(id, btn) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1221,37 +226,7 @@
       btn.classList.add('active');
     }
 
-    // ── HELPERS ──────────────────────────────────────────────────
-    function timeAgo(dateStr) {
-      if (!dateStr) return '';
-      const diff = (Date.now() - new Date(dateStr)) / 1000;
-      if (diff < 60)   return `${Math.floor(diff)}s önce`;
-      if (diff < 3600) return `${Math.floor(diff/60)}d önce`;
-      if (diff < 86400)return `${Math.floor(diff/3600)}s önce`;
-      return `${Math.floor(diff/86400)}g önce`;
-    }
-
-    function escHtml(str) {
-      return String(str || '')
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    function toast(msg, type = 'info') {
-      const box  = document.getElementById('toast');
-      const item = document.createElement('div');
-      item.className = `toast-item toast-${type}`;
-      item.textContent = msg;
-      box.appendChild(item);
-      setTimeout(() => item.remove(), 3000);
-    }
-
-    // ── MODAL CLOSE ON OVERLAY ────────────────────────────────────
-    document.getElementById('editModal').addEventListener('click', function(e) {
-      if (e.target === this) closeModal();
-    });
-
-    // ── START ────────────────────────────────────────────────────
+    // Script yüklendiğinde başlat
     initProfile();
   </script>
 </body>
