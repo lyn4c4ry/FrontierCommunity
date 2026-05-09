@@ -6,12 +6,14 @@ require('dotenv').config();
 const authRoutes = require('./routes/authRoutes');
 const threadRoutes = require('./routes/threadRoutes');
 const commentRoutes = require('./routes/commentRoutes'); // Import
+const newsRoutes = require('./routes/newsRoutes');
 
 const app = express();
 
 // 2. Middleware
 app.use(cors()); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parse incoming JSON requests
+app.use('/api/news', newsRoutes);
 
 // 3. Health Check Route
 app.get('/api/status', (req, res) => {
