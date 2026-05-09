@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Frontier Community — Game News</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#080a0f; --bg2:#0d1018; --surface:#111520; --surface2:#161c2a;
+      --border:rgba(74,144,226,0.10); --border2:rgba(74,144,226,0.22);
+      --blue:#1a6fd4; --blue-light:#4db8ff; --blue-glow:rgba(26,111,212,0.35);
+      --gold:#f5c518; --gold-dim:#c9a000;
+      --text:#dce8f5; --text-muted:#6a7f99; --text-dim:#2e3c50;
+      --red:#ff4060; --green:#22d47a; --purple:#9b6dff;
+      --r-sm:8px; --r:12px; --r-lg:16px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;line-height:1.6;min-height:100vh;display:flex;overflow-x:hidden;}
+    body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.35;}
+    ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:3px;}::-webkit-scrollbar-thumb:hover{background:var(--blue);}
+
+    /* TOAST */
+    #toast{position:fixed;bottom:28px;right:28px;z-index:10000;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+    .toast-msg{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);padding:11px 18px;font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;animation:toastIn 0.28s cubic-bezier(.22,1,.36,1) both;box-shadow:0 8px 32px rgba(0,0,0,0.4);}
+    .toast-msg.success{border-color:rgba(34,212,122,0.3);color:var(--green);}
+    .toast-msg.error{border-color:rgba(255,64,96,0.3);color:var(--red);}
+    .toast-msg.out{animation:toastOut 0.22s ease both;}
+    @keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes toastOut{to{opacity:0;transform:translateY(6px)}}
+
+    /* LEFT SIDEBAR */
+    .sidebar-left{position:fixed;top:0;left:0;width:228px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;overflow-y:auto;}
+    .logo-area{padding:22px 20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;}
+    .logo-area img{width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(77,184,255,0.45));}
+    .logo-text{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(90deg,var(--blue-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .sidebar-profile{margin:16px 13px 6px;padding:12px 14px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color 0.2s;text-decoration:none;}
+    .sidebar-profile:hover{border-color:var(--blue);}
+    .sidebar-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--blue);flex-shrink:0;}
+    .sidebar-uname{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--text);}
+    .sidebar-handle{font-size:11px;color:var(--text-muted);}
+    .nav-section{padding:14px 10px 8px;flex:1;}
+    .nav-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);padding:0 12px;margin-bottom:5px;display:block;}
+    .nav-item{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:var(--r-sm);color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:600;transition:all 0.2s;margin-bottom:2px;cursor:pointer;border:none;background:none;width:100%;text-align:left;}
+    .nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
+    .nav-item.active{background:rgba(26,111,212,0.12);color:var(--blue-light);}
+    .nav-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
+    .sidebar-bottom{padding:14px;border-top:1px solid var(--border);}
+    .btn-logout{width:100%;padding:9px;background:rgba(255,64,96,0.07);border:1px solid rgba(255,64,96,0.18);border-radius:var(--r-sm);color:var(--red);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;}
+    .btn-logout:hover{background:rgba(255,64,96,0.16);border-color:rgba(255,64,96,0.4);}
+
+    /* MAIN */
+    .main{margin-left:228px;flex:1;display:flex;min-height:100vh;}
+
+    /* CONTENT */
+    .content{flex:1;padding:24px 24px 80px;border-right:1px solid var(--border);min-width:0;}
+
+    /* PAGE HEADER */
+    .page-header{margin-bottom:20px;position:relative;overflow:hidden;background:linear-gradient(135deg,#0d1422 0%,#0a1220 100%);border:1px solid var(--border2);border-radius:var(--r-lg);padding:22px 26px;}
+    .page-header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--gold),var(--purple));}
+    .page-header::after{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(26,111,212,0.12) 0%,transparent 70%);pointer-events:none;}
+    .page-header-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .page-title{font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;letter-spacing:1px;color:#fff;}
+    .page-subtitle{font-size:12px;color:var(--text-muted);margin-top:2px;}
+    .api-badge{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:20px;color:var(--green);background:rgba(34,212,122,0.08);border:1px solid rgba(34,212,122,0.18);white-space:nowrap;}
+
+    /* TOOLBAR */
+    .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
+    .filter-search{flex:1;min-width:200px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 14px 9px 36px;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s;position:relative;}
+    .search-wrap{position:relative;flex:1;min-width:200px;}
+    .search-wrap::before{content:'⌕';position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:16px;pointer-events:none;z-index:1;}
+    .search-wrap input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 14px 9px 34px;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s;}
+    .search-wrap input::placeholder{color:var(--text-dim);}
+    .search-wrap input:focus{border-color:var(--blue);}
+    .filter-select{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 12px;color:var(--text-muted);font-family:'Nunito',sans-serif;font-size:12px;outline:none;cursor:pointer;transition:border-color 0.2s;}
+    .filter-select:focus{border-color:var(--blue);color:var(--text);}
+    .filter-select option{background:var(--surface2);}
+    .results-info{font-size:11px;color:var(--text-muted);white-space:nowrap;}
+    .view-toggle{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;}
+    .view-btn{width:34px;height:34px;border:none;background:none;color:var(--text-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.2s;}
+    .view-btn.active{background:rgba(26,111,212,0.15);color:var(--blue-light);}
+    .view-btn:hover:not(.active){color:var(--text-muted);}
+
+    /* GENRE BAR */
+    .genre-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;align-items:center;}
+    .genre-chip{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;padding:6px 14px;border-radius:6px;cursor:pointer;transition:all 0.18s;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);}
+    .genre-chip:hover{border-color:var(--border2);color:var(--text);background:rgba(255,255,255,0.03);}
+    .genre-chip.active{background:rgba(26,111,212,0.15);border-color:rgba(26,111,212,0.5);color:var(--blue-light);}
+    .watchlist-chip{border-color:rgba(245,197,24,0.2);color:var(--text-muted);}
+    .watchlist-chip.active{background:rgba(245,197,24,0.1);border-color:rgba(245,197,24,0.5);color:var(--gold);}
+
+    /* ── GRID VIEW ── */
+    .game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+    .game-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;transition:border-color 0.22s,transform 0.18s,box-shadow 0.22s;animation:fadeUp 0.35s ease both;cursor:default;position:relative;}
+    .game-card:hover{border-color:rgba(74,144,226,0.3);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.4);}
+    .game-card.followed{border-color:rgba(245,197,24,0.25);}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+    /* cover */
+    .cover-wrap{position:relative;overflow:hidden;height:130px;}
+    .game-cover{width:100%;height:100%;object-fit:cover;display:block;background:var(--surface2);transition:transform 0.4s ease;}
+    .game-card:hover .game-cover{transform:scale(1.05);}
+    .game-cover-placeholder{width:100%;height:100%;background:linear-gradient(135deg,#0d1422,#080a0f);display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--text-dim);}
+    .cover-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,10,15,0.85) 0%,transparent 55%);opacity:0;transition:opacity 0.25s;}
+    .game-card:hover .cover-overlay{opacity:1;}
+    .cover-actions{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:8px;opacity:0;transform:translateY(6px);transition:all 0.25s;}
+    .game-card:hover .cover-actions{opacity:1;transform:translateY(0);}
+    .btn-discuss{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#fff;background:rgba(26,111,212,0.75);border:1px solid rgba(77,184,255,0.4);backdrop-filter:blur(6px);padding:6px 14px;border-radius:var(--r-sm);cursor:pointer;transition:background 0.2s;}
+    .btn-discuss:hover{background:rgba(26,111,212,0.95);}
+    .score-badge{position:absolute;top:9px;left:9px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;padding:3px 8px;border-radius:6px;backdrop-filter:blur(8px);}
+    .score-high{background:rgba(34,212,122,0.2);border:1px solid rgba(34,212,122,0.35);color:var(--green);}
+    .score-mid{background:rgba(245,197,24,0.2);border:1px solid rgba(245,197,24,0.35);color:var(--gold);}
+    .score-low{background:rgba(255,64,96,0.2);border:1px solid rgba(255,64,96,0.35);color:var(--red);}
+    .follow-btn{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:rgba(8,10,15,0.55);backdrop-filter:blur(8px);color:var(--text-muted);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+    .follow-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(245,197,24,0.15);}
+    .follow-btn.active{background:rgba(245,197,24,0.2);border-color:rgba(245,197,24,0.5);color:var(--gold);}
+
+    /* card body */
+    .game-body{padding:11px 13px 12px;}
+    .game-title{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:#e8f0fa;line-height:1.3;margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .game-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:7px;}
+    .tag{font-size:9px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;padding:2px 7px;border-radius:4px;}
+    .tag-genre{background:rgba(26,111,212,0.12);border:1px solid rgba(26,111,212,0.2);color:rgba(77,184,255,0.85);}
+    .tag-platform{background:rgba(155,109,255,0.1);border:1px solid rgba(155,109,255,0.2);color:rgba(155,109,255,0.85);}
+    .game-date{font-size:10px;color:var(--text-muted);display:flex;align-items:center;gap:4px;}
+    .game-date::before{content:'';width:3px;height:3px;border-radius:50%;background:var(--text-dim);flex-shrink:0;}
+
+    /* ── LIST VIEW ── */
+    .game-list{display:flex;flex-direction:column;gap:6px;}
+    .game-list-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;display:flex;align-items:center;gap:0;transition:border-color 0.2s,background 0.2s;animation:fadeUp 0.3s ease both;cursor:default;}
+    .game-list-item:hover{border-color:rgba(74,144,226,0.25);background:rgba(17,21,32,0.95);}
+    .game-list-item.followed{border-color:rgba(245,197,24,0.2);}
+    .list-cover{width:72px;height:52px;object-fit:cover;flex-shrink:0;background:var(--surface2);}
+    .list-cover-placeholder{width:72px;height:52px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+    .list-body{flex:1;padding:0 14px;min-width:0;}
+    .list-title{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .list-meta{display:flex;align-items:center;gap:8px;margin-top:2px;}
+    .list-score{font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif;}
+    .ls-high{color:var(--green);}
+    .ls-mid{color:var(--gold);}
+    .ls-low{color:var(--red);}
+    .list-tag{font-size:9px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;padding:1px 6px;border-radius:4px;background:rgba(26,111,212,0.1);border:1px solid rgba(26,111,212,0.18);color:rgba(77,184,255,0.75);}
+    .list-date{font-size:10px;color:var(--text-muted);margin-left:auto;}
+    .list-actions{display:flex;align-items:center;gap:6px;padding:0 12px;flex-shrink:0;}
+    .list-follow-btn{width:26px;height:26px;border-radius:50%;border:1px solid var(--border2);background:var(--surface2);color:var(--text-muted);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+    .list-follow-btn:hover{border-color:var(--gold);color:var(--gold);}
+    .list-follow-btn.active{background:rgba(245,197,24,0.12);border-color:var(--gold);color:var(--gold);}
+    .list-discuss-btn{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--blue-light);background:rgba(26,111,212,0.08);border:1px solid rgba(26,111,212,0.2);padding:5px 11px;border-radius:var(--r-sm);cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+    .list-discuss-btn:hover{background:rgba(26,111,212,0.18);border-color:var(--blue);}
+
+    /* RIGHT SIDEBAR */
+    .sidebar-right{width:256px;flex-shrink:0;padding:24px 14px;display:flex;flex-direction:column;gap:12px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+    .widget{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;}
+    .widget-title{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
+    .widget-count{font-size:10px;color:var(--text-muted);font-family:'Nunito',sans-serif;letter-spacing:0;}
+
+    /* WATCHLIST */
+    .watchlist-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity 0.2s;}
+    .watchlist-item:last-child{border-bottom:none;padding-bottom:0;}
+    .watchlist-item:first-child{padding-top:0;}
+    .watchlist-item:hover{opacity:0.75;}
+    .watchlist-cover{width:30px;height:30px;border-radius:5px;object-fit:cover;background:var(--surface2);flex-shrink:0;}
+    .watchlist-info{flex:1;min-width:0;}
+    .watchlist-name{font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .watchlist-score{font-size:10px;color:var(--text-muted);}
+    .watchlist-unfollow{background:none;border:none;color:var(--text-dim);font-size:13px;cursor:pointer;padding:2px 4px;transition:color 0.2s;flex-shrink:0;}
+    .watchlist-unfollow:hover{color:var(--red);}
+    .watchlist-empty{font-size:12px;color:var(--text-dim);text-align:center;padding:10px 0;}
+
+    /* STATS */
+    .stat-row{display:flex;gap:7px;}
+    .stat-box{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 8px;text-align:center;}
+    .stat-num{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;line-height:1;}
+    .stat-label{font-size:9px;color:var(--text-muted);margin-top:3px;text-transform:uppercase;letter-spacing:0.5px;}
+
+    /* LOADING / EMPTY */
+    .spinner{width:20px;height:20px;border:2px solid rgba(26,111,212,0.15);border-top-color:var(--blue);border-radius:50%;animation:spin 0.75s linear infinite;margin:14px auto;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .skeleton-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+    .skeleton-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;animation:pulse-sk 1.5s ease infinite;}
+    @keyframes pulse-sk{0%,100%{opacity:1}50%{opacity:0.5}}
+    .sk-img{height:130px;background:var(--surface2);}
+    .sk-body{padding:11px 13px;}
+    .sk-line{height:11px;background:var(--surface2);border-radius:4px;margin-bottom:8px;}
+    .sk-line.short{width:60%;}
+    .sk-line.xs{width:40%;}
+    .empty-state{padding:60px 20px;text-align:center;color:var(--text-muted);font-size:13px;}
+    .empty-icon{font-size:40px;margin-bottom:12px;}
+
+    /* LOAD MORE */
+    .load-more-wrap{display:flex;justify-content:center;margin-top:22px;}
+    .btn-load-more{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:10px 32px;border-radius:var(--r-sm);cursor:pointer;transition:all 0.2s;}
+    .btn-load-more:hover{border-color:var(--blue);color:var(--blue-light);}
+    .btn-load-more:disabled{opacity:0.4;cursor:not-allowed;}
+
+    /* KEY BANNER */
+    .key-banner{background:rgba(245,197,24,0.05);border:1px solid rgba(245,197,24,0.18);border-radius:var(--r);padding:12px 15px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px;}
+    .key-banner-icon{font-size:17px;flex-shrink:0;margin-top:1px;}
+    .key-banner-text{flex:1;font-size:12px;color:var(--text-muted);line-height:1.5;}
+    .key-banner-text strong{color:var(--gold);}
+    .key-input-row{display:flex;gap:7px;margin-top:8px;}
+    .key-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:7px 11px;color:var(--text);font-family:'Nunito',sans-serif;font-size:12px;outline:none;}
+    .key-input:focus{border-color:var(--gold);}
+    .btn-save-key{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.25);padding:7px 13px;border-radius:var(--r-sm);cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+    .btn-save-key:hover{background:rgba(245,197,24,0.18);}
+
+    @media(max-width:1100px){.sidebar-right{display:none;}.content{border-right:none;}}
+    @media(max-width:900px){.game-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));}}
+    @media(max-width:700px){
+      .sidebar-left{width:56px;}
+      .logo-text,.sidebar-uname,.sidebar-handle,.nav-item span,.nav-label{display:none;}
+      .main{margin-left:56px;}
+      .logo-area{justify-content:center;padding:14px 8px;}
+      .sidebar-profile{justify-content:center;padding:10px;}
+      .nav-item{justify-content:center;padding:10px;}
+      .content{padding:12px 10px 60px;}
+      .game-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+    }
+  </style>
+</head>
+<body onload="initNews()">
+
+<div id="toast"></div>
+
+<!-- LEFT SIDEBAR -->
+<aside class="sidebar-left">
+  <div class="logo-area">
+    <img src="logo_v1.png" alt="Frontier Logo">
+    <span class="logo-text">Frontier</span>
+  </div>
+  <a href="profile.html" class="sidebar-profile">
+    <img id="sidebar-avatar" src="" class="sidebar-avatar" alt="avatar">
+    <div>
+      <div class="sidebar-uname" id="sidebar-name">—</div>
+      <div class="sidebar-handle" id="sidebar-handle">@—</div>
+    </div>
+  </a>
+  <nav class="nav-section">
+    <span class="nav-label">Navigate</span>
+    <a href="home.html" class="nav-item"><span class="nav-icon">🏠</span><span>Home</span></a>
+    <a href="news.html" class="nav-item active"><span class="nav-icon">🎮</span><span>Game News</span></a>
+    <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span><span>Profile</span></a>
+  </nav>
+  <div class="sidebar-bottom">
+    <button class="btn-logout" onclick="handleLogout()">⏻ &nbsp;Logout</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <section class="content">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div class="page-header-row">
+        <div>
+          <div class="page-title">🎮 Game News</div>
+          <div class="page-subtitle">Latest releases, ratings & updates — powered by RAWG</div>
+        </div>
+        <span class="api-badge" id="api-status">● Connecting...</span>
+      </div>
+    </div>
+
+    <!-- KEY BANNER -->
+    <div class="key-banner" id="key-banner" style="display:none;">
+      <div class="key-banner-icon">🔑</div>
+      <div class="key-banner-text">
+        <strong>RAWG API Key required.</strong> Get a free key at rawg.io and enter it below.
+        <div class="key-input-row">
+          <input class="key-input" id="rawg-key-input" placeholder="Paste your API key..." type="password">
+          <button class="btn-save-key" onclick="saveRawgKey()">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <input id="search-input" placeholder="Search games..." oninput="onSearch()">
+      </div>
+      <select class="filter-select" id="sort-select" onchange="applyFilters()">
+        <option value="-released">Newest</option>
+        <option value="-rating">Top Rated</option>
+        <option value="-added">Popular</option>
+        <option value="name">A → Z</option>
+      </select>
+      <select class="filter-select" id="platform-select" onchange="applyFilters()">
+        <option value="">All Platforms</option>
+        <option value="4">PC</option>
+        <option value="187">PS5</option>
+        <option value="18">PS4</option>
+        <option value="1">Xbox One</option>
+        <option value="186">Xbox Series</option>
+        <option value="7">Switch</option>
+      </select>
+      <span class="results-info" id="results-info"></span>
+      <div class="view-toggle">
+        <button class="view-btn active" id="view-grid" onclick="setView('grid')" title="Grid view">⊞</button>
+        <button class="view-btn" id="view-list" onclick="setView('list')" title="List view">☰</button>
+      </div>
+    </div>
+
+    <!-- GENRE BAR -->
+    <div class="genre-bar" id="genre-bar"></div>
+
+    <!-- GAME GRID / LIST -->
+    <div id="game-grid"></div>
+
+    <!-- LOAD MORE -->
+    <div class="load-more-wrap" id="load-more-wrap" style="display:none;">
+      <button class="btn-load-more" id="btn-load-more" onclick="loadMore()">Load More</button>
+    </div>
+
+  </section>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="sidebar-right">
+    <div class="widget">
+      <div class="widget-title">
+        ⭐ My Watchlist
+        <span class="widget-count" id="watchlist-count">0 games</span>
+      </div>
+      <div id="watchlist-list"><div class="watchlist-empty">Follow games to see them here</div></div>
+    </div>
+    <div class="widget">
+      <div class="widget-title">Database</div>
+      <div class="stat-row">
+        <div class="stat-box">
+          <div class="stat-num" id="stat-shown" style="color:var(--blue-light)">—</div>
+          <div class="stat-label">Shown</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="stat-followed" style="color:var(--gold)">—</div>
+          <div class="stat-label">Following</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script>
+const RAWG_BASE = 'https://api.rawg.io/api';
+const GENRES = [
+  { id: 4, name: 'Action' }, { id: 51, name: 'Indie' }, { id: 3, name: 'Adventure' },
+  { id: 5, name: 'RPG' }, { id: 2, name: 'Shooter' }, { id: 7, name: 'Puzzle' },
+  { id: 11, name: 'Arcade' }, { id: 83, name: 'Platformer' }, { id: 1, name: 'Racing' },
+  { id: 15, name: 'Sports' }, { id: 6, name: 'Fighting' }, { id: 14, name: 'Simulation' },
+  { id: 10, name: 'Strategy' },
+];
+
+let state = { games:[], page:1, nextUrl:null, activeGenre:null, activePlatform:'', activeSort:'-released', searchQuery:'', watchlistOnly:false, loading:false, view:'grid' };
+let watchlist = {};
+let searchTimer = null;
+
+function initNews() {
+  if (!localStorage.getItem('token')) { window.location.href = 'index.html'; return; }
+  const username = localStorage.getItem('username') || 'User';
+  const av = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=1a6fd4&color=fff&size=128&bold=true`;
+  document.getElementById('sidebar-avatar').src = av;
+  document.getElementById('sidebar-name').textContent = username;
+  document.getElementById('sidebar-handle').textContent = `@${username}`;
+  try { watchlist = JSON.parse(localStorage.getItem('fc_watchlist') || '{}'); } catch { watchlist = {}; }
+  buildGenreBar();
+  renderWatchlist();
+  checkApiKey();
+}
+
+function checkApiKey() {
+  const key = getRawgKey();
+  if (!key) {
+    document.getElementById('key-banner').style.display = 'flex';
+    document.getElementById('api-status').textContent = '● No API Key';
+    document.getElementById('api-status').style.color = 'var(--red)';
+    showStaticFallback();
+    return;
+  }
+  document.getElementById('key-banner').style.display = 'none';
+  document.getElementById('api-status').textContent = '● RAWG Connected';
+  document.getElementById('api-status').style.color = 'var(--green)';
+  fetchGames(true);
+}
+
+function getRawgKey() { return localStorage.getItem('rawg_key') || ''; }
+
+function saveRawgKey() {
+  const val = document.getElementById('rawg-key-input').value.trim();
+  if (!val) { toast('Key cannot be empty.', 'error'); return; }
+  localStorage.setItem('rawg_key', val);
+  toast('API key saved!', 'success');
+  checkApiKey();
+}
+
+/* ── GENRE BAR ─────────────────────────────────────────── */
+function buildGenreBar() {
+  const bar = document.getElementById('genre-bar');
+  bar.innerHTML =
+    `<button class="genre-chip active" data-genre="" onclick="selectGenre(this,null)">All</button>` +
+    `<button class="genre-chip watchlist-chip" id="watchlist-chip" onclick="toggleWatchlistFilter()">⭐ My List</button>` +
+    GENRES.map(g => `<button class="genre-chip" data-genre="${g.id}" onclick="selectGenre(this,${g.id})">${g.name}</button>`).join('');
+}
+
+function selectGenre(btn, genreId) {
+  state.watchlistOnly = false;
+  document.getElementById('watchlist-chip').classList.remove('active');
+  document.querySelectorAll('#genre-bar .genre-chip:not(.watchlist-chip)').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.activeGenre = genreId;
+  fetchGames(true);
+}
+
+/* ── FILTERS ───────────────────────────────────────────── */
+function applyFilters() {
+  state.activeSort = document.getElementById('sort-select').value;
+  state.activePlatform = document.getElementById('platform-select').value;
+  fetchGames(true);
+}
+
+function onSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    state.searchQuery = document.getElementById('search-input').value.trim();
+    fetchGames(true);
+  }, 400);
+}
+
+function toggleWatchlistFilter() {
+  state.watchlistOnly = !state.watchlistOnly;
+  document.getElementById('watchlist-chip').classList.toggle('active', state.watchlistOnly);
+  if (state.watchlistOnly) renderWatchlistOnly();
+  else fetchGames(true);
+}
+
+/* ── VIEW TOGGLE ───────────────────────────────────────── */
+function setView(v) {
+  state.view = v;
+  document.getElementById('view-grid').classList.toggle('active', v === 'grid');
+  document.getElementById('view-list').classList.toggle('active', v === 'list');
+  renderGames(state.games, true);
+}
+
+/* ── FETCH ─────────────────────────────────────────────── */
+async function fetchGames(reset = false) {
+  if (state.loading) return;
+  state.loading = true;
+  if (reset) { state.page = 1; state.games = []; state.nextUrl = null; }
+  const key = getRawgKey();
+  if (!key) { state.loading = false; return; }
+  const grid = document.getElementById('game-grid');
+  if (reset) { grid.innerHTML = buildSkeletons(12); document.getElementById('load-more-wrap').style.display = 'none'; }
+  const params = new URLSearchParams({ key, page_size: 20, page: state.page, ordering: state.activeSort });
+  if (state.activeGenre)    params.set('genres', state.activeGenre);
+  if (state.activePlatform) params.set('platforms', state.activePlatform);
+  if (state.searchQuery)    params.set('search', state.searchQuery);
+  try {
+    const data = await fetch(`${RAWG_BASE}/games?${params}`).then(r => { if (!r.ok) throw new Error('RAWG error'); return r.json(); });
+    if (reset) { state.games = data.results; grid.innerHTML = ''; }
+    else { state.games = [...state.games, ...data.results]; }
+    state.nextUrl = data.next;
+    renderGames(data.results, reset);
+    updateStats();
+    document.getElementById('results-info').textContent = `${data.count.toLocaleString()} games`;
+    document.getElementById('load-more-wrap').style.display = data.next ? 'flex' : 'none';
+    document.getElementById('api-status').textContent = '● RAWG Connected';
+    document.getElementById('api-status').style.color = 'var(--green)';
+  } catch (e) {
+    console.error(e);
+    if (reset) grid.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Failed to load. Check your API key.</p></div>`;
+    document.getElementById('api-status').textContent = '● API Error';
+    document.getElementById('api-status').style.color = 'var(--red)';
+  } finally { state.loading = false; }
+}
+
+async function loadMore() {
+  if (!state.nextUrl || state.loading) return;
+  const btn = document.getElementById('btn-load-more');
+  btn.disabled = true; btn.textContent = 'Loading...';
+  state.page++;
+  await fetchGames(false);
+  btn.disabled = false; btn.textContent = 'Load More';
+}
+
+/* ── RENDER ────────────────────────────────────────────── */
+function renderGames(games, replace = true) {
+  const grid = document.getElementById('game-grid');
+  if (replace) {
+    grid.className = state.view === 'grid' ? 'game-grid' : 'game-list';
+    grid.innerHTML = '';
+  }
+  if (!games.length && replace) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🎮</div><p>No games found.</p></div>';
+    return;
+  }
+  games.forEach((g, i) => {
+    const card = state.view === 'grid' ? buildGameCard(g, i) : buildListItem(g, i);
+    grid.appendChild(card);
+  });
+}
+
+function buildGameCard(g, idx) {
+  const followed = !!watchlist[g.id];
+  const score = g.rating ? g.rating.toFixed(1) : null;
+  const scoreCls = !score ? '' : score >= 4 ? 'score-high' : score >= 3 ? 'score-mid' : 'score-low';
+  const genre = g.genres?.[0]?.name || null;
+  const platform = g.parent_platforms?.[0]?.platform?.name || null;
+  const cover = g.background_image;
+  const released = g.released ? new Date(g.released).toLocaleDateString('en-US', { year:'numeric', month:'short' }) : 'TBA';
+
+  const card = document.createElement('div');
+  card.className = `game-card${followed ? ' followed' : ''}`;
+  card.id = `gc-${g.id}`;
+  card.style.animationDelay = `${(idx % 20) * 0.04}s`;
+  card.innerHTML = `
+    <div class="cover-wrap">
+      ${cover ? `<img class="game-cover" src="${cover}" alt="${escHtml(g.name)}" loading="lazy">` : `<div class="game-cover-placeholder">🎮</div>`}
+      ${score ? `<span class="score-badge ${scoreCls}">★ ${score}</span>` : ''}
+      <button class="follow-btn ${followed ? 'active' : ''}" id="fb-${g.id}" onclick="toggleFollow(${g.id})">${followed ? '⭐' : '☆'}</button>
+      <div class="cover-overlay"></div>
+      <div class="cover-actions">
+        <button class="btn-discuss" onclick="openDiscuss(${JSON.stringify(g.name).replace(/</g,'&lt;')})">💬 Discuss</button>
+      </div>
+    </div>
+    <div class="game-body">
+      <div class="game-title" title="${escHtml(g.name)}">${escHtml(g.name)}</div>
+      <div class="game-tags">
+        ${genre ? `<span class="tag tag-genre">${escHtml(genre)}</span>` : ''}
+        ${platform ? `<span class="tag tag-platform">${escHtml(platform)}</span>` : ''}
+      </div>
+      <div class="game-date">${released}</div>
+    </div>`;
+  return card;
+}
+
+function buildListItem(g, idx) {
+  const followed = !!watchlist[g.id];
+  const score = g.rating ? g.rating.toFixed(1) : null;
+  const scoreCls = !score ? '' : score >= 4 ? 'ls-high' : score >= 3 ? 'ls-mid' : 'ls-low';
+  const genre = g.genres?.[0]?.name || null;
+  const released = g.released ? new Date(g.released).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : 'TBA';
+  const cover = g.background_image;
+
+  const item = document.createElement('div');
+  item.className = `game-list-item${followed ? ' followed' : ''}`;
+  item.id = `gc-${g.id}`;
+  item.style.animationDelay = `${(idx % 20) * 0.03}s`;
+  item.innerHTML = `
+    ${cover ? `<img class="list-cover" src="${cover}" alt="${escHtml(g.name)}" loading="lazy">` : `<div class="list-cover-placeholder">🎮</div>`}
+    <div class="list-body">
+      <div class="list-title">${escHtml(g.name)}</div>
+      <div class="list-meta">
+        ${score ? `<span class="list-score ${scoreCls}">★ ${score}</span>` : ''}
+        ${genre ? `<span class="list-tag">${escHtml(genre)}</span>` : ''}
+        <span class="list-date">${released}</span>
+      </div>
+    </div>
+    <div class="list-actions">
+      <button class="list-discuss-btn" onclick="openDiscuss(${JSON.stringify(g.name).replace(/</g,'&lt;')})">💬 Discuss</button>
+      <button class="list-follow-btn ${followed ? 'active' : ''}" id="fb-${g.id}" onclick="toggleFollow(${g.id})">${followed ? '⭐' : '☆'}</button>
+    </div>`;
+  return item;
+}
+
+/* ── WATCHLIST ─────────────────────────────────────────── */
+function toggleFollow(gameId) {
+  const game = state.games.find(g => g.id === gameId);
+  if (!game) return;
+  if (watchlist[gameId]) { delete watchlist[gameId]; toast(`Unfollowed ${game.name}`, 'info'); }
+  else { watchlist[gameId] = game; toast(`Following ${game.name} ⭐`, 'success'); }
+  localStorage.setItem('fc_watchlist', JSON.stringify(watchlist));
+  const card = document.getElementById(`gc-${gameId}`);
+  const btn  = document.getElementById(`fb-${gameId}`);
+  if (card) card.classList.toggle('followed', !!watchlist[gameId]);
+  if (btn) { btn.classList.toggle('active', !!watchlist[gameId]); btn.textContent = watchlist[gameId] ? '⭐' : '☆'; }
+  renderWatchlist();
+  updateStats();
+}
+
+function renderWatchlist() {
+  const el = document.getElementById('watchlist-list');
+  const count = document.getElementById('watchlist-count');
+  const items = Object.values(watchlist);
+  count.textContent = `${items.length} game${items.length !== 1 ? 's' : ''}`;
+  if (!items.length) { el.innerHTML = '<div class="watchlist-empty">Follow games to see them here</div>'; return; }
+  el.innerHTML = items.slice(0, 8).map(g => {
+    const score = g.rating ? `★ ${g.rating.toFixed(1)}` : 'Unrated';
+    return `<div class="watchlist-item" onclick="scrollToGame(${g.id})">
+      ${g.background_image ? `<img class="watchlist-cover" src="${g.background_image}" alt="">` : `<div class="watchlist-cover" style="display:flex;align-items:center;justify-content:center;font-size:14px;">🎮</div>`}
+      <div class="watchlist-info"><div class="watchlist-name">${escHtml(g.name)}</div><div class="watchlist-score">${score}</div></div>
+      <button class="watchlist-unfollow" onclick="event.stopPropagation();toggleFollow(${g.id})">✕</button>
+    </div>`;
+  }).join('');
+  if (items.length > 8) el.innerHTML += `<div class="watchlist-empty" style="padding-top:7px;">+${items.length - 8} more</div>`;
+}
+
+function renderWatchlistOnly() {
+  const grid = document.getElementById('game-grid');
+  const items = Object.values(watchlist);
+  document.getElementById('results-info').textContent = `${items.length} followed`;
+  document.getElementById('load-more-wrap').style.display = 'none';
+  if (!items.length) { grid.innerHTML = '<div class="empty-state"><div class="empty-icon">⭐</div><p>No followed games yet.</p></div>'; return; }
+  state.games = items;
+  grid.className = state.view === 'grid' ? 'game-grid' : 'game-list';
+  grid.innerHTML = '';
+  items.forEach((g, i) => grid.appendChild(state.view === 'grid' ? buildGameCard(g, i) : buildListItem(g, i)));
+}
+
+function scrollToGame(gameId) {
+  const card = document.getElementById(`gc-${gameId}`);
+  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function openDiscuss(gameName) {
+  sessionStorage.setItem('compose_prefill', gameName);
+  window.location.href = 'home.html';
+}
+
+function updateStats() {
+  document.getElementById('stat-shown').textContent = state.games.length;
+  document.getElementById('stat-followed').textContent = Object.keys(watchlist).length;
+}
+
+function showStaticFallback() {
+  const STATIC = [
+    { id:1, name:'Elden Ring: Nightreign', rating:4.6, released:'2025-05-30', genres:[{name:'RPG'}], parent_platforms:[{platform:{name:'PC'}}], background_image:null },
+    { id:2, name:'GTA VI', rating:null, released:'2025 (TBA)', genres:[{name:'Action'}], parent_platforms:[{platform:{name:'PS5'}}], background_image:null },
+    { id:3, name:'Monster Hunter Wilds', rating:4.3, released:'2025-02-28', genres:[{name:'RPG'}], parent_platforms:[{platform:{name:'PC'}}], background_image:null },
+    { id:4, name:'Hollow Knight: Silksong', rating:null, released:'TBA', genres:[{name:'Indie'}], parent_platforms:[{platform:{name:'Switch'}}], background_image:null },
+    { id:5, name:'Death Stranding 2', rating:4.1, released:'2025-06-26', genres:[{name:'Action'}], parent_platforms:[{platform:{name:'PS5'}}], background_image:null },
+    { id:6, name:'Civilization VII', rating:3.8, released:'2025-02-11', genres:[{name:'Strategy'}], parent_platforms:[{platform:{name:'PC'}}], background_image:null },
+  ];
+  state.games = STATIC;
+  const grid = document.getElementById('game-grid');
+  grid.className = 'game-grid';
+  grid.innerHTML = '';
+  STATIC.forEach((g, i) => grid.appendChild(buildGameCard(g, i)));
+  document.getElementById('results-info').textContent = 'Static fallback — add API key for live data';
+  updateStats();
+}
+
+function handleLogout() { localStorage.clear(); window.location.href = 'index.html'; }
+
+function toast(msg, type = 'info') {
+  const wrap = document.getElementById('toast');
+  const el = document.createElement('div');
+  el.className = `toast-msg ${type}`;
+  el.innerHTML = `<span>${type==='success'?'✓':type==='error'?'✕':'ℹ'}</span> ${escHtml(msg)}`;
+  wrap.appendChild(el);
+  setTimeout(() => { el.classList.add('out'); el.addEventListener('animationend', () => el.remove()); }, 3000);
+}
+
+function escHtml(str) { const d = document.createElement('div'); d.textContent = str || ''; return d.innerHTML; }
+
+function buildSkeletons(n) {
+  return `<div class="skeleton-grid">${Array(n).fill(`<div class="skeleton-card"><div class="sk-img"></div><div class="sk-body"><div class="sk-line"></div><div class="sk-line short"></div><div class="sk-line xs"></div></div></div>`).join('')}</div>`;
+}
+</script>
+</body>
+</html>

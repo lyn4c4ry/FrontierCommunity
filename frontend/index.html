@@ -1,31 +1,476 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Lyna Forum - Access</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Frontier Community — Welcome</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    /* Animated background blobs */
+    .bg-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(26,111,212,0.18) 0%, transparent 70%);
+      top: -100px; left: -100px;
+      animation: blobMove1 12s ease-in-out infinite alternate;
+    }
+    .blob2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(245,197,24,0.1) 0%, transparent 70%);
+      bottom: -80px; right: -80px;
+      animation: blobMove2 15s ease-in-out infinite alternate;
+    }
+    .blob3 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(77,184,255,0.1) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      animation: blobMove3 10s ease-in-out infinite alternate;
+    }
+
+    @keyframes blobMove1 { to { transform: translate(60px, 80px); } }
+    @keyframes blobMove2 { to { transform: translate(-60px, -80px); } }
+    @keyframes blobMove3 { to { transform: translate(-40%, -40%); } }
+
+    /* Grid lines */
+    .grid-lines {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(26,111,212,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(26,111,212,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Main wrapper */
+    .auth-wrapper {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      max-width: 880px;
+      width: 100%;
+      margin: 0 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(26,111,212,0.08);
+      animation: fadeUp 0.5s ease both;
+    }
+
+    /* Left panel — branding */
+    .auth-brand {
+      background: linear-gradient(160deg, #0a1628 0%, #050810 60%, #0d1a2e 100%);
+      padding: 52px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-brand::before {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(26,111,212,0.25) 0%, transparent 70%);
+      bottom: -80px; right: -80px;
+      border-radius: 50%;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+
+    .brand-logo img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 12px var(--blue-glow));
+      animation: glow 3s ease-in-out infinite;
+    }
+
+    .brand-logo-text {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 24px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, var(--blue-light), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .brand-tagline {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1.2;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    .brand-tagline span {
+      background: linear-gradient(90deg, var(--blue-light), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .brand-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+
+    .brand-stats {
+      display: flex;
+      gap: 24px;
+    }
+
+    .brand-stat { text-align: center; }
+
+    .brand-stat-num {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--blue-light);
+      display: block;
+    }
+
+    .brand-stat-label {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Right panel — forms */
+    .auth-forms {
+      padding: 48px 44px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Tabs */
+    .auth-tabs {
+      display: flex;
+      gap: 0;
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+      margin-bottom: 32px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      padding: 9px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .auth-tab.active {
+      color: var(--blue-light);
+      background: rgba(26,111,212,0.15);
+      box-shadow: inset 0 0 0 1px rgba(26,111,212,0.25);
+    }
+
+    /* Form panels */
+    .form-panel { display: none; }
+    .form-panel.active { display: block; }
+
+    .form-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .form-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .field-icon-wrap {
+      position: relative;
+    }
+
+    .field-icon-wrap .field-icon {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 14px;
+      pointer-events: none;
+    }
+
+    .field-icon-wrap .input {
+      padding-left: 38px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      margin-top: 8px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #fff;
+      background: linear-gradient(135deg, var(--blue) 0%, #1e55c0 100%);
+      border: none;
+      padding: 13px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: 0 4px 20px var(--blue-glow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-submit::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      transition: left 0.4s;
+    }
+
+    .btn-submit:hover::before { left: 100%; }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 28px var(--blue-glow); }
+    .btn-submit:active { transform: translateY(0); }
+
+    .form-message {
+      margin-top: 12px;
+      font-size: 13px;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    .form-message.success { color: var(--green); }
+    .form-message.error { color: var(--red); }
+
+    @media (max-width: 680px) {
+      .auth-wrapper { grid-template-columns: 1fr; }
+      .auth-brand { display: none; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Registration Form -->
-        <div class="form-container">
-            <h2>Register</h2>
-            <input type="text" id="username" placeholder="Username">
-            <input type="email" id="email" placeholder="Email">
-            <input type="password" id="password" placeholder="Password">
-            <button class="reg-btn" onclick="handleRegister()">Sign Up</button>
-            <div id="message" style="margin-top:10px;"></div>
+  <div class="bg-blob blob1"></div>
+  <div class="bg-blob blob2"></div>
+  <div class="bg-blob blob3"></div>
+  <div class="grid-lines"></div>
+
+  <div class="auth-wrapper">
+    <!-- Brand Panel -->
+    <div class="auth-brand">
+      <div>
+        <div class="brand-logo">
+          <img src="logo_v1.png" alt="Frontier">
+          <span class="brand-logo-text">Frontier</span>
+        </div>
+        <div class="brand-tagline">Your gaming<br>community <span>hub.</span></div>
+        <div class="brand-desc">
+          Discuss games, share moments, and connect with players who share your passion. Every thread is a new adventure.
+        </div>
+      </div>
+      <div class="brand-stats">
+        <div class="brand-stat">
+          <span class="brand-stat-num">2.4K</span>
+          <span class="brand-stat-label">Members</span>
+        </div>
+        <div class="brand-stat">
+          <span class="brand-stat-num">18K</span>
+          <span class="brand-stat-label">Threads</span>
+        </div>
+        <div class="brand-stat">
+          <span class="brand-stat-num">94K</span>
+          <span class="brand-stat-label">Replies</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Forms Panel -->
+    <div class="auth-forms">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('login')">Login</button>
+        <button class="auth-tab" onclick="switchTab('register')">Register</button>
+      </div>
+
+      <!-- Login -->
+      <div class="form-panel active" id="panel-login">
+        <div class="form-title">Welcome back</div>
+        <div class="form-subtitle">Sign in to continue to Frontier</div>
+
+        <div class="field">
+          <label>Email</label>
+          <div class="field-icon-wrap">
+            <span class="field-icon">✉</span>
+            <input class="input" type="email" id="login-email" placeholder="you@example.com">
+          </div>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <div class="field-icon-wrap">
+            <span class="field-icon">🔒</span>
+            <input class="input" type="password" id="login-password" placeholder="••••••••">
+          </div>
         </div>
 
-        <!-- Login Form -->
-        <div class="form-container">
-            <h2>Login</h2>
-            <input type="email" id="login-email" placeholder="Email">
-            <input type="password" id="login-password" placeholder="Password">
-            <button class="login-btn" onclick="handleLogin()">Login</button>
-            <div id="login-message" style="margin-top:10px;"></div>
+        <button class="btn-submit" onclick="handleLogin()">Enter the Frontier</button>
+        <div class="form-message" id="login-message"></div>
+      </div>
+
+      <!-- Register -->
+      <div class="form-panel" id="panel-register">
+        <div class="form-title">Join the community</div>
+        <div class="form-subtitle">Create your Frontier account</div>
+
+        <div class="field">
+          <label>Username</label>
+          <div class="field-icon-wrap">
+            <span class="field-icon">👤</span>
+            <input class="input" type="text" id="username" placeholder="Choose a username">
+          </div>
         </div>
+        <div class="field">
+          <label>Email</label>
+          <div class="field-icon-wrap">
+            <span class="field-icon">✉</span>
+            <input class="input" type="email" id="email" placeholder="you@example.com">
+          </div>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <div class="field-icon-wrap">
+            <span class="field-icon">🔒</span>
+            <input class="input" type="password" id="password" placeholder="Min. 6 characters">
+          </div>
+        </div>
+
+        <button class="btn-submit" onclick="handleRegister()">Create Account</button>
+        <div class="form-message" id="register-message"></div>
+      </div>
     </div>
-    <script src="app.js"></script>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function switchTab(tab) {
+      document.querySelectorAll('.auth-tab').forEach((t, i) => {
+        t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'));
+      });
+      document.getElementById('panel-login').classList.toggle('active', tab === 'login');
+      document.getElementById('panel-register').classList.toggle('active', tab === 'register');
+    }
+
+    // Override handleRegister to show message in-page
+    async function handleRegister() {
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const msg = document.getElementById('register-message');
+
+      try {
+        const res = await fetch(`${API_URL}/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          msg.className = 'form-message success';
+          msg.innerText = '✓ Account created! Switching to login...';
+          setTimeout(() => switchTab('login'), 1500);
+        } else {
+          msg.className = 'form-message error';
+          msg.innerText = data.message || 'Registration failed.';
+        }
+      } catch {
+        msg.className = 'form-message error';
+        msg.innerText = 'Server unreachable.';
+      }
+    }
+
+    async function handleLogin() {
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const msg = document.getElementById('login-message');
+
+      try {
+        const res = await fetch(`${API_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('username', data.user.username);
+          localStorage.setItem('userId', data.user.id);
+          msg.className = 'form-message success';
+          msg.innerText = '✓ Welcome back! Loading...';
+          setTimeout(() => window.location.href = 'home.html', 800);
+        } else {
+          msg.className = 'form-message error';
+          msg.innerText = data.message || 'Login failed.';
+        }
+      } catch {
+        msg.className = 'form-message error';
+        msg.innerText = 'Server unreachable.';
+      }
+    }
+  </script>
 </body>
 </html>
