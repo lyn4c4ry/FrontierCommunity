@@ -62,7 +62,7 @@
     .page-header-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
     .page-title{font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;letter-spacing:1px;color:#fff;}
     .page-subtitle{font-size:12px;color:var(--text-muted);margin-top:2px;}
-    .api-badge{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:20px;color:var(--green);background:rgba(34,212,122,0.08);border:1px solid rgba(34,212,122,0.18);white-space:nowrap;}
+    .api-badge{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:20px;color:var(--text-dim);background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);white-space:nowrap;}
 
     /* TOOLBAR */
     .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
@@ -193,17 +193,6 @@
     .btn-load-more:hover{border-color:var(--blue);color:var(--blue-light);}
     .btn-load-more:disabled{opacity:0.4;cursor:not-allowed;}
 
-    /* KEY BANNER */
-    .key-banner{background:rgba(245,197,24,0.05);border:1px solid rgba(245,197,24,0.18);border-radius:var(--r);padding:12px 15px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px;}
-    .key-banner-icon{font-size:17px;flex-shrink:0;margin-top:1px;}
-    .key-banner-text{flex:1;font-size:12px;color:var(--text-muted);line-height:1.5;}
-    .key-banner-text strong{color:var(--gold);}
-    .key-input-row{display:flex;gap:7px;margin-top:8px;}
-    .key-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:7px 11px;color:var(--text);font-family:'Nunito',sans-serif;font-size:12px;outline:none;}
-    .key-input:focus{border-color:var(--gold);}
-    .btn-save-key{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.25);padding:7px 13px;border-radius:var(--r-sm);cursor:pointer;transition:all 0.2s;white-space:nowrap;}
-    .btn-save-key:hover{background:rgba(245,197,24,0.18);}
-
     @media(max-width:1100px){.sidebar-right{display:none;}.content{border-right:none;}}
     @media(max-width:900px){.game-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));}}
     @media(max-width:700px){
@@ -222,7 +211,6 @@
 
 <div id="toast"></div>
 
-<!-- LEFT SIDEBAR -->
 <aside class="sidebar-left">
   <div class="logo-area">
     <img src="logo_v1.png" alt="Frontier Logo">
@@ -246,11 +234,9 @@
   </div>
 </aside>
 
-<!-- MAIN -->
 <div class="main">
   <section class="content">
 
-    <!-- PAGE HEADER -->
     <div class="page-header">
       <div class="page-header-row">
         <div>
@@ -261,19 +247,6 @@
       </div>
     </div>
 
-    <!-- KEY BANNER -->
-    <div class="key-banner" id="key-banner" style="display:none;">
-      <div class="key-banner-icon">🔑</div>
-      <div class="key-banner-text">
-        <strong>RAWG API Key required.</strong> Get a free key at rawg.io and enter it below.
-        <div class="key-input-row">
-          <input class="key-input" id="rawg-key-input" placeholder="Paste your API key..." type="password">
-          <button class="btn-save-key" onclick="saveRawgKey()">Save</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- TOOLBAR -->
     <div class="toolbar">
       <div class="search-wrap">
         <input id="search-input" placeholder="Search games..." oninput="onSearch()">
@@ -300,20 +273,16 @@
       </div>
     </div>
 
-    <!-- GENRE BAR -->
     <div class="genre-bar" id="genre-bar"></div>
 
-    <!-- GAME GRID / LIST -->
     <div id="game-grid"></div>
 
-    <!-- LOAD MORE -->
     <div class="load-more-wrap" id="load-more-wrap" style="display:none;">
       <button class="btn-load-more" id="btn-load-more" onclick="loadMore()">Load More</button>
     </div>
 
   </section>
 
-  <!-- RIGHT SIDEBAR -->
   <aside class="sidebar-right">
     <div class="widget">
       <div class="widget-title">
@@ -339,7 +308,9 @@
 </div>
 
 <script>
-const RAWG_BASE = 'https://api.rawg.io/api';
+// RAWG_BASE yerine artık senin backend'indeki proxy endpoint'ini kullanıyoruz
+const API_BASE = 'http://localhost:5000/api/news'; 
+
 const GENRES = [
   { id: 4, name: 'Action' }, { id: 51, name: 'Indie' }, { id: 3, name: 'Adventure' },
   { id: 5, name: 'RPG' }, { id: 2, name: 'Shooter' }, { id: 7, name: 'Puzzle' },
@@ -362,32 +333,9 @@ function initNews() {
   try { watchlist = JSON.parse(localStorage.getItem('fc_watchlist') || '{}'); } catch { watchlist = {}; }
   buildGenreBar();
   renderWatchlist();
-  checkApiKey();
-}
-
-function checkApiKey() {
-  const key = getRawgKey();
-  if (!key) {
-    document.getElementById('key-banner').style.display = 'flex';
-    document.getElementById('api-status').textContent = '● No API Key';
-    document.getElementById('api-status').style.color = 'var(--red)';
-    showStaticFallback();
-    return;
-  }
-  document.getElementById('key-banner').style.display = 'none';
-  document.getElementById('api-status').textContent = '● RAWG Connected';
-  document.getElementById('api-status').style.color = 'var(--green)';
+  
+  // API key kontrolü kalktı, doğrudan sunucudan (proxy) veri çekiyoruz
   fetchGames(true);
-}
-
-function getRawgKey() { return localStorage.getItem('rawg_key') || ''; }
-
-function saveRawgKey() {
-  const val = document.getElementById('rawg-key-input').value.trim();
-  if (!val) { toast('Key cannot be empty.', 'error'); return; }
-  localStorage.setItem('rawg_key', val);
-  toast('API key saved!', 'success');
-  checkApiKey();
 }
 
 /* ── GENRE BAR ─────────────────────────────────────────── */
@@ -443,16 +391,18 @@ async function fetchGames(reset = false) {
   if (state.loading) return;
   state.loading = true;
   if (reset) { state.page = 1; state.games = []; state.nextUrl = null; }
-  const key = getRawgKey();
-  if (!key) { state.loading = false; return; }
+  
   const grid = document.getElementById('game-grid');
   if (reset) { grid.innerHTML = buildSkeletons(12); document.getElementById('load-more-wrap').style.display = 'none'; }
-  const params = new URLSearchParams({ key, page_size: 20, page: state.page, ordering: state.activeSort });
+  
+  // Parametreleri senin backend'ine gönderiyoruz. Backend bu parametreleri alıp RAWG'a iletecek.
+  const params = new URLSearchParams({ page_size: 20, page: state.page, ordering: state.activeSort });
   if (state.activeGenre)    params.set('genres', state.activeGenre);
   if (state.activePlatform) params.set('platforms', state.activePlatform);
   if (state.searchQuery)    params.set('search', state.searchQuery);
+  
   try {
-    const data = await fetch(`${RAWG_BASE}/games?${params}`).then(r => { if (!r.ok) throw new Error('RAWG error'); return r.json(); });
+    const data = await fetch(`${API_BASE}/games?${params}`).then(r => { if (!r.ok) throw new Error('Server error'); return r.json(); });
     if (reset) { state.games = data.results; grid.innerHTML = ''; }
     else { state.games = [...state.games, ...data.results]; }
     state.nextUrl = data.next;
@@ -460,13 +410,18 @@ async function fetchGames(reset = false) {
     updateStats();
     document.getElementById('results-info').textContent = `${data.count.toLocaleString()} games`;
     document.getElementById('load-more-wrap').style.display = data.next ? 'flex' : 'none';
-    document.getElementById('api-status').textContent = '● RAWG Connected';
+    
+    document.getElementById('api-status').textContent = '● Server Connected';
     document.getElementById('api-status').style.color = 'var(--green)';
+    document.getElementById('api-status').style.borderColor = 'rgba(34,212,122,0.3)';
+    document.getElementById('api-status').style.background = 'rgba(34,212,122,0.1)';
   } catch (e) {
     console.error(e);
-    if (reset) grid.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Failed to load. Check your API key.</p></div>`;
-    document.getElementById('api-status').textContent = '● API Error';
+    if (reset) showStaticFallback();
+    document.getElementById('api-status').textContent = '● Server Error';
     document.getElementById('api-status').style.color = 'var(--red)';
+    document.getElementById('api-status').style.borderColor = 'rgba(255,64,96,0.3)';
+    document.getElementById('api-status').style.background = 'rgba(255,64,96,0.1)';
   } finally { state.loading = false; }
 }
 
@@ -632,7 +587,7 @@ function showStaticFallback() {
   grid.className = 'game-grid';
   grid.innerHTML = '';
   STATIC.forEach((g, i) => grid.appendChild(buildGameCard(g, i)));
-  document.getElementById('results-info').textContent = 'Static fallback — add API key for live data';
+  document.getElementById('results-info').textContent = 'Static fallback — API not available';
   updateStats();
 }
 
