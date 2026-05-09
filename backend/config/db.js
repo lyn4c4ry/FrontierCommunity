@@ -4,6 +4,9 @@ require('dotenv').config();
 // Create a new connection pool using the connection string from .env
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // Event listener for successful database connection
