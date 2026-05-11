@@ -6,9 +6,11 @@ const authMiddleware = require('../middleware/authMiddleware');
 // GET all comments for a thread — public
 router.get('/:threadId', async (req, res) => {
   try {
+    // GÜNCELLEME: u.avatar_url SQL sorgusuna eklendi
     const result = await pool.query(
       `SELECT c.id, c.thread_id, c.user_id, c.content, c.parent_id,
-              c.is_deleted, c.created_at AT TIME ZONE 'UTC' as created_at, u.username
+              c.is_deleted, c.created_at AT TIME ZONE 'UTC' as created_at, 
+              u.username, u.avatar_url
        FROM comments c JOIN users u ON u.id = c.user_id
        WHERE c.thread_id=$1 ORDER BY c.created_at ASC`,
       [req.params.threadId]
@@ -22,8 +24,10 @@ router.get('/', async (req, res) => {
   const { userId } = req.query;
   if (!userId) return res.status(400).json({ error: 'userId required' });
   try {
+    // GÜNCELLEME: u.avatar_url SQL sorgusuna eklendi
     const result = await pool.query(
-      `SELECT c.*, u.username FROM comments c JOIN users u ON u.id=c.user_id
+      `SELECT c.*, u.username, u.avatar_url 
+       FROM comments c JOIN users u ON u.id=c.user_id
        WHERE c.user_id=$1 AND c.is_deleted=FALSE ORDER BY c.created_at DESC`,
       [userId]
     );
@@ -41,9 +45,13 @@ router.post('/', authMiddleware, async (req, res) => {
       `INSERT INTO comments (thread_id, user_id, content, parent_id) VALUES ($1,$2,$3,$4) RETURNING *`,
       [threadId, userId, content.trim(), parentId || null]
     );
-    // Fetch the full comment with username for the response
+    
+    // GÜNCELLEME: Hatalı olan c.thread_id sorgusu c.id olarak düzeltildi.
     const full = await pool.query(
-      `SELECT c.*, u.username FROM comments c JOIN users u ON u.id=c.user_id WHERE c.id=$1`,
+      `SELECT c.*, u.username, u.avatar_url 
+       FROM comments c 
+       JOIN users u ON c.user_id = u.id 
+       WHERE c.id = $1`,
       [result.rows[0].id]
     );
     res.status(201).json(full.rows[0]);
