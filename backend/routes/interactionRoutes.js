@@ -7,10 +7,9 @@ const authMiddleware = require('../middleware/authMiddleware');
 // POST /api/like  { targetId, targetType, value }
 // value: 1 = like, -1 = dislike
 router.post('/like', authMiddleware, async (req, res) => {
-  const userId = req.user.userId; 
+  const userId = req.user.userId;
   const { targetId, targetType, value } = req.body;
 
-  // Validation
   if (!targetId || !['thread', 'comment'].includes(targetType) || ![1, -1].includes(Number(value))) {
     return res.status(400).json({ error: 'Invalid parameters' });
   }
@@ -25,14 +24,14 @@ router.post('/like', authMiddleware, async (req, res) => {
 
     if (existing.rows.length) {
       if (existing.rows[0].value === Number(value)) {
-        // Same vote -> remove (toggle)
+        // Same vote — toggle off (remove)
         await pool.query('DELETE FROM likes WHERE id=$1', [existing.rows[0].id]);
       } else {
-        // Different vote -> update
+        // Different vote — update existing row
         await pool.query('UPDATE likes SET value=$1 WHERE id=$2', [value, existing.rows[0].id]);
       }
     } else {
-      // New interaction
+      // No prior vote — insert new row
       await pool.query(
         'INSERT INTO likes (user_id, target_id, target_type, value) VALUES ($1,$2,$3,$4)',
         [userId, targetId, targetType, value]
@@ -41,7 +40,7 @@ router.post('/like', authMiddleware, async (req, res) => {
 
     await pool.query('COMMIT');
 
-    // Get updated counts
+    // Return updated counts after the operation
     const counts = await pool.query(
       `SELECT 
         COUNT(*) FILTER (WHERE value=1)  AS likes,
@@ -50,7 +49,7 @@ router.post('/like', authMiddleware, async (req, res) => {
       [targetId, targetType]
     );
 
-    // Get current user vote status
+    // Return the current user's vote status
     const userVoteRow = await pool.query(
       'SELECT value FROM likes WHERE user_id=$1 AND target_id=$2 AND target_type=$3',
       [userId, targetId, targetType]
@@ -69,6 +68,7 @@ router.post('/like', authMiddleware, async (req, res) => {
 });
 
 // GET /api/likes/:type/:targetId
+// Returns like/dislike counts and the requesting user's vote for a single target
 router.get('/likes/:type/:targetId', async (req, res) => {
   const { type, targetId } = req.params;
   const { userId } = req.query;
@@ -101,8 +101,68 @@ router.get('/likes/:type/:targetId', async (req, res) => {
   }
 });
 
+// ── BATCH LIKES ─────────────────────────────────────────────────────────────
+// POST /api/likes/batch  { threadIds: [1,2,3,...], userId? }
+// Fetches like/dislike counts and user vote for multiple threads in a single query.
+// Used on page load to pre-populate counts without N individual requests.
+router.post('/likes/batch', async (req, res) => {
+  const { threadIds, userId } = req.body;
+
+  if (!Array.isArray(threadIds) || threadIds.length === 0) {
+    return res.status(400).json({ error: 'threadIds array required' });
+  }
+
+  // Cap at 100 threads per batch request
+  const ids = threadIds.slice(0, 100).map(Number).filter(n => !isNaN(n));
+
+  try {
+    // Fetch counts for all requested thread ids in one query
+    const countsResult = await pool.query(
+      `SELECT 
+        target_id,
+        COUNT(*) FILTER (WHERE value=1)  AS likes,
+        COUNT(*) FILTER (WHERE value=-1) AS dislikes
+       FROM likes
+       WHERE target_id = ANY($1) AND target_type = 'thread'
+       GROUP BY target_id`,
+      [ids]
+    );
+
+    // Fetch the authenticated user's votes if userId is provided
+    let userVotes = {};
+    if (userId && userId !== 'undefined') {
+      const votesResult = await pool.query(
+        `SELECT target_id, value FROM likes
+         WHERE user_id=$1 AND target_id = ANY($2) AND target_type='thread'`,
+        [userId, ids]
+      );
+      votesResult.rows.forEach(r => {
+        userVotes[r.target_id] = r.value;
+      });
+    }
+
+    // Build response map — default every id to zero counts
+    const data = {};
+    ids.forEach(id => {
+      data[id] = { likes: 0, dislikes: 0, userVote: 0 };
+    });
+    countsResult.rows.forEach(r => {
+      data[r.target_id] = {
+        likes: parseInt(r.likes) || 0,
+        dislikes: parseInt(r.dislikes) || 0,
+        userVote: userVotes[r.target_id] ?? 0
+      };
+    });
+
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ error: 'Batch likes fetch failed' });
+  }
+});
+
 // ── BOOKMARK ────────────────────────────────────────────────────────────────
 // POST /api/bookmark  { threadId }
+// Toggles bookmark on/off for the authenticated user
 router.post('/bookmark', authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   const { threadId } = req.body;
@@ -131,6 +191,7 @@ router.post('/bookmark', authMiddleware, async (req, res) => {
 });
 
 // GET /api/bookmarks/:userId
+// Returns all threads bookmarked by the given user
 router.get('/bookmarks/:userId', async (req, res) => {
   try {
     const result = await pool.query(
