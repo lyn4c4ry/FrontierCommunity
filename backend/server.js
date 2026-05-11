@@ -16,7 +16,8 @@ const app = express();
 
 // 2. Middleware
 app.use(cors()); // Enable Cross-Origin Resource Sharing
-app.use(express.json()); // Parse incoming JSON requests
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 app.use('/api/news', newsRoutes); // News routes (GET latest news)
 app.use('/api/auth', authRoutes); // Authentication endpoints (Register, Login)

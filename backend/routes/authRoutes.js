@@ -51,10 +51,11 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials.' });
     }
 
-    // FIXED: Added missing comma after the payload object
+    // GÜVENLİK DÜZELTMESİ: 'secretkey' fallback'i kaldırıldı (TODO listesine istinaden)
+    // Sadece .env içindeki JWT_SECRET kullanılacak.
     const token = jwt.sign(
       { userId: user.id, username: user.username }, 
-      process.env.JWT_SECRET || 'secretkey',
+      process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 
@@ -79,16 +80,45 @@ router.put('/profile', async (req, res) => {
 
     if (!userId) return res.status(400).json({ message: 'userId is required' });
 
-    const { rows } = await db.query(
-      `UPDATE users
-       SET
-         username   = COALESCE($1, username),
-         bio        = COALESCE($2, bio),
-         avatar_url = COALESCE($3, avatar_url)
-       WHERE id = $4
-       RETURNING id, username, email, bio, avatar_url`,
-      [username || null, bio || null, avatar_url || null, userId]
-    );
+    // AVATAR BUG DÜZELTMESİ: Dinamik SQL Sorgusu oluşturuluyor.
+    // COALESCE kullanmak yerine, sadece frontend'den gelen verileri güncelliyoruz.
+    let updateFields = [];
+    let values = [];
+    let counter = 1;
+
+    // Eğer username gönderildiyse ve boş değilse
+    if (username !== undefined && username.trim() !== "") {
+      updateFields.push(`username = $${counter++}`);
+      values.push(username.trim());
+    }
+
+    // Eğer bio gönderildiyse (boş string "" olsa bile kaydet)
+    if (bio !== undefined) {
+      updateFields.push(`bio = $${counter++}`);
+      values.push(bio);
+    }
+
+    // Eğer avatar_url gönderildiyse (kaldırılmak istendiyse "" gelir, bunu NULL'a çevir)
+    if (avatar_url !== undefined) {
+      updateFields.push(`avatar_url = $${counter++}`);
+      values.push(avatar_url === '' ? null : avatar_url);
+    }
+
+    // Güncellenecek hiçbir alan yoksa hata dön
+    if (updateFields.length === 0) {
+      return res.status(400).json({ message: 'No fields to update' });
+    }
+
+    values.push(userId); // WHERE id = $X için son parametre
+
+    const query = `
+      UPDATE users
+      SET ${updateFields.join(', ')}
+      WHERE id = $${counter}
+      RETURNING id, username, email, bio, avatar_url
+    `;
+
+    const { rows } = await db.query(query, values);
 
     if (!rows[0]) return res.status(404).json({ message: 'User not found' });
 

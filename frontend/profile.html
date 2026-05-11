@@ -258,7 +258,7 @@
             <p class="drop-label-sub">JPG · PNG · GIF · WEBP — max 5 MB</p>
           </div>
         </div>
-        <input type="file" id="fcFileInput" accept="image/*" style="display:none" onchange="fcHandleFile(this.files[0])">
+        <input type="file" id="fcFileInput" accept=".jpg, .jpeg, .png, .gif, .webp, image/jpeg, image/png, image/gif, image/webp" style="display:none" onchange="fcHandleFile(this.files[0])">
         <div class="drop-progress" id="fcProgress"><div class="drop-progress-fill" id="fcProgressFill"></div></div>
         <div class="drop-remove" id="fcRemove" onclick="fcRemoveAvatar()">✕ Remove photo</div>
         <div class="url-toggle" onclick="document.getElementById('fcUrlRow').classList.toggle('visible')">↳ Or paste an image URL instead</div>
@@ -701,16 +701,53 @@
     function fcDragLeave()  { document.getElementById('fcDropZone').classList.remove('dragover'); }
     function fcDrop(e) { e.preventDefault(); fcDragLeave(); const f = e.dataTransfer.files[0]; if (f) fcHandleFile(f); }
 
+    // Fotoğrafı tam merkezden 1:1 oranında (kare) kesen fonksiyon
+    function cropToSquare(base64Image, callback) {
+      const img = new Image();
+      img.onload = () => {
+        // Fotoğrafın kısa kenarını bul (karemizin boyutu bu olacak)
+        const size = Math.min(img.width, img.height);
+        
+        // Merkezden kesmek için X ve Y başlangıç noktalarını hesapla
+        const startX = (img.width - size) / 2;
+        const startY = (img.height - size) / 2;
+
+        // Sanal bir tuval (canvas) oluştur
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+
+        // Fotoğrafı tuvale çiz (Sadece merkezdeki kare alanı alır)
+        ctx.drawImage(img, startX, startY, size, size, 0, 0, size, size);
+
+        // Kırpılmış fotoğrafı yeni bir Base64 verisi olarak geri döndür (webp formatında, %80 kalite)
+        callback(canvas.toDataURL('image/webp', 0.8));
+      };
+      img.src = base64Image;
+    }
+
     function fcHandleFile(file) {
       if (!file) return;
       if (!file.type.startsWith('image/')) { toast('Please select a valid image file.', 'error'); return; }
-      if (file.size > 5 * 1024 * 1024)    { toast('Image too large — max 5 MB.', 'error'); return; }
+      if (file.size > 5 * 1024 * 1024) { toast('Image too large — max 5 MB.', 'error'); return; }
+      
       fcShowBar();
       const reader = new FileReader();
+      
       reader.onload = ev => {
-        fcHideBar(); fc.avatarDataUrl = ev.target.result; fc.avatarUrl = null;
-        fcSetPreviewImg(ev.target.result); document.getElementById('fcRemove').classList.add('visible'); document.getElementById('fcUrlInput').value = '';
+        // ESKİ KOD BURADAYDI, ŞİMDİ YERİNE KESME İŞLEMİNİ ÇAĞIRIYORUZ
+        cropToSquare(ev.target.result, (croppedBase64) => {
+          fcHideBar(); 
+          fc.avatarDataUrl = croppedBase64; // Artık 1:1 kırpılmış fotoğraf kaydedilecek
+          fc.avatarUrl = null;
+          
+          fcSetPreviewImg(croppedBase64); 
+          document.getElementById('fcRemove').classList.add('visible'); 
+          document.getElementById('fcUrlInput').value = '';
+        });
       };
+      
       reader.readAsDataURL(file);
     }
 
@@ -751,29 +788,80 @@
     /* ══════════════════════════════════════════
        SAVE PROFILE
     ══════════════════════════════════════════ */
-    async function saveProfile() {
-      const username = document.getElementById('fcUsername').value.trim();
-      if (!username) { toast('Username cannot be empty.', 'error'); return; }
-      const bio        = document.getElementById('fcBio').value.trim();
-      const avatar_url = fc.avatarDataUrl || fc.avatarUrl || null;
-      const btn        = document.getElementById('fcSaveBtn');
-      btn.classList.add('saving'); btn.disabled = true;
-      try {
-        const res = await fetch(`${API_URL}/auth/profile`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: ps.userId, username, bio, avatar_url }),
-        });
-        if (!res.ok) throw new Error();
-        localStorage.setItem('username', username);
-        localStorage.setItem('userBio', bio);
-        if (avatar_url !== null) localStorage.setItem('userAvatar', avatar_url);
-        else localStorage.removeItem('userAvatar');
-        closeModal();
-        toast('Profile updated ✓', 'success');
-        loadProfile(ps.userId);
-      } catch { toast('Update failed. Please try again.', 'error'); }
-      finally { btn.classList.remove('saving'); btn.disabled = false; }
+async function saveProfile() {
+  const username = document.getElementById('fcUsername').value.trim();
+  if (!username) { toast('Kullanıcı adı boş olamaz.', 'error'); return; }
+  
+  const bio = document.getElementById('fcBio').value.trim();
+  // Fotoğraf kaldırma işleminin backend'e iletilmesi için "" gönderiyoruz
+  const avatar_url = fc.avatarDataUrl || fc.avatarUrl || ""; 
+
+  const btn = document.getElementById('fcSaveBtn');
+  btn.classList.add('saving'); 
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(`${API_URL}/auth/profile`, {
+      method: 'PUT', 
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: ps.userId, username, bio, avatar_url }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Güncelleme başarısız oldu.');
+
+    // Backend'den güncellenmiş ve onaylanmış kullanıcı verisini alıyoruz
+    const updatedUser = data.user;
+
+    // 1. LocalStorage Güncellemesi
+    localStorage.setItem('username', updatedUser.username);
+    localStorage.setItem('userBio', updatedUser.bio || '');
+    if (updatedUser.avatar_url) {
+        localStorage.setItem('userAvatar', updatedUser.avatar_url);
+    } else {
+        localStorage.removeItem('userAvatar');
     }
+
+    // 2. SAYFAYI YENİLEMEDEN ANINDA ARAYÜZ (DOM) GÜNCELLEMESİ
+    // İsimleri Güncelle
+    document.getElementById('heroUsername').textContent = updatedUser.username;
+    document.getElementById('sidebar-name').textContent = updatedUser.username;
+    
+    // @KullanıcıAdı (Handle) Güncelle
+    const handle = `@${updatedUser.username.toLowerCase()}`;
+    document.getElementById('heroTag').textContent = handle;
+    document.getElementById('sidebar-handle').textContent = handle;
+    
+    // Bio Güncelle
+    document.getElementById('heroBio').textContent = updatedUser.bio || '';
+
+    // Avatarları Güncelle (Hem profil kapağındaki hem sol menüdeki)
+    const frame = document.getElementById('avatarFrame');
+    const sidebarAvatar = document.getElementById('sidebar-avatar');
+
+    if (updatedUser.avatar_url) {
+        frame.innerHTML = `<img src="${updatedUser.avatar_url}" alt="avatar">`;
+        sidebarAvatar.src = updatedUser.avatar_url;
+    } else {
+        // Fotoğraf silindiyse baş harflere (Initials) geri dön
+        frame.innerHTML = `<span id="avatarInitials">${updatedUser.username.slice(0, 2).toUpperCase()}</span>`;
+        sidebarAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(updatedUser.username)}&background=1a6fd4&color=fff&size=128&bold=true`;
+    }
+
+    // Global state'i güncelle
+    ps.username = updatedUser.username;
+
+    // Modalı kapat ve bildirim göster
+    closeModal();
+    toast('Profil başarıyla güncellendi ✓', 'success');
+
+  } catch (err) { 
+    toast(err.message, 'error'); 
+  } finally { 
+    btn.classList.remove('saving'); 
+    btn.disabled = false; 
+  }
+}
 
     /* ══════════════════════════════════════════
        HELPERS
