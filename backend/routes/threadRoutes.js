@@ -1,42 +1,55 @@
 const express = require('express');
-const router = express.Router();
-const Thread = require('../models/Thread');
+const router  = express.Router();
+const pool    = require('../config/db');
 
-/**
- * @route   POST /api/threads
- * @desc    Create a new thread with debug logging
- */
-router.post('/', async (req, res) => {
+// GET /api/threads
+router.get('/', async (req, res) => {
   try {
-    const { title, content, userId } = req.body;
-    
-    // Log incoming data to see what's being sent
-    console.log("Creating thread for User ID:", userId);
-
-    if (!userId) {
-      return res.status(400).json({ message: 'User ID is required' });
-    }
-
-    const newThread = await Thread.create(title, content, userId);
-    res.status(201).json(newThread);
-  } catch (err) {
-    // This will print the exact SQL or logical error in your terminal
-    console.error('SERVER SIDE ERROR:', err.message);
-    res.status(500).json({ message: 'Database Error', error: err.message });
+    const result = await pool.query(
+      `SELECT t.*, u.username
+       FROM threads t
+       JOIN users u ON u.id = t.user_id
+       ORDER BY t.created_at DESC`
+    );
+    res.json(result.rows);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
 });
 
-/**
- * @route   GET /api/threads
- * @desc    Get all threads
- */
-router.get('/', async (req, res) => {
+// POST /api/threads
+router.post('/', async (req, res) => {
+  const { title, content, userId } = req.body;
+  if (!title?.trim() || !content?.trim() || !userId) {
+    return res.status(400).json({ error: 'Missing fields' });
+  }
   try {
-    const threads = await Thread.getAll();
-    res.json(threads);
-  } catch (err) {
-    console.error('Fetch Threads Error:', err.message);
-    res.status(500).json({ message: 'Server Error' });
+    const result = await pool.query(
+      `INSERT INTO threads (title, content, user_id)
+       VALUES ($1, $2, $3) RETURNING *`,
+      [title.trim(), content.trim(), userId]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// DELETE /api/threads/:threadId  { userId }
+router.delete('/:threadId', async (req, res) => {
+  const { userId } = req.body;
+  const { threadId } = req.params;
+  if (!userId) return res.status(400).json({ error: 'userId required' });
+  try {
+    const check = await pool.query('SELECT user_id FROM threads WHERE id=$1', [threadId]);
+    if (!check.rows.length) return res.status(404).json({ error: 'Not found' });
+    if (String(check.rows[0].user_id) !== String(userId)) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    await pool.query('DELETE FROM threads WHERE id=$1', [threadId]);
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
   }
 });
 

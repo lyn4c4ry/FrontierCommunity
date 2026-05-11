@@ -10,17 +10,15 @@
       --bg:#080a0f; --bg2:#0d1018; --surface:#111520; --surface2:#161c2a;
       --border:rgba(74,144,226,0.10); --border2:rgba(74,144,226,0.22);
       --blue:#1a6fd4; --blue-light:#4db8ff; --blue-glow:rgba(26,111,212,0.35);
-      --gold:#f5c518; --gold-dim:#c9a000;
-      --text:#dce8f5; --text-muted:#6a7f99; --text-dim:#2e3c50;
+      --gold:#f5c518; --text:#dce8f5; --text-muted:#6a7f99; --text-dim:#2e3c50;
       --red:#ff4060; --green:#22d47a;
       --r-sm:8px; --r:12px; --r-lg:18px;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;line-height:1.6;min-height:100vh;display:flex;overflow-x:hidden;}
     body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.35;}
-    ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:3px;}::-webkit-scrollbar-thumb:hover{background:var(--blue);}
+    ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:3px;}
 
-    /* TOAST */
     #toast{position:fixed;bottom:28px;right:28px;z-index:10000;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
     .toast-msg{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);padding:11px 18px;font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;animation:toastIn 0.28s cubic-bezier(.22,1,.36,1) both;box-shadow:0 8px 32px rgba(0,0,0,0.4);}
     .toast-msg.success{border-color:rgba(34,212,122,0.3);color:var(--green);}
@@ -41,7 +39,7 @@
     .sidebar-handle{font-size:11px;color:var(--text-muted);}
     .nav-section{padding:14px 10px 8px;flex:1;}
     .nav-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);padding:0 12px;margin-bottom:5px;display:block;}
-    .nav-item{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:var(--r-sm);color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:600;transition:all 0.2s;margin-bottom:2px;cursor:pointer;border:none;background:none;width:100%;text-align:left;}
+    .nav-item{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:var(--r-sm);color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:600;transition:all 0.2s;margin-bottom:2px;}
     .nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
     .nav-item.active{background:rgba(26,111,212,0.12);color:var(--blue-light);}
     .nav-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
@@ -73,15 +71,15 @@
 
     /* FEED HEADER */
     .feed-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-    .feed-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;letter-spacing:1px;color:var(--text);}
+    .feed-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;letter-spacing:1px;}
     .live-badge{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);background:rgba(34,212,122,0.08);border:1px solid rgba(34,212,122,0.18);padding:4px 10px;border-radius:20px;}
     .live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 
     /* THREAD CARD */
-    .thread-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:14px;overflow:hidden;transition:border-color 0.2s,transform 0.18s;animation:fadeUp 0.35s ease both;}
+    .thread-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:14px;overflow:hidden;transition:border-color 0.2s;animation:fadeUp 0.35s ease both;}
     @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-    .thread-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+    .thread-card:hover{border-color:var(--border2);}
     .thread-stripe{height:3px;}
     .stripe-blue{background:linear-gradient(90deg,var(--blue),transparent);}
     .stripe-gold{background:linear-gradient(90deg,var(--gold),transparent);}
@@ -95,27 +93,56 @@
     .thread-cat{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:20px;color:var(--blue-light);background:rgba(26,111,212,0.1);border:1px solid rgba(26,111,212,0.18);}
     .thread-title{font-family:'Rajdhani',sans-serif;font-size:19px;font-weight:700;color:#fff;line-height:1.3;margin-bottom:7px;}
     .thread-content{font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:15px;}
+
+    /* ACTIONS (like/dislike/bookmark/delete) */
+    .thread-actions{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+    .action-btn{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-muted);font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.18s;}
+    .action-btn:hover{border-color:var(--border2);color:var(--text);}
+    .action-btn.liked{border-color:rgba(26,111,212,0.5);color:var(--blue-light);background:rgba(26,111,212,0.1);}
+    .action-btn.disliked{border-color:rgba(255,64,96,0.4);color:var(--red);background:rgba(255,64,96,0.08);}
+    .action-btn.bookmarked{border-color:rgba(245,197,24,0.4);color:var(--gold);background:rgba(245,197,24,0.08);}
+    .action-btn.delete-btn{margin-left:auto;border-color:rgba(255,64,96,0.2);color:rgba(255,64,96,0.5);}
+    .action-btn.delete-btn:hover{border-color:rgba(255,64,96,0.5);color:var(--red);background:rgba(255,64,96,0.08);}
+
+    /* COMMENTS */
     .thread-divider{height:1px;background:var(--border);margin-bottom:13px;}
-    .replies-list{display:flex;flex-direction:column;gap:7px;margin-bottom:11px;}
-    .reply-item{display:flex;gap:8px;padding:8px 11px;background:var(--surface2);border-radius:var(--r-sm);border:1px solid var(--border);}
-    .reply-avatar{width:24px;height:24px;border-radius:50%;flex-shrink:0;}
-    .reply-body{flex:1;}
-    .reply-author{font-size:11px;font-weight:700;color:var(--blue-light);margin-bottom:1px;}
-    .reply-text{font-size:12px;color:var(--text-muted);line-height:1.5;}
-    .reply-row{display:flex;gap:7px;align-items:center;}
+    .comments-section{margin-bottom:12px;}
+    .comment-tree{display:flex;flex-direction:column;gap:6px;}
+    .comment-item{display:flex;gap:9px;}
+    .comment-right{flex:1;min-width:0;}
+    .comment-bubble{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 12px;}
+    .comment-bubble.deleted{opacity:0.45;font-style:italic;}
+    .comment-author{font-size:11px;font-weight:700;color:var(--blue-light);margin-bottom:2px;}
+    .comment-text{font-size:12px;color:var(--text-muted);line-height:1.5;word-break:break-word;}
+    .comment-footer{display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap;}
+    .comment-time{font-size:10px;color:var(--text-dim);}
+    .comment-action{font-size:10px;font-weight:700;color:var(--text-dim);background:none;border:none;cursor:pointer;padding:0;transition:color 0.15s;font-family:'Nunito',sans-serif;}
+    .comment-action:hover{color:var(--text-muted);}
+    .comment-action.c-like.active{color:var(--blue-light);}
+    .comment-action.c-dislike.active{color:var(--red);}
+    .comment-action.c-delete:hover{color:var(--red);}
+    .reply-form{display:flex;gap:6px;margin-top:6px;align-items:center;}
+    .reply-form input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:6px 12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:12px;outline:none;transition:border-color 0.2s;}
+    .reply-form input::placeholder{color:var(--text-dim);}
+    .reply-form input:focus{border-color:var(--blue);}
+    .reply-form button{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;color:var(--blue-light);background:rgba(26,111,212,0.1);border:1px solid rgba(26,111,212,0.22);padding:5px 12px;border-radius:20px;cursor:pointer;white-space:nowrap;transition:all 0.18s;}
+    .reply-form button:hover{background:rgba(26,111,212,0.2);}
+    .top-reply-row{display:flex;gap:7px;align-items:center;margin-top:4px;}
     .reply-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:30px;padding:7px 14px;color:var(--text);font-family:'Nunito',sans-serif;font-size:12px;outline:none;transition:border-color 0.2s;}
     .reply-input::placeholder{color:var(--text-dim);}
     .reply-input:focus{border-color:var(--blue);}
     .btn-reply{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--blue-light);background:rgba(26,111,212,0.1);border:1px solid rgba(26,111,212,0.22);padding:6px 14px;border-radius:30px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
     .btn-reply:hover:not(:disabled){background:rgba(26,111,212,0.22);border-color:var(--blue);}
     .btn-reply:disabled{opacity:0.5;cursor:not-allowed;}
+    .show-more-comments{font-size:11px;color:var(--blue-light);background:none;border:none;cursor:pointer;padding:4px 0;font-family:'Nunito',sans-serif;font-weight:700;transition:opacity 0.15s;}
+    .show-more-comments:hover{opacity:0.7;}
 
     /* RIGHT SIDEBAR */
     .sidebar-right{width:272px;flex-shrink:0;padding:26px 16px;display:flex;flex-direction:column;gap:13px;position:sticky;top:0;height:100vh;overflow-y:auto;}
     .widget{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;}
     .widget-title{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:13px;}
     .trend-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity 0.2s;}
-    .trend-item:last-child{border-bottom:none;padding-bottom:0;}.trend-item:first-child{padding-top:0;}.trend-item:hover{opacity:0.7;}
+    .trend-item:last-child{border-bottom:none;}.trend-item:hover{opacity:0.7;}
     .trend-rank{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--text-dim);width:24px;flex-shrink:0;line-height:1;}
     .trend-rank.top{color:var(--gold);}
     .trend-info{flex:1;}
@@ -123,18 +150,15 @@
     .trend-name{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--text);}
     .trend-count{font-size:10px;color:var(--text-muted);}
     .news-item{padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity 0.2s;}
-    .news-item:last-child{border-bottom:none;padding-bottom:0;}.news-item:first-child{padding-top:0;}.news-item:hover{opacity:0.7;}
+    .news-item:last-child{border-bottom:none;}.news-item:hover{opacity:0.7;}
     .news-item-title{font-size:12px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:2px;}
     .news-item-meta{font-size:10px;color:var(--text-muted);}
     .see-all{display:inline-block;margin-top:10px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--blue-light);text-decoration:none;}
     .see-all:hover{color:var(--gold);}
-
-    /* STAT WIDGET */
     .stat-row{display:flex;gap:8px;}
     .stat-box{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;text-align:center;}
     .stat-num{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--blue-light);line-height:1;}
     .stat-label{font-size:10px;color:var(--text-muted);margin-top:2px;}
-
     .spinner{width:20px;height:20px;border:2px solid rgba(26,111,212,0.15);border-top-color:var(--blue);border-radius:50%;animation:spin 0.75s linear infinite;margin:14px auto;}
     @keyframes spin{to{transform:rotate(360deg)}}
     .loading-state{padding:44px 20px;text-align:center;color:var(--text-muted);font-size:13px;}
@@ -157,16 +181,13 @@
 </head>
 <body onload="initHome()">
 
-<!-- TOAST CONTAINER -->
 <div id="toast"></div>
 
-<!-- LEFT SIDEBAR -->
 <aside class="sidebar-left">
   <div class="logo-area">
-    <img src="logo_v1.png" alt="Frontier Logo">
+    <img src="logo_v1.png" alt="Frontier Logo" onerror="this.style.display='none'">
     <span class="logo-text">Frontier</span>
   </div>
-
   <a href="profile.html" class="sidebar-profile">
     <img id="sidebar-avatar" src="" class="sidebar-avatar" alt="avatar">
     <div>
@@ -174,29 +195,18 @@
       <div class="sidebar-handle" id="sidebar-handle">@—</div>
     </div>
   </a>
-
   <nav class="nav-section">
     <span class="nav-label">Navigate</span>
-    <a href="home.html" class="nav-item active">
-      <span class="nav-icon">🏠</span><span>Home</span>
-    </a>
-    <a href="news.html" class="nav-item">
-      <span class="nav-icon">🎮</span><span>Game News</span>
-    </a>
-    <a href="profile.html" class="nav-item">
-      <span class="nav-icon">👤</span><span>Profile</span>
-    </a>
+    <a href="home.html" class="nav-item active"><span class="nav-icon">🏠</span><span>Home</span></a>
+    <a href="news.html" class="nav-item"><span class="nav-icon">🎮</span><span>Game News</span></a>
+    <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span><span>Profile</span></a>
   </nav>
-
   <div class="sidebar-bottom">
     <button class="btn-logout" onclick="handleLogout()">⏻ &nbsp;Logout</button>
   </div>
 </aside>
 
-<!-- MAIN -->
 <div class="main">
-
-  <!-- FEED -->
   <section class="feed">
     <div class="compose">
       <span class="compose-label">New Discussion</span>
@@ -211,38 +221,23 @@
         <button class="btn-post" id="btn-post" onclick="createThread()">Post →</button>
       </div>
     </div>
-
     <div class="feed-header">
       <span class="feed-title">Recent Discussions</span>
       <span class="live-badge"><span class="live-dot"></span>Live</span>
     </div>
-
     <div id="threads-list">
-      <div class="loading-state">
-        <div class="spinner"></div>
-        Loading discussions...
-      </div>
+      <div class="loading-state"><div class="spinner"></div>Loading discussions...</div>
     </div>
   </section>
 
-  <!-- RIGHT SIDEBAR -->
   <aside class="sidebar-right">
-
-    <!-- Community Stats -->
     <div class="widget">
       <div class="widget-title">Community</div>
       <div class="stat-row">
-        <div class="stat-box">
-          <div class="stat-num" id="stat-threads">—</div>
-          <div class="stat-label">Threads</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-num" id="stat-comments">—</div>
-          <div class="stat-label">Replies</div>
-        </div>
+        <div class="stat-box"><div class="stat-num" id="stat-threads">—</div><div class="stat-label">Threads</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-comments">—</div><div class="stat-label">Replies</div></div>
       </div>
     </div>
-
     <div class="widget">
       <div class="widget-title">Trending Now</div>
       <div class="trend-item"><span class="trend-rank top">1</span><div class="trend-info"><div class="trend-tag">RPG</div><div class="trend-name">#EldenRing</div><div class="trend-count">1.2k discussions</div></div></div>
@@ -250,7 +245,6 @@
       <div class="trend-item"><span class="trend-rank">3</span><div class="trend-info"><div class="trend-tag">RPG</div><div class="trend-name">#BaldursGate3</div><div class="trend-count">654 discussions</div></div></div>
       <div class="trend-item"><span class="trend-rank">4</span><div class="trend-info"><div class="trend-tag">Indie</div><div class="trend-name">#Hades2</div><div class="trend-count">432 discussions</div></div></div>
     </div>
-
     <div class="widget">
       <div class="widget-title">Latest Releases</div>
       <div id="sidebar-news"><div class="spinner"></div></div>
@@ -261,324 +255,267 @@
 
 <script src="app.js"></script>
 <script>
+const ME = { userId: null, username: null, token: null };
+const likeCache     = {};
+const bookmarkCache = new Set();
+const commentCache  = {};
+const STRIPES = ['stripe-blue','stripe-gold','stripe-green'];
 
-/* ─── TOAST ─────────────────────────────────────────── */
-function toast(msg, type = 'info') {
-  const wrap = document.getElementById('toast');
-  const el = document.createElement('div');
-  el.className = `toast-msg ${type}`;
-  const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-  el.innerHTML = `<span>${icon}</span> ${msg}`;
+function toast(msg, type='info') {
+  const wrap=document.getElementById('toast');
+  const el=document.createElement('div');
+  el.className=`toast-msg ${type}`;
+  el.innerHTML=`<span>${type==='success'?'✓':type==='error'?'✕':'ℹ'}</span> ${msg}`;
   wrap.appendChild(el);
-  setTimeout(() => {
-    el.classList.add('out');
-    el.addEventListener('animationend', () => el.remove());
-  }, 3000);
+  setTimeout(()=>{el.classList.add('out');el.addEventListener('animationend',()=>el.remove());},3000);
 }
 
-/* ─── INIT ───────────────────────────────────────────── */
 function initHome() {
-  if (!localStorage.getItem('token')) { window.location.href = 'index.html'; return; }
-
-  const username = localStorage.getItem('username') || 'User';
-  const userId   = localStorage.getItem('userId');
-
-  const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=1a6fd4&color=fff&size=128&bold=true`;
-  setAvatars(defaultAvatar);
-  document.getElementById('sidebar-name').textContent   = username;
-  document.getElementById('sidebar-handle').textContent = `@${username}`;
-
-  // Try to fetch real profile picture — graceful fallback if route doesn't exist yet
-  if (userId) {
-    fetch(`${API_URL}/auth/profile/${userId}`)
-      .then(r => r.ok ? r.json() : null)
-      .then(u => {
-        if (u?.profile_picture) setAvatars(u.profile_picture);
-      })
-      .catch(() => {}); // Route may not exist yet, that's fine
+  if(!localStorage.getItem('token')){window.location.href='index.html';return;}
+  ME.userId   = localStorage.getItem('userId');
+  ME.username = localStorage.getItem('username')||'User';
+  ME.token    = localStorage.getItem('token');
+  const av=`https://ui-avatars.com/api/?name=${encodeURIComponent(ME.username)}&background=1a6fd4&color=fff&size=128&bold=true`;
+  setAvatars(av);
+  document.getElementById('sidebar-name').textContent   = ME.username;
+  document.getElementById('sidebar-handle').textContent = `@${ME.username}`;
+  if(ME.userId){
+    fetch(`${API_URL}/auth/profile/${ME.userId}`).then(r=>r.ok?r.json():null).then(u=>{if(u?.avatar_url)setAvatars(u.avatar_url);}).catch(()=>{});
+    fetch(`${API_URL}/bookmarks/${ME.userId}`).then(r=>r.ok?r.json():[]).then(list=>{list.forEach(t=>bookmarkCache.add(t.id));}).catch(()=>{});
   }
-
-  // Prefill compose if coming from news.html "Discuss" button
-  const prefill = sessionStorage.getItem('compose_prefill');
-  if (prefill) {
-    document.getElementById('thread-title').value = prefill;
-    document.getElementById('thread-content').focus();
-    sessionStorage.removeItem('compose_prefill');
-    document.querySelector('.compose').scrollIntoView({ behavior: 'smooth' });
-  }
-
+  const prefill=sessionStorage.getItem('compose_prefill');
+  if(prefill){document.getElementById('thread-title').value=prefill;document.getElementById('thread-content').focus();sessionStorage.removeItem('compose_prefill');document.querySelector('.compose').scrollIntoView({behavior:'smooth'});}
   loadThreads();
   loadSidebarNews();
 }
 
-function setAvatars(src) {
-  document.getElementById('compose-avatar').src = src;
-  document.getElementById('sidebar-avatar').src = src;
-}
-
-/* ─── STRIPE COLORS ──────────────────────────────────── */
-const STRIPES = ['stripe-blue', 'stripe-gold', 'stripe-green'];
-
-/* ─── LOAD THREADS ───────────────────────────────────── */
-// Cache: threadId -> comments[]
-const commentCache = {};
+function setAvatars(src){document.getElementById('compose-avatar').src=src;document.getElementById('sidebar-avatar').src=src;}
 
 async function loadThreads() {
-  const el = document.getElementById('threads-list');
-  el.innerHTML = '<div class="loading-state"><div class="spinner"></div>Loading discussions...</div>';
-
+  const el=document.getElementById('threads-list');
+  el.innerHTML='<div class="loading-state"><div class="spinner"></div>Loading discussions...</div>';
   try {
-    const threads = await fetch(`${API_URL}/threads`).then(r => {
-      if (!r.ok) throw new Error('Failed to fetch threads');
-      return r.json();
-    });
-
-    // Update stats
-    document.getElementById('stat-threads').textContent = threads.length;
-
-    if (!threads.length) {
-      el.innerHTML = `<div class="empty-state"><div class="empty-icon">🎮</div><p>No discussions yet. Be the first to post!</p></div>`;
-      return;
-    }
-
-    // Fetch all comments in parallel instead of sequentially
-    const commentResults = await Promise.all(
-      threads.map(t =>
-        fetch(`${API_URL}/comments/${t.id}`)
-          .then(r => r.ok ? r.json() : [])
-          .catch(() => [])
-      )
-    );
-
-    // Update total reply count
-    const totalComments = commentResults.reduce((sum, c) => sum + c.length, 0);
-    document.getElementById('stat-comments').textContent = totalComments;
-
-    el.innerHTML = '';
-    threads.forEach((t, i) => {
-      const comments = commentResults[i] || [];
-      commentCache[t.id] = comments;
-      el.appendChild(buildThreadCard(t, comments, i));
-    });
-
-  } catch (e) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Failed to load threads. Is the backend running?</p></div>`;
-    console.error(e);
-  }
+    const threads=await fetch(`${API_URL}/threads`).then(r=>{if(!r.ok)throw new Error();return r.json();});
+    document.getElementById('stat-threads').textContent=threads.length;
+    if(!threads.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">🎮</div><p>No discussions yet. Be the first to post!</p></div>`;return;}
+    const commentResults=await Promise.all(threads.map(t=>fetch(`${API_URL}/comments/${t.id}`).then(r=>r.ok?r.json():[]).catch(()=>[])));
+    document.getElementById('stat-comments').textContent=commentResults.reduce((s,c)=>s+c.length,0);
+    el.innerHTML='';
+    threads.forEach((t,i)=>{commentCache[t.id]=commentResults[i]||[];el.appendChild(buildThreadCard(t,commentCache[t.id],i));});
+  } catch(e){el.innerHTML=`<div class="empty-state"><div class="empty-icon">⚠️</div><p>Failed to load. Is the backend running?</p></div>`;}
 }
 
-/* ─── BUILD THREAD CARD ──────────────────────────────── */
 function buildThreadCard(t, comments, i) {
-  const av  = `https://ui-avatars.com/api/?name=${encodeURIComponent(t.username)}&background=1a6fd4&color=fff&size=64&bold=true`;
-  const ago = timeAgo(new Date(t.created_at));
-  const stripe = STRIPES[i % 3];
-
-  const repliesHTML = comments.length
-    ? comments.slice(0, 3).map(c => `
-        <div class="reply-item">
-          <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(c.username)}&background=161c2a&color=4db8ff&size=48" class="reply-avatar" alt="${c.username}">
-          <div class="reply-body">
-            <div class="reply-author">@${escHtml(c.username)}</div>
-            <div class="reply-text">${escHtml(c.content)}</div>
-          </div>
-        </div>`).join('')
-    : '';
-
-  const moreReplies = comments.length > 3
-    ? `<div style="font-size:11px;color:var(--text-muted);padding:4px 11px;">+${comments.length - 3} more replies</div>`
-    : '';
-
-  const card = document.createElement('div');
-  card.className = 'thread-card';
-  card.id = `card-${t.id}`;
-  card.style.animationDelay = `${i * 0.06}s`;
-  card.innerHTML = `
-    <div class="thread-stripe ${stripe}"></div>
+  const av=`https://ui-avatars.com/api/?name=${encodeURIComponent(t.username||'U')}&background=1a6fd4&color=fff&size=64&bold=true`;
+  const isOwn=String(t.user_id)===String(ME.userId);
+  const lk=likeCache[`thread_${t.id}`]||{likes:0,dislikes:0,userVote:0};
+  const bk=bookmarkCache.has(t.id);
+  const card=document.createElement('div');
+  card.className='thread-card'; card.id=`card-${t.id}`; card.style.animationDelay=`${i*0.06}s`;
+  card.innerHTML=`
+    <div class="thread-stripe ${STRIPES[i%3]}"></div>
     <div class="thread-inner">
       <div class="thread-top">
-        <img src="${av}" class="thread-avatar" alt="${t.username}">
+        <img src="${av}" class="thread-avatar" alt="${escHtml(t.username)}">
         <div class="thread-meta">
           <div class="thread-author">@${escHtml(t.username)}</div>
-          <div class="thread-time">${ago}</div>
+          <div class="thread-time">${timeAgo(new Date(t.created_at))}</div>
         </div>
         <span class="thread-cat">Discussion</span>
       </div>
       <div class="thread-title">${escHtml(t.title)}</div>
       <div class="thread-content">${escHtml(t.content)}</div>
+      <div class="thread-actions">
+        <button class="action-btn ${lk.userVote===1?'liked':''}" id="tlike-${t.id}" onclick="voteThread(${t.id},1)">👍 <span id="tlike-count-${t.id}">${lk.likes}</span></button>
+        <button class="action-btn ${lk.userVote===-1?'disliked':''}" id="tdislike-${t.id}" onclick="voteThread(${t.id},-1)">👎 <span id="tdislike-count-${t.id}">${lk.dislikes}</span></button>
+        <button class="action-btn ${bk?'bookmarked':''}" id="tbookmark-${t.id}" onclick="toggleBookmark(${t.id})">🔖 <span id="tbm-label-${t.id}">${bk?'Saved':'Save'}</span></button>
+        ${isOwn?`<button class="action-btn delete-btn" onclick="deleteThread(${t.id})">🗑 Delete</button>`:''}
+      </div>
       <div class="thread-divider"></div>
-      <div class="replies-list" id="replies-${t.id}">${repliesHTML}${moreReplies}</div>
-      <div class="reply-row">
+      <div class="comments-section" id="comments-${t.id}">${buildCommentsHTML(comments,t.id)}</div>
+      <div class="top-reply-row">
         <input class="reply-input" id="reply-${t.id}" placeholder="Write a reply..." maxlength="500">
-        <button class="btn-reply" id="replybtn-${t.id}" onclick="postReply(${t.id})">Reply</button>
+        <button class="btn-reply" onclick="postReply(${t.id},null)">Reply</button>
       </div>
     </div>`;
   return card;
 }
 
-/* ─── REFRESH SINGLE THREAD ──────────────────────────── */
-async function refreshThread(threadId) {
-  try {
-    const comments = await fetch(`${API_URL}/comments/${threadId}`).then(r => r.json());
-    commentCache[threadId] = comments;
-    const repliesEl = document.getElementById(`replies-${threadId}`);
-    if (!repliesEl) return;
-
-    const repliesHTML = comments.length
-      ? comments.slice(0, 3).map(c => `
-          <div class="reply-item">
-            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(c.username)}&background=161c2a&color=4db8ff&size=48" class="reply-avatar" alt="${c.username}">
-            <div class="reply-body">
-              <div class="reply-author">@${escHtml(c.username)}</div>
-              <div class="reply-text">${escHtml(c.content)}</div>
-            </div>
-          </div>`).join('')
-      : '';
-
-    const more = comments.length > 3
-      ? `<div style="font-size:11px;color:var(--text-muted);padding:4px 11px;">+${comments.length - 3} more replies</div>`
-      : '';
-
-    repliesEl.innerHTML = repliesHTML + more;
-
-    // Update total comment count in sidebar
-    const total = Object.values(commentCache).reduce((s, c) => s + c.length, 0);
-    document.getElementById('stat-comments').textContent = total;
-  } catch (e) {
-    console.error('refreshThread error', e);
-  }
+function buildCommentsHTML(comments, threadId, parentId=null, depth=0) {
+  const children=comments.filter(c=>parentId===null?(c.parent_id==null||c.parent_id===undefined):String(c.parent_id)===String(parentId));
+  if(!children.length) return '';
+  const LIMIT=3;
+  const visible=parentId===null?children.slice(0,LIMIT):children;
+  const hidden=parentId===null?children.slice(LIMIT):[];
+  let html='<div class="comment-tree">';
+  visible.forEach(c=>{html+=buildCommentItem(c,comments,threadId,depth);});
+  if(hidden.length) html+=`<button class="show-more-comments" onclick="showMore(this,${threadId},'${JSON.stringify(hidden.map(c=>c.id)).replace(/'/g,"\\'")}')">▾ Show ${hidden.length} more comment${hidden.length>1?'s':''}</button>`;
+  html+='</div>'; return html;
 }
 
-/* ─── SIDEBAR NEWS ───────────────────────────────────── */
-// Static fallback — RAWG key not configured
-const FALLBACK_NEWS = [
-  { name: 'Elden Ring: Nightreign', released: '2025-05-30', rating: 4.6 },
-  { name: 'GTA VI', released: '2025 (TBA)', rating: '?' },
-  { name: 'Hollow Knight: Silksong', released: 'TBA', rating: '?' },
-  { name: 'Monster Hunter Wilds', released: '2025-02-28', rating: 4.3 },
-];
-
-async function loadSidebarNews() {
-  const el = document.getElementById('sidebar-news');
-  const RAWG_KEY = localStorage.getItem('rawg_key') || '';
-
-  if (!RAWG_KEY) {
-    // Show static fallback
-    el.innerHTML = FALLBACK_NEWS.map(g => `
-      <div class="news-item">
-        <div class="news-item-title">${g.name}</div>
-        <div class="news-item-meta">${g.released} &nbsp;·&nbsp; ⭐ ${g.rating}</div>
-      </div>`).join('');
-    return;
-  }
-
-  try {
-    const data = await fetch(`https://api.rawg.io/api/games?key=${RAWG_KEY}&page_size=4&ordering=-released`).then(r => r.json());
-    if (!data.results?.length) throw new Error();
-    el.innerHTML = data.results.map(g => `
-      <div class="news-item">
-        <div class="news-item-title">${g.name}</div>
-        <div class="news-item-meta">${g.released || '—'} &nbsp;·&nbsp; ⭐ ${g.rating || '?'}</div>
-      </div>`).join('');
-  } catch (e) {
-    el.innerHTML = FALLBACK_NEWS.map(g => `
-      <div class="news-item">
-        <div class="news-item-title">${g.name}</div>
-        <div class="news-item-meta">${g.released} &nbsp;·&nbsp; ⭐ ${g.rating}</div>
-      </div>`).join('');
-  }
+function buildCommentItem(c, all, threadId, depth) {
+  const isOwn=String(c.user_id)===String(ME.userId);
+  const av=`https://ui-avatars.com/api/?name=${encodeURIComponent(c.username||'U')}&background=161c2a&color=4db8ff&size=48`;
+  const lk=likeCache[`comment_${c.id}`]||{likes:0,dislikes:0,userVote:0};
+  const deleted=c.is_deleted;
+  const indent=depth>0?`margin-left:${Math.min(depth*18,72)}px;`:'';
+  return `<div class="comment-item" id="ci-${c.id}" style="${indent}">
+    <div class="comment-right">
+      <div class="comment-bubble ${deleted?'deleted':''}">
+        <div class="comment-author"><img src="${av}" style="width:16px;height:16px;border-radius:50%;vertical-align:middle;margin-right:4px;">@${escHtml(c.username)}</div>
+        <div class="comment-text">${deleted?'<em>This comment was deleted.</em>':escHtml(c.content)}</div>
+      </div>
+      <div class="comment-footer">
+        <span class="comment-time">${timeAgo(new Date(c.created_at))}</span>
+        ${!deleted?`
+          <button class="comment-action c-like ${lk.userVote===1?'active':''}" id="clike-${c.id}" onclick="voteComment(${c.id},1,${threadId})">👍 <span id="clike-count-${c.id}">${lk.likes}</span></button>
+          <button class="comment-action c-dislike ${lk.userVote===-1?'active':''}" id="cdislike-${c.id}" onclick="voteComment(${c.id},-1,${threadId})">👎 <span id="cdislike-count-${c.id}">${lk.dislikes}</span></button>
+          <button class="comment-action" onclick="toggleReplyForm('rf-${c.id}')">Reply</button>
+          ${isOwn?`<button class="comment-action c-delete" onclick="deleteComment(${c.id},${threadId})">Delete</button>`:''}
+        `:''}
+      </div>
+      <div class="reply-form" id="rf-${c.id}" style="display:none;">
+        <input placeholder="Reply to @${escHtml(c.username)}..." maxlength="500" id="rfinput-${c.id}">
+        <button onclick="postReply(${threadId},${c.id})">Send</button>
+      </div>
+      ${buildCommentsHTML(all,threadId,c.id,depth+1)}
+    </div>
+  </div>`;
 }
 
-/* ─── CREATE THREAD ──────────────────────────────────── */
+function showMore(btn, threadId, idsJson) {
+  const ids=JSON.parse(idsJson); const comments=commentCache[threadId]||[];
+  const toShow=comments.filter(c=>ids.includes(c.id));
+  let html=''; toShow.forEach(c=>{html+=buildCommentItem(c,comments,threadId,0);});
+  const w=document.createElement('div'); w.innerHTML=html;
+  btn.parentNode.insertBefore(w,btn); btn.remove();
+}
+
+function toggleReplyForm(id) {
+  const el=document.getElementById(id); if(!el) return;
+  const v=el.style.display!=='none'; el.style.display=v?'none':'flex';
+  if(!v) el.querySelector('input')?.focus();
+}
+
+async function refreshComments(threadId) {
+  try {
+    const comments=await fetch(`${API_URL}/comments/${threadId}`).then(r=>r.json());
+    commentCache[threadId]=comments;
+    const el=document.getElementById(`comments-${threadId}`);
+    if(el) el.innerHTML=buildCommentsHTML(comments,threadId);
+    document.getElementById('stat-comments').textContent=Object.values(commentCache).reduce((s,c)=>s+c.length,0);
+  } catch(e){console.error(e);}
+}
+
+async function voteThread(threadId, value) {
+  if(!ME.userId){toast('Please login.','error');return;}
+  try {
+    const res=await fetch(`${API_URL}/like`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:ME.userId,targetId:threadId,targetType:'thread',value})}).then(r=>r.json());
+    likeCache[`thread_${threadId}`]=res;
+    document.getElementById(`tlike-count-${threadId}`).textContent=res.likes;
+    document.getElementById(`tdislike-count-${threadId}`).textContent=res.dislikes;
+    document.getElementById(`tlike-${threadId}`).className=`action-btn ${res.userVote===1?'liked':''}`;
+    document.getElementById(`tdislike-${threadId}`).className=`action-btn ${res.userVote===-1?'disliked':''}`;
+  } catch{toast('Failed to vote.','error');}
+}
+
+async function voteComment(commentId, value, threadId) {
+  if(!ME.userId){toast('Please login.','error');return;}
+  try {
+    const res=await fetch(`${API_URL}/like`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:ME.userId,targetId:commentId,targetType:'comment',value})}).then(r=>r.json());
+    likeCache[`comment_${commentId}`]=res;
+    document.getElementById(`clike-count-${commentId}`).textContent=res.likes;
+    document.getElementById(`cdislike-count-${commentId}`).textContent=res.dislikes;
+    document.getElementById(`clike-${commentId}`).className=`comment-action c-like ${res.userVote===1?'active':''}`;
+    document.getElementById(`cdislike-${commentId}`).className=`comment-action c-dislike ${res.userVote===-1?'active':''}`;
+  } catch{toast('Failed to vote.','error');}
+}
+
+async function toggleBookmark(threadId) {
+  if(!ME.userId){toast('Please login.','error');return;}
+  try {
+    const res=await fetch(`${API_URL}/bookmark`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:ME.userId,threadId})}).then(r=>r.json());
+    if(res.bookmarked){bookmarkCache.add(threadId);}else{bookmarkCache.delete(threadId);}
+    document.getElementById(`tbookmark-${threadId}`).className=`action-btn ${res.bookmarked?'bookmarked':''}`;
+    document.getElementById(`tbm-label-${threadId}`).textContent=res.bookmarked?'Saved':'Save';
+    toast(res.bookmarked?'Saved to profile!':'Removed from saved.',res.bookmarked?'success':'info');
+  } catch{toast('Failed.','error');}
+}
+
+async function deleteThread(threadId) {
+  if(!confirm('Delete this discussion? This cannot be undone.')) return;
+  try {
+    const res=await fetch(`${API_URL}/threads/${threadId}`,{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:ME.userId})});
+    if(!res.ok) throw new Error();
+    document.getElementById(`card-${threadId}`)?.remove();
+    delete commentCache[threadId];
+    toast('Discussion deleted.','success');
+  } catch{toast('Failed to delete.','error');}
+}
+
+async function deleteComment(commentId, threadId) {
+  if(!confirm('Delete this comment?')) return;
+  try {
+    const res=await fetch(`${API_URL}/comments/${commentId}`,{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:ME.userId})});
+    if(!res.ok) throw new Error();
+    await refreshComments(threadId);
+    toast('Comment deleted.','success');
+  } catch{toast('Failed to delete.','error');}
+}
+
 async function createThread() {
-  const titleEl   = document.getElementById('thread-title');
-  const contentEl = document.getElementById('thread-content');
-  const btn       = document.getElementById('btn-post');
-
-  const title   = titleEl.value.trim();
-  const content = contentEl.value.trim();
-  const userId  = localStorage.getItem('userId');
-
-  if (!title)   { toast('Please enter a topic title.', 'error'); titleEl.focus(); return; }
-  if (!content) { toast('Please write something before posting.', 'error'); contentEl.focus(); return; }
-  if (!userId)  { toast('Session expired. Please login again.', 'error'); return; }
-
-  btn.disabled = true;
-  btn.textContent = 'Posting...';
-
+  const titleEl=document.getElementById('thread-title');
+  const contentEl=document.getElementById('thread-content');
+  const btn=document.getElementById('btn-post');
+  const title=titleEl.value.trim(); const content=contentEl.value.trim();
+  if(!title){toast('Please enter a title.','error');titleEl.focus();return;}
+  if(!content){toast('Please write something.','error');contentEl.focus();return;}
+  if(!ME.userId){toast('Session expired.','error');return;}
+  btn.disabled=true; btn.textContent='Posting...';
   try {
-    const res = await fetch(`${API_URL}/threads`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, content, userId })
-    });
-    if (!res.ok) throw new Error('Post failed');
-
-    titleEl.value   = '';
-    contentEl.value = '';
-    toast('Discussion posted!', 'success');
+    const res=await fetch(`${API_URL}/threads`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title,content,userId:ME.userId})});
+    if(!res.ok) throw new Error();
+    titleEl.value=''; contentEl.value='';
+    toast('Discussion posted!','success');
     await loadThreads();
-  } catch (e) {
-    toast('Failed to post. Check your connection.', 'error');
-    console.error(e);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Post →';
-  }
+  } catch{toast('Failed to post.','error');}
+  finally{btn.disabled=false;btn.textContent='Post →';}
 }
 
-/* ─── POST REPLY ─────────────────────────────────────── */
-async function postReply(threadId) {
-  const input  = document.getElementById(`reply-${threadId}`);
-  const btn    = document.getElementById(`replybtn-${threadId}`);
-  const content = input.value.trim();
-  const userId  = localStorage.getItem('userId');
-
-  if (!content) { toast('Reply cannot be empty.', 'error'); return; }
-  if (!userId)  { toast('Session expired. Please login again.', 'error'); return; }
-
-  btn.disabled = true;
-  btn.textContent = '...';
-
+async function postReply(threadId, parentId) {
+  const inputId=parentId?`rfinput-${parentId}`:`reply-${threadId}`;
+  const input=document.getElementById(inputId);
+  const content=input?.value.trim();
+  if(!content){toast('Reply cannot be empty.','error');return;}
+  if(!ME.userId){toast('Session expired.','error');return;}
   try {
-    const res = await fetch(`${API_URL}/comments`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ threadId, userId, content })
-    });
-    if (!res.ok) throw new Error('Reply failed');
-
-    input.value = '';
-    toast('Reply posted!', 'success');
-    await refreshThread(threadId); // Only refresh this thread's comments
-  } catch (e) {
-    toast('Failed to post reply.', 'error');
-    console.error(e);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Reply';
-  }
+    const res=await fetch(`${API_URL}/comments`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({threadId,userId:ME.userId,content,parentId:parentId||null})});
+    if(!res.ok) throw new Error();
+    input.value='';
+    if(parentId){const f=document.getElementById(`rf-${parentId}`);if(f)f.style.display='none';}
+    toast('Reply posted!','success');
+    await refreshComments(threadId);
+  } catch{toast('Failed to reply.','error');}
 }
 
-/* ─── AUTH ───────────────────────────────────────────── */
-function handleLogout() {
-  localStorage.clear();
-  window.location.href = 'index.html';
+const FALLBACK_NEWS=[
+  {name:'Elden Ring: Nightreign',released:'2025-05-30',rating:4.6},
+  {name:'GTA VI',released:'2025 (TBA)',rating:'?'},
+  {name:'Hollow Knight: Silksong',released:'TBA',rating:'?'},
+  {name:'Monster Hunter Wilds',released:'2025-02-28',rating:4.3},
+];
+async function loadSidebarNews() {
+  const el=document.getElementById('sidebar-news');
+  try {
+    const data=await fetch(`${API_URL}/news/games?page_size=4&ordering=-released`).then(r=>r.ok?r.json():null);
+    if(!data?.results?.length) throw new Error();
+    el.innerHTML=data.results.map(g=>`<div class="news-item"><div class="news-item-title">${escHtml(g.name)}</div><div class="news-item-meta">${g.released||'—'} · ⭐ ${g.rating||'?'}</div></div>`).join('');
+  } catch{el.innerHTML=FALLBACK_NEWS.map(g=>`<div class="news-item"><div class="news-item-title">${g.name}</div><div class="news-item-meta">${g.released} · ⭐ ${g.rating}</div></div>`).join('');}
 }
 
-/* ─── UTILS ──────────────────────────────────────────── */
-function timeAgo(d) {
-  const s = Math.floor((Date.now() - d) / 1000);
-  if (s < 60)    return 'just now';
-  if (s < 3600)  return `${Math.floor(s / 60)}m ago`;
-  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
-  return `${Math.floor(s / 86400)}d ago`;
-}
-
-function escHtml(str) {
-  const d = document.createElement('div');
-  d.textContent = str || '';
-  return d.innerHTML;
-}
+function handleLogout(){localStorage.clear();window.location.href='index.html';}
+function timeAgo(d){const s=Math.floor((Date.now()-d)/1000);if(s<60)return 'just now';if(s<3600)return `${Math.floor(s/60)}m ago`;if(s<86400)return `${Math.floor(s/3600)}h ago`;return `${Math.floor(s/86400)}d ago`;}
+function escHtml(str){const d=document.createElement('div');d.textContent=str||'';return d.innerHTML;}
 </script>
 </body>
 </html>
