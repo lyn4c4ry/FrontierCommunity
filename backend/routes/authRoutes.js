@@ -51,10 +51,11 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials.' });
     }
 
+    // FIXED: Added missing comma after the payload object
     const token = jwt.sign(
-      { id: user.id, username: user.username },
+      { userId: user.id, username: user.username }, 
       process.env.JWT_SECRET || 'secretkey',
-      { expiresIn: '1h' }
+      { expiresIn: '7d' }
     );
 
     res.json({

@@ -1,95 +1,120 @@
 const express = require('express');
 const router  = express.Router();
 const pool    = require('../config/db');
+const authMiddleware = require('../middleware/authMiddleware');
 
 // ── LIKE / DISLIKE ──────────────────────────────────────────────────────────
-// POST /api/like  { userId, targetId, targetType, value }
+// POST /api/like  { targetId, targetType, value }
 // value: 1 = like, -1 = dislike
-router.post('/like', async (req, res) => {
-  const { userId, targetId, targetType, value } = req.body;
-  if (!userId || !targetId || !targetType || ![1, -1].includes(Number(value))) {
-    return res.status(400).json({ error: 'Invalid params' });
+router.post('/like', authMiddleware, async (req, res) => {
+  const userId = req.user.userId; 
+  const { targetId, targetType, value } = req.body;
+
+  // Validation
+  if (!targetId || !['thread', 'comment'].includes(targetType) || ![1, -1].includes(Number(value))) {
+    return res.status(400).json({ error: 'Invalid parameters' });
   }
+
   try {
+    await pool.query('BEGIN');
+
     const existing = await pool.query(
       'SELECT id, value FROM likes WHERE user_id=$1 AND target_id=$2 AND target_type=$3',
       [userId, targetId, targetType]
     );
+
     if (existing.rows.length) {
       if (existing.rows[0].value === Number(value)) {
-        // Aynı oy → kaldır (toggle)
+        // Same vote -> remove (toggle)
         await pool.query('DELETE FROM likes WHERE id=$1', [existing.rows[0].id]);
       } else {
-        // Farklı oy → güncelle
+        // Different vote -> update
         await pool.query('UPDATE likes SET value=$1 WHERE id=$2', [value, existing.rows[0].id]);
       }
     } else {
+      // New interaction
       await pool.query(
         'INSERT INTO likes (user_id, target_id, target_type, value) VALUES ($1,$2,$3,$4)',
         [userId, targetId, targetType, value]
       );
     }
+
+    await pool.query('COMMIT');
+
+    // Get updated counts
     const counts = await pool.query(
-      `SELECT
+      `SELECT 
         COUNT(*) FILTER (WHERE value=1)  AS likes,
         COUNT(*) FILTER (WHERE value=-1) AS dislikes
        FROM likes WHERE target_id=$1 AND target_type=$2`,
       [targetId, targetType]
     );
+
+    // Get current user vote status
     const userVoteRow = await pool.query(
       'SELECT value FROM likes WHERE user_id=$1 AND target_id=$2 AND target_type=$3',
       [userId, targetId, targetType]
     );
+
     res.json({
-      likes:    parseInt(counts.rows[0].likes),
-      dislikes: parseInt(counts.rows[0].dislikes),
+      likes: parseInt(counts.rows[0].likes) || 0,
+      dislikes: parseInt(counts.rows[0].dislikes) || 0,
       userVote: userVoteRow.rows[0]?.value ?? 0
     });
+
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    await pool.query('ROLLBACK');
+    res.status(500).json({ error: 'Internal server error during like operation' });
   }
 });
 
-// GET /api/likes/:type/:targetId?userId=
+// GET /api/likes/:type/:targetId
 router.get('/likes/:type/:targetId', async (req, res) => {
   const { type, targetId } = req.params;
   const { userId } = req.query;
+
   try {
     const counts = await pool.query(
-      `SELECT
+      `SELECT 
         COUNT(*) FILTER (WHERE value=1)  AS likes,
         COUNT(*) FILTER (WHERE value=-1) AS dislikes
        FROM likes WHERE target_id=$1 AND target_type=$2`,
       [targetId, type]
     );
+
     let userVote = 0;
-    if (userId) {
+    if (userId && userId !== 'undefined') {
       const uv = await pool.query(
         'SELECT value FROM likes WHERE user_id=$1 AND target_id=$2 AND target_type=$3',
         [userId, targetId, type]
       );
       userVote = uv.rows[0]?.value ?? 0;
     }
+
     res.json({
-      likes:    parseInt(counts.rows[0].likes),
-      dislikes: parseInt(counts.rows[0].dislikes),
+      likes: parseInt(counts.rows[0].likes) || 0,
+      dislikes: parseInt(counts.rows[0].dislikes) || 0,
       userVote
     });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: 'Failed to fetch interaction counts' });
   }
 });
 
 // ── BOOKMARK ────────────────────────────────────────────────────────────────
-// POST /api/bookmark  { userId, threadId }  → toggle
-router.post('/bookmark', async (req, res) => {
-  const { userId, threadId } = req.body;
-  if (!userId || !threadId) return res.status(400).json({ error: 'Invalid params' });
+// POST /api/bookmark  { threadId }
+router.post('/bookmark', authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
+  const { threadId } = req.body;
+
+  if (!threadId) return res.status(400).json({ error: 'Thread ID is required' });
+
   try {
     const existing = await pool.query(
       'SELECT id FROM bookmarks WHERE user_id=$1 AND thread_id=$2',
       [userId, threadId]
     );
+
     if (existing.rows.length) {
       await pool.query('DELETE FROM bookmarks WHERE id=$1', [existing.rows[0].id]);
       res.json({ bookmarked: false });
@@ -101,7 +126,7 @@ router.post('/bookmark', async (req, res) => {
       res.json({ bookmarked: true });
     }
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: 'Bookmark toggle failed' });
   }
 });
 
@@ -119,7 +144,7 @@ router.get('/bookmarks/:userId', async (req, res) => {
     );
     res.json(result.rows);
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(500).json({ error: 'Could not retrieve bookmarks' });
   }
 });
 

@@ -1,19 +1,28 @@
 const express = require('express');
 const cors = require('cors');
+const authMiddleware = require('./middleware/authMiddleware');
+
 require('dotenv').config();
+console.log('JWT_SECRET:', process.env.JWT_SECRET);
 
 // 1. Route Imports
 const authRoutes = require('./routes/authRoutes');
 const threadRoutes = require('./routes/threadRoutes');
-const commentRoutes = require('./routes/commentRoutes'); // Import
+const commentRoutes = require('./routes/commentRoutes'); 
 const newsRoutes = require('./routes/newsRoutes');
+const interactionRoutes = require('./routes/interactionRoutes');
 
 const app = express();
 
 // 2. Middleware
 app.use(cors()); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parse incoming JSON requests
-app.use('/api/news', newsRoutes);
+
+app.use('/api/news', newsRoutes); // News routes (GET latest news)
+app.use('/api/auth', authRoutes); // Authentication endpoints (Register, Login)
+app.use('/api/threads', threadRoutes); // Forum Thread endpoints (Create, List)  
+app.use('/api/comments', commentRoutes); // Comment routes (GET by thread, POST, DELETE)
+app.use('/api', interactionRoutes); // Like, Dislike, Bookmark routes
 
 // 3. Health Check Route
 app.get('/api/status', (req, res) => {
