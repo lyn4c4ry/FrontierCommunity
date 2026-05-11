@@ -79,7 +79,7 @@
     .search-result-item.section-header:hover{background:transparent;}
     .search-result-title{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .search-result-meta{font-size:10px;color:var(--text-muted);margin-top:1px;}
-    .search-mini-av{width:24px;height:24px;border-radius:50%;flex-shrink:0;}
+    .search-mini-av{width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0;}
 
     /* ── MAIN ── */
     .main{margin-left:228px;flex:1;display:flex;min-height:100vh;}
@@ -98,7 +98,7 @@
     .compose-input::placeholder,.compose-textarea::placeholder{color:var(--text-dim);}
     .compose-input:focus,.compose-textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,212,0.12);}
     .compose-textarea{resize:none;height:74px;}
-    /* Category select — matches compose input style */
+    /* Category select */
     .compose-select{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 13px;color:var(--text-muted);font-family:'Nunito',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s;width:100%;cursor:pointer;appearance:none;-webkit-appearance:none;}
     .compose-select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,212,0.12);}
     .compose-select option{background:var(--surface2);color:var(--text);}
@@ -202,7 +202,7 @@
     .top-likes{font-size:10px;color:var(--blue-light);font-weight:700;}
     .member-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);}
     .member-item:last-child{border-bottom:none;}
-    .member-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;border:1.5px solid var(--border2);}
+    .member-av{width:30px;height:30px;border-radius:50%;object-fit:cover;border:1.5px solid var(--border2);flex-shrink:0;}
     .member-info{flex:1;min-width:0;}
     .member-name{font-size:12px;font-weight:700;color:var(--text);}
     .member-since{font-size:10px;color:var(--text-muted);}
@@ -234,7 +234,6 @@
 
 <div id="toast"></div>
 
-<!-- ── CUSTOM CONFIRM MODAL ── -->
 <div id="confirm-modal" onclick="if(event.target===this)closeConfirm(false)">
   <div class="confirm-box">
     <div class="confirm-icon" id="confirm-icon">🗑</div>
@@ -260,7 +259,6 @@
     </div>
   </a>
 
-  <!-- ── SEARCH (sidebar) ── -->
   <div class="search-wrapper">
     <span class="search-icon">🔍</span>
     <input type="text" id="globalSearch" class="search-input" placeholder="Search threads, users...">
@@ -280,7 +278,6 @@
 
 <div class="main">
   <section class="feed">
-    <!-- ── COMPOSE ── -->
     <div class="compose">
       <span class="compose-label">New Discussion</span>
       <div class="compose-row">
@@ -288,7 +285,6 @@
         <div class="compose-fields">
           <input type="text" class="compose-input" id="thread-title" placeholder="Topic or game title..." maxlength="120">
           <textarea class="compose-textarea" id="thread-content" placeholder="Share your thoughts with the community..." maxlength="2000"></textarea>
-          <!-- Category dropdown — populated by loadCategories() on init -->
           <select id="categorySelect" class="compose-select">
             <option value="">Select a category (optional)</option>
           </select>
@@ -304,7 +300,6 @@
       <span class="live-badge"><span class="live-dot"></span>Live</span>
     </div>
 
-    <!-- Category filter chips — populated by loadCategories() -->
     <div class="category-filter" id="category-filter"></div>
 
     <div id="threads-list">
@@ -333,14 +328,13 @@
 
 <script src="app.js"></script>
 <script>
-const ME = { userId: null, username: null, token: null };
-const likeCache     = {};
-const bookmarkCache = new Set();
-const commentCache  = {};
-const STRIPES = ['stripe-blue','stripe-gold','stripe-green'];
-
-// Tracks the active category filter chip (null = show all)
-let activeCategoryFilter = '';
+var hState = { userId: null, username: null, token: null, activeCategoryFilter: '' };
+var hLikeCache = {};
+var hBookmarkCache = new Set();
+var hCommentCache = {};
+var hSTRIPES = ['stripe-blue','stripe-gold','stripe-green'];
+var hConfirmResolve = null;
+var hSearchTimer = null;
 
 /* ══════════════════════════════════════════
    TOAST
@@ -357,20 +351,18 @@ function toast(msg, type='info') {
 /* ══════════════════════════════════════════
    CUSTOM CONFIRM MODAL
 ══════════════════════════════════════════ */
-let _confirmResolve = null;
-
 function showConfirm({ icon = '🗑', title = 'Are you sure?', msg = 'This action cannot be undone.', okLabel = 'Delete' } = {}) {
   document.getElementById('confirm-icon').textContent  = icon;
   document.getElementById('confirm-title').textContent = title;
   document.getElementById('confirm-msg').textContent   = msg;
   document.getElementById('confirm-ok').textContent    = okLabel;
   document.getElementById('confirm-modal').classList.add('open');
-  return new Promise(resolve => { _confirmResolve = resolve; });
+  return new Promise(resolve => { hConfirmResolve = resolve; });
 }
 
 function closeConfirm(val = false) {
   document.getElementById('confirm-modal').classList.remove('open');
-  if (_confirmResolve) { _confirmResolve(val); _confirmResolve = null; }
+  if (hConfirmResolve) { hConfirmResolve(val); hConfirmResolve = null; }
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeConfirm(false); });
@@ -380,23 +372,21 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeConfirm
 ══════════════════════════════════════════ */
 function initHome() {
   if (!localStorage.getItem('token')) { window.location.href = 'index.html'; return; }
-  ME.userId   = localStorage.getItem('userId');
-  ME.username = localStorage.getItem('username') || 'User';
-  ME.token    = localStorage.getItem('token');
+  hState.userId   = localStorage.getItem('userId');
+  hState.username = localStorage.getItem('username') || 'User';
+  hState.token    = localStorage.getItem('token');
 
-  const av = `https://ui-avatars.com/api/?name=${encodeURIComponent(ME.username)}&background=1a6fd4&color=fff&size=128&bold=true`;
+  const storedAvatar = localStorage.getItem('userAvatar');
+  const av = storedAvatar ? storedAvatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(hState.username)}&background=1a6fd4&color=fff&size=128&bold=true`;
   setAvatars(av);
-  document.getElementById('sidebar-name').textContent   = ME.username;
-  document.getElementById('sidebar-handle').textContent = `@${ME.username}`;
+  
+  document.getElementById('sidebar-name').textContent   = hState.username;
+  document.getElementById('sidebar-handle').textContent = `@${hState.username.toLowerCase()}`;
 
-  if (ME.userId) {
-    fetch(`${API_URL}/auth/profile/${ME.userId}`)
-      .then(r => r.ok ? r.json() : null)
-      .then(u => { if (u?.avatar_url) setAvatars(u.avatar_url); })
-      .catch(() => {});
-    fetch(`${API_URL}/bookmarks/${ME.userId}`)
+  if (hState.userId) {
+    fetch(`${API_URL}/bookmarks/${hState.userId}`)
       .then(r => r.ok ? r.json() : [])
-      .then(list => { list.forEach(t => bookmarkCache.add(t.id)); })
+      .then(list => { list.forEach(t => hBookmarkCache.add(t.id)); })
       .catch(() => {});
   }
 
@@ -408,11 +398,8 @@ function initHome() {
     document.querySelector('.compose').scrollIntoView({ behavior: 'smooth' });
   }
 
-  // Load categories for dropdown and filter chips
   loadCategories();
-  // Init global search
   initSearch();
-  // Load thread feed
   loadThreads();
 }
 
@@ -422,13 +409,12 @@ function setAvatars(src) {
 }
 
 /* ══════════════════════════════════════════
-   CATEGORIES — dropdown + filter chips
+   CATEGORIES
 ══════════════════════════════════════════ */
 async function loadCategories() {
   try {
     const cats = await fetch(`${API_URL}/threads/categories`).then(r => r.ok ? r.json() : []);
 
-    // Populate compose dropdown
     const sel = document.getElementById('categorySelect');
     cats.forEach(c => {
       const opt = document.createElement('option');
@@ -437,11 +423,9 @@ async function loadCategories() {
       sel.appendChild(opt);
     });
 
-    // Build filter chips above the feed
     const bar = document.getElementById('category-filter');
     if (!bar) return;
 
-    // "All" chip
     const allChip = document.createElement('button');
     allChip.className = 'cat-chip active';
     allChip.textContent = 'All';
@@ -463,16 +447,88 @@ async function loadCategories() {
 function selectCategoryChip(btn, value) {
   document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
   btn.classList.add('active');
-  activeCategoryFilter = value;
+  hState.activeCategoryFilter = value;
   loadThreads(value);
+}
+
+/* ══════════════════════════════════════════
+   GLOBAL SEARCH
+══════════════════════════════════════════ */
+function initSearch() {
+  const input    = document.getElementById('globalSearch');
+  const dropdown = document.getElementById('searchDropdown');
+  if (!input) return;
+
+  input.addEventListener('input', () => {
+    clearTimeout(hSearchTimer);
+    const q = input.value.trim();
+    if (q.length < 2) { dropdown.classList.remove('open'); return; }
+    hSearchTimer = setTimeout(() => doSearch(q), 400);
+  });
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.search-wrapper')) dropdown.classList.remove('open');
+  });
+}
+
+async function doSearch(q) {
+  const dropdown = document.getElementById('searchDropdown');
+  dropdown.innerHTML = '<div class="search-result-item" style="color:var(--text-muted);cursor:default">Searching...</div>';
+  dropdown.classList.add('open');
+
+  try {
+    const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(q)}`);
+    if (!res.ok) throw new Error('Search failed');
+    const data = await res.json();
+
+    if (!data.total) {
+      dropdown.innerHTML = '<div class="search-result-item" style="color:var(--text-muted);cursor:default">No results found.</div>';
+      return;
+    }
+
+    let html = '';
+
+    if (data.threads.length) {
+      html += `<div class="search-result-item section-header">💬 Threads</div>`;
+      data.threads.forEach(t => {
+        const av = t.avatar_url ? escHtml(t.avatar_url) : `https://ui-avatars.com/api/?name=${encodeURIComponent(t.username||'U')}&background=1a6fd4&color=fff&size=48`;
+        html += `
+          <div class="search-result-item" onclick="location.href='thread.html?id=${t.id}'">
+            <img class="search-mini-av" src="${av}" alt="">
+            <div style="min-width:0;">
+              <div class="search-result-title">${escHtml(t.title)}</div>
+              <div class="search-result-meta">@${escHtml(t.username)} · 👍 ${t.like_count} · 💬 ${t.comment_count}</div>
+            </div>
+          </div>`;
+      });
+    }
+
+    if (data.users.length) {
+      html += `<div class="search-result-item section-header">👤 Users</div>`;
+      data.users.forEach(u => {
+        const av = u.avatar_url ? escHtml(u.avatar_url) : `https://ui-avatars.com/api/?name=${encodeURIComponent(u.username||'U')}&background=161c2a&color=4db8ff&size=48`;
+        html += `
+          <div class="search-result-item" onclick="location.href='profile.html?userId=${u.id}'">
+            <img class="search-mini-av" src="${av}" alt="">
+            <div>
+              <div class="search-result-title">@${escHtml(u.username)}</div>
+              <div class="search-result-meta">View profile</div>
+            </div>
+          </div>`;
+      });
+    }
+
+    dropdown.innerHTML = html;
+  } catch {
+    dropdown.innerHTML = '<div class="search-result-item" style="color:var(--red);cursor:default">Search failed.</div>';
+  }
 }
 
 /* ══════════════════════════════════════════
    LOAD THREADS
 ══════════════════════════════════════════ */
 async function loadThreads(categoryFilter) {
-  // Use the active chip filter if no argument is passed
-  if (categoryFilter === undefined) categoryFilter = activeCategoryFilter;
+  if (categoryFilter === undefined) categoryFilter = hState.activeCategoryFilter;
 
   const el = document.getElementById('threads-list');
   el.innerHTML = '<div class="loading-state"><div class="spinner"></div>Loading discussions...</div>';
@@ -495,7 +551,6 @@ async function loadThreads(categoryFilter) {
       return;
     }
 
-    // Fetch comment lists and batch like counts in parallel
     const [commentResults, batchLikes] = await Promise.all([
       Promise.all(
         threads.map(t => fetch(`${API_URL}/comments/${t.id}`).then(r => r.ok ? r.json() : []).catch(() => []))
@@ -507,14 +562,13 @@ async function loadThreads(categoryFilter) {
 
     el.innerHTML = '';
     threads.forEach((t, i) => {
-      commentCache[t.id] = commentResults[i] || [];
+      hCommentCache[t.id] = commentResults[i] || [];
 
-      // Pre-populate likeCache from batch result before building the card
       if (batchLikes[t.id]) {
-        likeCache[`thread_${t.id}`] = batchLikes[t.id];
+        hLikeCache[`thread_${t.id}`] = batchLikes[t.id];
       }
 
-      el.appendChild(buildThreadCard(t, commentCache[t.id], i));
+      el.appendChild(buildThreadCard(t, hCommentCache[t.id], i));
     });
 
     loadSidebarWidgets(threads);
@@ -527,8 +581,6 @@ async function loadThreads(categoryFilter) {
 
 /* ══════════════════════════════════════════
    BATCH LIKES
-   Fetches like/dislike counts + userVote for
-   all visible threads in a single request.
 ══════════════════════════════════════════ */
 async function fetchBatchLikes(threadIds) {
   if (!threadIds.length) return {};
@@ -536,7 +588,7 @@ async function fetchBatchLikes(threadIds) {
     const res = await fetch(`${API_URL}/likes/batch`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ threadIds, userId: ME.userId })
+      body: JSON.stringify({ threadIds, userId: hState.userId })
     });
     return res.ok ? res.json() : {};
   } catch {
@@ -560,7 +612,6 @@ async function loadTopDiscussions(threads) {
   }
 
   try {
-    // Use batch endpoint so we don't fire N requests
     const batchLikes = await fetchBatchLikes(threads.map(t => t.id));
 
     const scored = threads.map(t => ({
@@ -614,13 +665,13 @@ async function loadNewMembers() {
       username:  profiles[i]?.username || t.username || 'User',
       avatarUrl: profiles[i]?.avatar_url || null,
       joinedAt:  profiles[i]?.created_at || t.created_at,
-    })).sort((a, b) => new Date(b.joinedAt) - new Date(a.joinedAt));
+    })).sort((a, b) => parseDateSafely(b.joinedAt) - parseDateSafely(a.joinedAt));
 
     el.innerHTML = members.map(m => {
       const av = m.avatarUrl
         ? `<img class="member-av" src="${escHtml(m.avatarUrl)}" alt="${escHtml(m.username)}">`
         : `<img class="member-av" src="https://ui-avatars.com/api/?name=${encodeURIComponent(m.username)}&background=161c2a&color=4db8ff&size=60" alt="${escHtml(m.username)}">`;
-      const isNew = m.joinedAt && (Date.now() - new Date(m.joinedAt)) < 7 * 24 * 60 * 60 * 1000;
+      const isNew = m.joinedAt && (Date.now() - parseDateSafely(m.joinedAt)) < 7 * 24 * 60 * 60 * 1000;
       return `
         <div class="member-item">
           <a href="profile.html?userId=${m.userId}" style="display:contents;">${av}</a>
@@ -628,7 +679,7 @@ async function loadNewMembers() {
             <a href="profile.html?userId=${m.userId}" style="text-decoration:none;">
               <div class="member-name">@${escHtml(m.username)}</div>
             </a>
-            <div class="member-since">Joined ${timeAgo(new Date(m.joinedAt))}</div>
+            <div class="member-since">Joined ${timeAgo(m.joinedAt)}</div>
           </div>
           ${isNew ? '<span class="member-new">NEW</span>' : ''}
         </div>`;
@@ -642,10 +693,10 @@ async function loadNewMembers() {
    BUILD THREAD CARD
 ══════════════════════════════════════════ */
 function buildThreadCard(t, comments, i) {
-  const av    = `https://ui-avatars.com/api/?name=${encodeURIComponent(t.username||'U')}&background=1a6fd4&color=fff&size=64&bold=true`;
-  const isOwn = String(t.user_id) === String(ME.userId);
-  const lk    = likeCache[`thread_${t.id}`] || { likes: 0, dislikes: 0, userVote: 0 };
-  const bk    = bookmarkCache.has(t.id);
+  const av    = t.avatar_url ? escHtml(t.avatar_url) : `https://ui-avatars.com/api/?name=${encodeURIComponent(t.username||'U')}&background=1a6fd4&color=fff&size=64&bold=true`;
+  const isOwn = String(t.user_id) === String(hState.userId);
+  const lk    = hLikeCache[`thread_${t.id}`] || { likes: 0, dislikes: 0, userVote: 0 };
+  const bk    = hBookmarkCache.has(t.id);
   const card  = document.createElement('div');
   card.className = 'thread-card';
   card.id = `card-${t.id}`;
@@ -656,11 +707,10 @@ function buildThreadCard(t, comments, i) {
     window.location.href = `thread.html?id=${t.id}`;
   });
 
-  // Use category_name from the enriched threadRoutes response if available
   const catLabel = t.category_name || 'Discussion';
 
   card.innerHTML = `
-    <div class="thread-stripe ${STRIPES[i % 3]}"></div>
+    <div class="thread-stripe ${hSTRIPES[i % 3]}"></div>
     <div class="thread-inner">
       <div class="thread-top">
         <a href="profile.html?userId=${t.user_id}" onclick="event.stopPropagation()">
@@ -670,7 +720,7 @@ function buildThreadCard(t, comments, i) {
           <a href="profile.html?userId=${t.user_id}" onclick="event.stopPropagation()" style="text-decoration:none">
             <div class="thread-author">@${escHtml(t.username)}</div>
           </a>
-          <div class="thread-time">${timeAgo(new Date(t.created_at))}</div>
+          <div class="thread-time">${timeAgo(t.created_at)}</div>
         </div>
         <span class="thread-cat">${escHtml(catLabel)}</span>
       </div>
@@ -717,19 +767,19 @@ function buildCommentsHTML(comments, threadId, parentId = null, depth = 0) {
 }
 
 function buildCommentItem(c, all, threadId, depth) {
-  const isOwn   = String(c.user_id) === String(ME.userId);
-  const av      = `https://ui-avatars.com/api/?name=${encodeURIComponent(c.username||'U')}&background=161c2a&color=4db8ff&size=48`;
-  const lk      = likeCache[`comment_${c.id}`] || { likes: 0, dislikes: 0, userVote: 0 };
+  const isOwn   = String(c.user_id) === String(hState.userId);
+  const av      = c.avatar_url ? escHtml(c.avatar_url) : `https://ui-avatars.com/api/?name=${encodeURIComponent(c.username||'U')}&background=161c2a&color=4db8ff&size=48`;
+  const lk      = hLikeCache[`comment_${c.id}`] || { likes: 0, dislikes: 0, userVote: 0 };
   const deleted = c.is_deleted;
   const indent  = depth > 0 ? `margin-left:${Math.min(depth * 18, 72)}px;` : '';
   return `<div class="comment-item" id="ci-${c.id}" style="${indent}">
     <div class="comment-right">
       <div class="comment-bubble ${deleted ? 'deleted' : ''}">
-        <div class="comment-author"><img src="${av}" style="width:16px;height:16px;border-radius:50%;vertical-align:middle;margin-right:4px;">@${escHtml(c.username)}</div>
+        <div class="comment-author"><img src="${av}" style="width:16px;height:16px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:4px;">@${escHtml(c.username)}</div>
         <div class="comment-text">${deleted ? '<em>This comment was deleted.</em>' : escHtml(c.content)}</div>
       </div>
       <div class="comment-footer">
-        <span class="comment-time">${timeAgo(new Date(c.created_at))}</span>
+        <span class="comment-time">${timeAgo(c.created_at)}</span>
         ${!deleted ? `
           <button class="comment-action c-like ${lk.userVote===1?'active':''}" id="clike-${c.id}" onclick="voteComment(${c.id},1,${threadId})">👍 <span id="clike-count-${c.id}">${lk.likes}</span></button>
           <button class="comment-action c-dislike ${lk.userVote===-1?'active':''}" id="cdislike-${c.id}" onclick="voteComment(${c.id},-1,${threadId})">👎 <span id="cdislike-count-${c.id}">${lk.dislikes}</span></button>
@@ -748,7 +798,7 @@ function buildCommentItem(c, all, threadId, depth) {
 
 function showMore(btn, threadId, idsJson) {
   const ids      = JSON.parse(idsJson);
-  const comments = commentCache[threadId] || [];
+  const comments = hCommentCache[threadId] || [];
   const toShow   = comments.filter(c => ids.includes(c.id));
   let html = ''; toShow.forEach(c => { html += buildCommentItem(c, comments, threadId, 0); });
   const w = document.createElement('div'); w.innerHTML = html;
@@ -765,11 +815,11 @@ function toggleReplyForm(id) {
 async function refreshComments(threadId) {
   try {
     const comments = await fetch(`${API_URL}/comments/${threadId}`).then(r => r.json());
-    commentCache[threadId] = comments;
+    hCommentCache[threadId] = comments;
     const el = document.getElementById(`comments-${threadId}`);
     if (el) el.innerHTML = buildCommentsHTML(comments, threadId);
     document.getElementById('stat-comments').textContent =
-      Object.values(commentCache).reduce((s, c) => s + c.length, 0);
+      Object.values(hCommentCache).reduce((s, c) => s + c.length, 0);
   } catch (e) { console.error(e); }
 }
 
@@ -777,14 +827,14 @@ async function refreshComments(threadId) {
    VOTE / BOOKMARK
 ══════════════════════════════════════════ */
 async function voteThread(threadId, value) {
-  if (!ME.userId) { toast('Please login.', 'error'); return; }
+  if (!hState.userId) { toast('Please login.', 'error'); return; }
   try {
     const res = await fetch(`${API_URL}/like`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hState.token}` },
       body: JSON.stringify({ targetId: threadId, targetType: 'thread', value })
     }).then(r => r.json());
-    likeCache[`thread_${threadId}`] = res;
+    hLikeCache[`thread_${threadId}`] = res;
     document.getElementById(`tlike-count-${threadId}`).textContent    = res.likes;
     document.getElementById(`tdislike-count-${threadId}`).textContent = res.dislikes;
     document.getElementById(`tlike-${threadId}`).className    = `action-btn like-btn ${res.userVote === 1  ? 'liked'    : ''}`;
@@ -793,14 +843,14 @@ async function voteThread(threadId, value) {
 }
 
 async function voteComment(commentId, value, threadId) {
-  if (!ME.userId) { toast('Please login.', 'error'); return; }
+  if (!hState.userId) { toast('Please login.', 'error'); return; }
   try {
     const res = await fetch(`${API_URL}/like`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hState.token}` },
       body: JSON.stringify({ targetId: commentId, targetType: 'comment', value })
     }).then(r => r.json());
-    likeCache[`comment_${commentId}`] = res;
+    hLikeCache[`comment_${commentId}`] = res;
     document.getElementById(`clike-count-${commentId}`).textContent    = res.likes;
     document.getElementById(`cdislike-count-${commentId}`).textContent = res.dislikes;
     document.getElementById(`clike-${commentId}`).className    = `comment-action c-like ${res.userVote === 1  ? 'active' : ''}`;
@@ -809,14 +859,14 @@ async function voteComment(commentId, value, threadId) {
 }
 
 async function toggleBookmark(threadId) {
-  if (!ME.userId) { toast('Please login.', 'error'); return; }
+  if (!hState.userId) { toast('Please login.', 'error'); return; }
   try {
     const res = await fetch(`${API_URL}/bookmark`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hState.token}` },
       body: JSON.stringify({ threadId })
     }).then(r => r.json());
-    if (res.bookmarked) { bookmarkCache.add(threadId); } else { bookmarkCache.delete(threadId); }
+    if (res.bookmarked) { hBookmarkCache.add(threadId); } else { hBookmarkCache.delete(threadId); }
     document.getElementById(`tbookmark-${threadId}`).className = `action-btn ${res.bookmarked ? 'bookmarked' : ''}`;
     document.getElementById(`tbm-label-${threadId}`).textContent = res.bookmarked ? 'Saved' : 'Save';
     toast(res.bookmarked ? 'Saved to profile!' : 'Removed from saved.', res.bookmarked ? 'success' : 'info');
@@ -836,11 +886,11 @@ async function deleteThread(threadId) {
   try {
     const res = await fetch(`${API_URL}/threads/${threadId}`, {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` }
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hState.token}` }
     });
     if (!res.ok) throw new Error();
     document.getElementById(`card-${threadId}`)?.remove();
-    delete commentCache[threadId];
+    delete hCommentCache[threadId];
     toast('Discussion deleted.', 'success');
     const threads = await fetch(`${API_URL}/threads`).then(r => r.ok ? r.json() : []).catch(() => []);
     loadTopDiscussions(threads);
@@ -857,7 +907,7 @@ async function deleteComment(commentId, threadId) {
   try {
     const res = await fetch(`${API_URL}/comments/${commentId}`, {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` }
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hState.token}` }
     });
     if (!res.ok) throw new Error();
     await refreshComments(threadId);
@@ -877,12 +927,12 @@ async function createThread() {
   const content      = contentEl.value.trim();
   if (!title)   { toast('Please enter a title.', 'error'); titleEl.focus(); return; }
   if (!content) { toast('Please write something.', 'error'); contentEl.focus(); return; }
-  if (!ME.userId) { toast('Session expired.', 'error'); return; }
+  if (!hState.userId) { toast('Session expired.', 'error'); return; }
   btn.disabled = true; btn.textContent = 'Posting...';
   try {
     const res = await fetch(`${API_URL}/threads`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hState.token}` },
       body: JSON.stringify({ title, content, categoryId })
     });
     if (!res.ok) throw new Error();
@@ -899,11 +949,11 @@ async function postReply(threadId, parentId) {
   const input   = document.getElementById(inputId);
   const content = input?.value.trim();
   if (!content)   { toast('Reply cannot be empty.', 'error'); return; }
-  if (!ME.userId) { toast('Session expired.', 'error'); return; }
+  if (!hState.userId) { toast('Session expired.', 'error'); return; }
   try {
     const res = await fetch(`${API_URL}/comments`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hState.token}` },
       body: JSON.stringify({ threadId, content, parentId: parentId || null })
     });
     if (!res.ok) throw new Error();
@@ -919,22 +969,68 @@ async function postReply(threadId, parentId) {
 ══════════════════════════════════════════ */
 function handleLogout() { localStorage.clear(); window.location.href = 'index.html'; }
 
+// TARİH DÜZELTİCİ: Postgres saatini doğrudan UTC olarak yakalar.
+function parseDateSafely(d) {
+  if (!d) return new Date();
+  if (d instanceof Date) return isNaN(d.getTime()) ? new Date() : d; 
+  
+  let dStr = String(d);
+  if (dStr.endsWith('Z') || dStr.includes('+') || dStr.includes('GMT')) {
+    let parsed = new Date(dStr);
+    if (!isNaN(parsed.getTime())) return parsed;
+  }
+  
+  dStr = dStr.replace(' ', 'T');
+  if (!dStr.includes('T')) dStr += 'T00:00:00';
+  if (!dStr.endsWith('Z')) dStr += 'Z';
+  
+  let parsedZ = new Date(dStr);
+  return isNaN(parsedZ.getTime()) ? new Date(d) : parsedZ;
+}
+
+// YEREL ZAMAN GÖSTERİCİ: Bilgisayarın KENDİ işletim sistemi ayarlarını kullanır.
 function timeAgo(d) {
-  const date     = new Date(d);
+  if (!d) return '';
+  const date = parseDateSafely(d);
+  if (isNaN(date.getTime())) return ''; 
+
   const now      = new Date();
   const diffMs   = now - date;
   const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = diffMs / (1000 * 60 * 60);
-  if (diffMins < 1)   return 'just now';
-  if (diffMins < 60)  return `${diffMins}m ago`;
-  if (diffHours < 24) return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Istanbul' });
-  const todayIst = new Date(now.toLocaleString('en-US',  { timeZone: 'Europe/Istanbul' }));
-  const dateIst  = new Date(date.toLocaleString('en-US', { timeZone: 'Europe/Istanbul' }));
-  todayIst.setHours(0,0,0,0); dateIst.setHours(0,0,0,0);
-  const dayDiff = Math.round((todayIst - dateIst) / 86400000);
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+
+  if (diffMins < 1 && diffMs >= 0) return 'just now';
+  if (diffMins < 60 && diffMs >= 0) return `${diffMins}m ago`;
+
+  // Cihazın zaman dilimini (Örn: "Europe/Istanbul") ve dilini sistemden otomatik al
+  const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone || undefined;
+  const userLocale = navigator.language || undefined;
+
+  // 24 saatten kısaysa sadece saat ve dakikayı yerel ayarla göster
+  if (diffHours < 24 && diffMs >= 0) {
+    return new Intl.DateTimeFormat(userLocale, {
+      hour: '2-digit', minute: '2-digit',
+      hour12: false,
+      timeZone: userTZ
+    }).format(date);
+  }
+
+  // Gece yarısı hesaplaması
+  const today = new Date(now.toLocaleString('en-US', { timeZone: userTZ }));
+  const targetDate = new Date(date.toLocaleString('en-US', { timeZone: userTZ }));
+  today.setHours(0,0,0,0);
+  targetDate.setHours(0,0,0,0);
+
+  const dayDiff = Math.round((today - targetDate) / 86400000);
+
   if (dayDiff === 1) return 'Yesterday';
-  if (dayDiff < 7)   return `${dayDiff} days ago`;
-  return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Europe/Istanbul' });
+  if (dayDiff < 7 && dayDiff > 0) return `${dayDiff} days ago`;
+
+  // Daha eski veriler için yerel tarih formatı (Örn: "12 Şub 2026")
+  return new Intl.DateTimeFormat(userLocale, {
+    day: 'numeric', month: 'short', year: 'numeric',
+    timeZone: userTZ
+  }).format(date);
 }
 
 function escHtml(str) {

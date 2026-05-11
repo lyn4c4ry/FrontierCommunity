@@ -325,11 +325,17 @@ let searchTimer = null;
 
 function initNews() {
   if (!localStorage.getItem('token')) { window.location.href = 'index.html'; return; }
+  
   const username = localStorage.getItem('username') || 'User';
-  const av = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=1a6fd4&color=fff&size=128&bold=true`;
+  const storedAvatar = localStorage.getItem('userAvatar'); // Hafızadaki (DB'den gelen) fotoğrafı al
+  
+  // Eğer özel bir avatar varsa onu kullan, yoksa ismin baş harfinden avatar üret
+  const av = storedAvatar ? storedAvatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=1a6fd4&color=fff&size=128&bold=true`;
+  
   document.getElementById('sidebar-avatar').src = av;
   document.getElementById('sidebar-name').textContent = username;
-  document.getElementById('sidebar-handle').textContent = `@${username}`;
+  document.getElementById('sidebar-handle').textContent = `@${username.toLowerCase()}`;
+  
   try { watchlist = JSON.parse(localStorage.getItem('fc_watchlist') || '{}'); } catch { watchlist = {}; }
   buildGenreBar();
   renderWatchlist();
@@ -460,6 +466,9 @@ function buildGameCard(g, idx) {
   const cover = g.background_image;
   const released = g.released ? new Date(g.released).toLocaleDateString('en-US', { year:'numeric', month:'short' }) : 'TBA';
 
+  // OYUN ADINDAKİ TIRNAK İŞARETLERİNİ HTML İÇİN GÜVENLİ HALE GETİRİYORUZ
+  const safeGameName = JSON.stringify(g.name).replace(/"/g, '&quot;');
+
   const card = document.createElement('div');
   card.className = `game-card${followed ? ' followed' : ''}`;
   card.id = `gc-${g.id}`;
@@ -471,7 +480,7 @@ function buildGameCard(g, idx) {
       <button class="follow-btn ${followed ? 'active' : ''}" id="fb-${g.id}" onclick="toggleFollow(${g.id})">${followed ? '⭐' : '☆'}</button>
       <div class="cover-overlay"></div>
       <div class="cover-actions">
-        <button class="btn-discuss" onclick="openDiscuss(${JSON.stringify(g.name).replace(/</g,'&lt;')})">💬 Discuss</button>
+        <button class="btn-discuss" onclick="openDiscuss(${safeGameName})">💬 Discuss</button>
       </div>
     </div>
     <div class="game-body">
@@ -493,6 +502,9 @@ function buildListItem(g, idx) {
   const released = g.released ? new Date(g.released).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : 'TBA';
   const cover = g.background_image;
 
+  // OYUN ADINDAKİ TIRNAK İŞARETLERİNİ HTML İÇİN GÜVENLİ HALE GETİRİYORUZ
+  const safeGameName = JSON.stringify(g.name).replace(/"/g, '&quot;');
+
   const item = document.createElement('div');
   item.className = `game-list-item${followed ? ' followed' : ''}`;
   item.id = `gc-${g.id}`;
@@ -508,7 +520,7 @@ function buildListItem(g, idx) {
       </div>
     </div>
     <div class="list-actions">
-      <button class="list-discuss-btn" onclick="openDiscuss(${JSON.stringify(g.name).replace(/</g,'&lt;')})">💬 Discuss</button>
+      <button class="list-discuss-btn" onclick="openDiscuss(${safeGameName})">💬 Discuss</button>
       <button class="list-follow-btn ${followed ? 'active' : ''}" id="fb-${g.id}" onclick="toggleFollow(${g.id})">${followed ? '⭐' : '☆'}</button>
     </div>`;
   return item;
