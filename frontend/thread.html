@@ -162,7 +162,7 @@
     .search-result-item.section-header:hover{background:transparent;}
     .search-result-title{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .search-result-meta{font-size:10px;color:var(--text-muted);margin-top:1px;}
-    .search-mini-av{width:24px;height:24px;border-radius:50%;flex-shrink:0;}
+    .search-mini-av{width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0;}
 
     @media(max-width:700px){
       .sidebar-left{width:56px;}
@@ -201,7 +201,6 @@
       <div class="sidebar-handle" id="sidebar-handle">@—</div>
     </div>
   </a>
-  <!-- ── SEARCH ── -->
   <div class="search-wrapper">
     <span class="search-icon">🔍</span>
     <input type="text" id="globalSearch" class="search-input" placeholder="Search threads, users...">
@@ -291,7 +290,9 @@ function initThread() {
   ME.username = localStorage.getItem('username') || 'User';
   ME.token    = localStorage.getItem('token');
 
-  const av = `https://ui-avatars.com/api/?name=${encodeURIComponent(ME.username)}&background=1a6fd4&color=fff&size=128&bold=true`;
+  const storedAvatar = localStorage.getItem('userAvatar');
+  const av = storedAvatar ? storedAvatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(ME.username)}&background=1a6fd4&color=fff&size=128&bold=true`;
+  
   document.getElementById('sidebar-avatar').src  = av;
   document.getElementById('sidebar-name').textContent   = ME.username;
   document.getElementById('sidebar-handle').textContent = `@${ME.username}`;
@@ -340,7 +341,7 @@ async function loadThread() {
 /* ── RENDER THREAD ── */
 function renderThread(t, lk, bk) {
   const isOwn = String(t.user_id) === String(ME.userId);
-  const av = `https://ui-avatars.com/api/?name=${encodeURIComponent(t.username||'U')}&background=1a6fd4&color=fff&size=64&bold=true`;
+  const av = t.avatar_url ? escHtml(t.avatar_url) : `https://ui-avatars.com/api/?name=${encodeURIComponent(t.username||'U')}&background=1a6fd4&color=fff&size=64&bold=true`;
 
   document.getElementById('thread-container').innerHTML = `
     <div class="thread-body">
@@ -352,7 +353,7 @@ function renderThread(t, lk, bk) {
             <div class="thread-author"><a href="profile.html?userId=${t.user_id}">@${escHtml(t.username)}</a></div>
             <div class="thread-time-full">${fullDate(t.created_at)}</div>
           </div>
-          <span class="thread-cat">Discussion</span>
+          <span class="thread-cat">${escHtml(t.category_name || 'Discussion')}</span>
         </div>
         <div class="thread-title">${escHtml(t.title)}</div>
         <div class="thread-content">${escHtml(t.content)}</div>
@@ -386,7 +387,7 @@ function buildCommentsHTML(comments, parentId, depth) {
 
 function buildCommentItem(c, all, depth) {
   const isOwn   = String(c.user_id) === String(ME.userId);
-  const av      = `https://ui-avatars.com/api/?name=${encodeURIComponent(c.username||'U')}&background=161c2a&color=4db8ff&size=48`;
+  const av      = c.avatar_url ? escHtml(c.avatar_url) : `https://ui-avatars.com/api/?name=${encodeURIComponent(c.username||'U')}&background=161c2a&color=4db8ff&size=48`;
   const lk      = likeCache[`comment_${c.id}`] || { likes: 0, dislikes: 0, userVote: 0 };
   const deleted = c.is_deleted;
   const indent  = depth > 0 ? `margin-left:${Math.min(depth * 20, 80)}px;` : '';
@@ -395,7 +396,7 @@ function buildCommentItem(c, all, depth) {
       <div class="comment-right">
         <div class="comment-bubble ${deleted ? 'deleted' : ''}">
           <div class="comment-author">
-            <img src="${av}" style="width:16px;height:16px;border-radius:50%;vertical-align:middle;margin-right:4px;">
+            <img src="${av}" style="width:16px;height:16px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:4px;">
             <a href="profile.html?userId=${c.user_id}" style="color:inherit;text-decoration:none;">@${escHtml(c.username)}</a>
           </div>
           <div class="comment-text">${deleted ? '<em>This comment was deleted.</em>' : escHtml(c.content)}</div>
@@ -523,8 +524,21 @@ async function postReply(parentId) {
 }
 
 /* ── HELPERS ── */
+
+// GÜNCELLEME: Backend'den gelen tarih formatı bozuksa tarayıcının yanlış saat göstermesini engelleyen güvenlik fonksiyonu
+function parseDateSafely(d) {
+  if (!d) return new Date();
+  let dStr = String(d);
+  // Eğer string'in sonunda 'Z' (UTC) veya bir saat dilimi eki (+03:00) yoksa, sonuna zorla 'Z' ekliyoruz
+  if (!dStr.endsWith('Z') && !dStr.match(/[+\-]\d{2}:?\d{2}$/)) {
+    dStr = dStr.replace(' ', 'T') + 'Z';
+  }
+  return new Date(dStr);
+}
+
 function fullDate(d) {
-  return new Date(d).toLocaleString('tr-TR', {
+  // GÜNCELLEME: Bozuk tarihleri düzeltmek için parseDateSafely() kullanıldı
+  return parseDateSafely(d).toLocaleString('tr-TR', {
     day: 'numeric', month: 'long', year: 'numeric',
     hour: '2-digit', minute: '2-digit',
     timeZone: 'Europe/Istanbul'
@@ -538,7 +552,6 @@ function escHtml(str) {
 function handleLogout() { localStorage.clear(); window.location.href = 'index.html'; }
 
 initThread();
-initSearch();
 
 </script>
 </body>
