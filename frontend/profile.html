@@ -198,6 +198,24 @@
     .modal-btn-save .btn-spinner{display:none;width:13px;height:13px;border:2px solid rgba(255,255,255,0.25);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;}
     .modal-btn-save.saving .btn-spinner{display:block;}
     .modal-btn-save.saving .btn-label{opacity:0.7;}
+    
+    /* ── SEARCH ── */
+    .search-wrapper{position:relative;padding:10px 13px 6px;}
+    .search-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 12px 8px 32px;color:var(--text);font-family:'Nunito',sans-serif;font-size:12px;outline:none;transition:border-color 0.2s;}
+    .search-input::placeholder{color:var(--text-dim);}
+    .search-input:focus{border-color:var(--blue);}
+    .search-icon{position:absolute;left:22px;top:50%;transform:translateY(-50%);font-size:12px;pointer-events:none;color:var(--text-dim);}
+    .search-dropdown{position:absolute;top:100%;left:13px;right:13px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);z-index:999;max-height:340px;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,0.5);display:none;}
+    .search-dropdown.open{display:block;}
+    .search-result-item{padding:9px 13px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;gap:9px;align-items:center;transition:background 0.15s;}
+    .search-result-item:last-child{border-bottom:none;}
+    .search-result-item:hover{background:var(--surface2);}
+    .search-result-item.section-header{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);cursor:default;padding:8px 13px 4px;}
+    .search-result-item.section-header:hover{background:transparent;}
+    .search-result-title{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .search-result-meta{font-size:10px;color:var(--text-muted);margin-top:1px;}
+    .search-mini-av{width:24px;height:24px;border-radius:50%;flex-shrink:0;}
+    
   </style>
 </head>
 <body>
@@ -214,6 +232,12 @@
         <div class="sidebar-handle" id="sidebar-handle">@—</div>
       </div>
     </a>
+    <!-- ── SEARCH ── -->
+    <div class="search-wrapper">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="globalSearch" class="search-input" placeholder="Search threads, users...">
+      <div id="searchDropdown" class="search-dropdown"></div>
+    </div>
     <nav class="nav-section">
       <span class="nav-label">Navigate</span>
       <a href="home.html" class="nav-item"><span class="nav-icon">🏠</span><span>Home</span></a>
@@ -889,6 +913,8 @@ async function saveProfile() {
     function escHtml(str) { const d = document.createElement('div'); d.textContent = str || ''; return d.innerHTML; }
 
     initProfile();
+    initSearch();
+
   </script>
 </body>
 </html>

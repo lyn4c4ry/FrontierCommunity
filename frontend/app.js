@@ -163,3 +163,76 @@ if (typeof postReply === 'undefined') {
     loadThreads();
   };
 }
+
+// ─── GLOBAL SEARCH ───────────────────────────────────────────────────────────
+let _searchTimer = null;
+
+function initSearch() {
+  const input    = document.getElementById('globalSearch');
+  const dropdown = document.getElementById('searchDropdown');
+  if (!input) return;
+
+  input.addEventListener('input', () => {
+    clearTimeout(_searchTimer);
+    const q = input.value.trim();
+    if (q.length < 2) { dropdown.classList.remove('open'); return; }
+    _searchTimer = setTimeout(() => doSearch(q), 400);
+  });
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.search-wrapper')) dropdown.classList.remove('open');
+  });
+}
+
+async function doSearch(q) {
+  const dropdown = document.getElementById('searchDropdown');
+  dropdown.innerHTML = '<div class="search-result-item" style="color:var(--text-muted);cursor:default">Searching...</div>';
+  dropdown.classList.add('open');
+
+  try {
+    const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(q)}`);
+    if (!res.ok) throw new Error('Search failed');
+    const data = await res.json();
+
+    if (!data.threads.length && !data.users.length) {
+      dropdown.innerHTML = '<div class="search-result-item" style="color:var(--text-muted);cursor:default">No results found.</div>';
+      return;
+    }
+
+    let html = '';
+
+    if (data.threads.length) {
+      html += `<div class="search-result-item section-header">💬 Threads</div>`;
+      data.threads.forEach(t => {
+        const av = `https://ui-avatars.com/api/?name=${encodeURIComponent(t.username||'U')}&background=1a6fd4&color=fff&size=48`;
+        html += `
+          <div class="search-result-item" onclick="location.href='thread.html?id=${t.id}'">
+            <img class="search-mini-av" src="${av}" alt="">
+            <div style="min-width:0;">
+              <div class="search-result-title">${escHtml(t.title)}</div>
+              <div class="search-result-meta">@${escHtml(t.username)}</div>
+            </div>
+          </div>`;
+      });
+    }
+
+    if (data.users.length) {
+      html += `<div class="search-result-item section-header">👤 Users</div>`;
+      data.users.forEach(u => {
+        const av = u.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.username||'U')}&background=161c2a&color=4db8ff&size=48`;
+        html += `
+          <div class="search-result-item" onclick="location.href='profile.html?userId=${u.id}'">
+            <img class="search-mini-av" src="${escHtml(av)}" alt="">
+            <div>
+              <div class="search-result-title">@${escHtml(u.username)}</div>
+              <div class="search-result-meta">View profile</div>
+            </div>
+          </div>`;
+      });
+    }
+
+    dropdown.innerHTML = html;
+  } catch {
+    dropdown.innerHTML = '<div class="search-result-item" style="color:var(--red);cursor:default">Search failed.</div>';
+  }
+}
