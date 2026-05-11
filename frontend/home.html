@@ -64,6 +64,23 @@
     .btn-logout{width:100%;padding:9px;background:rgba(255,64,96,0.07);border:1px solid rgba(255,64,96,0.18);border-radius:var(--r-sm);color:var(--red);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;}
     .btn-logout:hover{background:rgba(255,64,96,0.16);border-color:rgba(255,64,96,0.4);}
 
+    /* ── SEARCH ── */
+    .search-wrapper{position:relative;padding:10px 13px 6px;}
+    .search-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 12px 8px 32px;color:var(--text);font-family:'Nunito',sans-serif;font-size:12px;outline:none;transition:border-color 0.2s;}
+    .search-input::placeholder{color:var(--text-dim);}
+    .search-input:focus{border-color:var(--blue);}
+    .search-icon{position:absolute;left:22px;top:50%;transform:translateY(-50%);font-size:12px;pointer-events:none;color:var(--text-dim);}
+    .search-dropdown{position:absolute;top:100%;left:13px;right:13px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);z-index:999;max-height:340px;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,0.5);display:none;}
+    .search-dropdown.open{display:block;}
+    .search-result-item{padding:9px 13px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;gap:9px;align-items:center;transition:background 0.15s;}
+    .search-result-item:last-child{border-bottom:none;}
+    .search-result-item:hover{background:var(--surface2);}
+    .search-result-item.section-header{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);cursor:default;padding:8px 13px 4px;}
+    .search-result-item.section-header:hover{background:transparent;}
+    .search-result-title{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .search-result-meta{font-size:10px;color:var(--text-muted);margin-top:1px;}
+    .search-mini-av{width:24px;height:24px;border-radius:50%;flex-shrink:0;}
+
     /* ── MAIN ── */
     .main{margin-left:228px;flex:1;display:flex;min-height:100vh;}
 
@@ -81,6 +98,10 @@
     .compose-input::placeholder,.compose-textarea::placeholder{color:var(--text-dim);}
     .compose-input:focus,.compose-textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,212,0.12);}
     .compose-textarea{resize:none;height:74px;}
+    /* Category select — matches compose input style */
+    .compose-select{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 13px;color:var(--text-muted);font-family:'Nunito',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s;width:100%;cursor:pointer;appearance:none;-webkit-appearance:none;}
+    .compose-select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,212,0.12);}
+    .compose-select option{background:var(--surface2);color:var(--text);}
     .compose-footer{display:flex;justify-content:flex-end;margin-top:12px;}
     .btn-post{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--blue),#1255a8);border:none;padding:9px 24px;border-radius:var(--r-sm);cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px var(--blue-glow);}
     .btn-post:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 26px var(--blue-glow);}
@@ -92,6 +113,12 @@
     .live-badge{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);background:rgba(34,212,122,0.08);border:1px solid rgba(34,212,122,0.18);padding:4px 10px;border-radius:20px;}
     .live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+    /* Category filter chips */
+    .category-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+    .cat-chip{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;transition:all 0.18s;font-family:'Nunito',sans-serif;}
+    .cat-chip:hover{border-color:var(--border2);color:var(--text);}
+    .cat-chip.active{border-color:rgba(26,111,212,0.5);color:var(--blue-light);background:rgba(26,111,212,0.1);}
 
     /* ── THREAD CARD ── */
     .thread-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:14px;overflow:hidden;transition:border-color 0.2s;animation:fadeUp 0.35s ease both;}
@@ -158,14 +185,10 @@
     .sidebar-right{width:272px;flex-shrink:0;padding:26px 16px;display:flex;flex-direction:column;gap:13px;position:sticky;top:0;height:100vh;overflow-y:auto;}
     .widget{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;}
     .widget-title{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:13px;}
-
-    /* Community stats */
     .stat-row{display:flex;gap:8px;}
     .stat-box{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;text-align:center;}
     .stat-num{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--blue-light);line-height:1;}
     .stat-label{font-size:10px;color:var(--text-muted);margin-top:2px;}
-
-    /* Top Discussions */
     .top-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
     .top-item:last-child{border-bottom:none;}
     .top-rank{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--text-dim);width:20px;flex-shrink:0;line-height:1.2;text-align:center;}
@@ -177,8 +200,6 @@
     .top-meta{display:flex;align-items:center;gap:6px;margin-top:3px;}
     .top-author{font-size:10px;color:var(--text-muted);}
     .top-likes{font-size:10px;color:var(--blue-light);font-weight:700;}
-
-    /* New Members */
     .member-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);}
     .member-item:last-child{border-bottom:none;}
     .member-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;border:1.5px solid var(--border2);}
@@ -186,13 +207,9 @@
     .member-name{font-size:12px;font-weight:700;color:var(--text);}
     .member-since{font-size:10px;color:var(--text-muted);}
     .member-new{font-size:9px;font-weight:700;letter-spacing:0.5px;color:var(--green);background:rgba(34,212,122,0.08);border:1px solid rgba(34,212,122,0.2);padding:1px 6px;border-radius:10px;flex-shrink:0;}
-
-    /* Empty state widget */
     .widget-empty{text-align:center;padding:18px 10px;}
     .widget-empty-icon{font-size:24px;margin-bottom:6px;opacity:0.4;}
     .widget-empty-text{font-size:11px;color:var(--text-dim);line-height:1.5;}
-
-    /* Generic */
     .spinner{width:20px;height:20px;border:2px solid rgba(26,111,212,0.15);border-top-color:var(--blue);border-radius:50%;animation:spin 0.75s linear infinite;margin:14px auto;}
     @keyframes spin{to{transform:rotate(360deg)}}
     .loading-state{padding:44px 20px;text-align:center;color:var(--text-muted);font-size:13px;}
@@ -201,11 +218,10 @@
     .empty-icon{font-size:36px;margin-bottom:10px;}
     .empty-state p{font-size:13px;color:var(--text-muted);}
 
-    /* Responsive */
     @media(max-width:1100px){.sidebar-right{display:none;}.feed{max-width:100%;border-right:none;}}
     @media(max-width:700px){
       .sidebar-left{width:56px;}
-      .logo-text,.sidebar-uname,.sidebar-handle,.nav-item span,.nav-label{display:none;}
+      .logo-text,.sidebar-uname,.sidebar-handle,.nav-item span,.nav-label,.search-wrapper{display:none;}
       .main{margin-left:56px;}
       .logo-area{justify-content:center;padding:14px 8px;}
       .sidebar-profile{justify-content:center;padding:10px;}
@@ -243,6 +259,14 @@
       <div class="sidebar-handle" id="sidebar-handle">@—</div>
     </div>
   </a>
+
+  <!-- ── SEARCH (sidebar) ── -->
+  <div class="search-wrapper">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="globalSearch" class="search-input" placeholder="Search threads, users...">
+    <div id="searchDropdown" class="search-dropdown"></div>
+  </div>
+
   <nav class="nav-section">
     <span class="nav-label">Navigate</span>
     <a href="home.html" class="nav-item active"><span class="nav-icon">🏠</span><span>Home</span></a>
@@ -256,6 +280,7 @@
 
 <div class="main">
   <section class="feed">
+    <!-- ── COMPOSE ── -->
     <div class="compose">
       <span class="compose-label">New Discussion</span>
       <div class="compose-row">
@@ -263,23 +288,31 @@
         <div class="compose-fields">
           <input type="text" class="compose-input" id="thread-title" placeholder="Topic or game title..." maxlength="120">
           <textarea class="compose-textarea" id="thread-content" placeholder="Share your thoughts with the community..." maxlength="2000"></textarea>
+          <!-- Category dropdown — populated by loadCategories() on init -->
+          <select id="categorySelect" class="compose-select">
+            <option value="">Select a category (optional)</option>
+          </select>
         </div>
       </div>
       <div class="compose-footer">
         <button class="btn-post" id="btn-post" onclick="createThread()">Post →</button>
       </div>
     </div>
+
     <div class="feed-header">
       <span class="feed-title">Recent Discussions</span>
       <span class="live-badge"><span class="live-dot"></span>Live</span>
     </div>
+
+    <!-- Category filter chips — populated by loadCategories() -->
+    <div class="category-filter" id="category-filter"></div>
+
     <div id="threads-list">
       <div class="loading-state"><div class="spinner"></div>Loading discussions...</div>
     </div>
   </section>
 
   <aside class="sidebar-right">
-    <!-- Community Stats -->
     <div class="widget">
       <div class="widget-title">Community</div>
       <div class="stat-row">
@@ -287,14 +320,10 @@
         <div class="stat-box"><div class="stat-num" id="stat-comments">—</div><div class="stat-label">Replies</div></div>
       </div>
     </div>
-
-    <!-- Top Discussions -->
     <div class="widget">
       <div class="widget-title">🔥 Top Discussions</div>
       <div id="widget-top-discussions"><div class="spinner"></div></div>
     </div>
-
-    <!-- New Members -->
     <div class="widget">
       <div class="widget-title">👥 New Members</div>
       <div id="widget-new-members"><div class="spinner"></div></div>
@@ -309,6 +338,9 @@ const likeCache     = {};
 const bookmarkCache = new Set();
 const commentCache  = {};
 const STRIPES = ['stripe-blue','stripe-gold','stripe-green'];
+
+// Tracks the active category filter chip (null = show all)
+let activeCategoryFilter = '';
 
 /* ══════════════════════════════════════════
    TOAST
@@ -376,6 +408,11 @@ function initHome() {
     document.querySelector('.compose').scrollIntoView({ behavior: 'smooth' });
   }
 
+  // Load categories for dropdown and filter chips
+  loadCategories();
+  // Init global search
+  initSearch();
+  // Load thread feed
   loadThreads();
 }
 
@@ -385,66 +422,201 @@ function setAvatars(src) {
 }
 
 /* ══════════════════════════════════════════
+   CATEGORIES — dropdown + filter chips
+══════════════════════════════════════════ */
+async function loadCategories() {
+  try {
+    const cats = await fetch(`${API_URL}/threads/categories`).then(r => r.ok ? r.json() : []);
+
+    // Populate compose dropdown
+    const sel = document.getElementById('categorySelect');
+    cats.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.name;
+      sel.appendChild(opt);
+    });
+
+    // Build filter chips above the feed
+    const bar = document.getElementById('category-filter');
+    if (!bar) return;
+
+    // "All" chip
+    const allChip = document.createElement('button');
+    allChip.className = 'cat-chip active';
+    allChip.textContent = 'All';
+    allChip.onclick = () => selectCategoryChip(allChip, '');
+    bar.appendChild(allChip);
+
+    cats.forEach(c => {
+      const chip = document.createElement('button');
+      chip.className = 'cat-chip';
+      chip.textContent = c.name;
+      chip.onclick = () => selectCategoryChip(chip, c.slug || c.id);
+      bar.appendChild(chip);
+    });
+  } catch (e) {
+    console.warn('Categories load failed:', e);
+  }
+}
+
+function selectCategoryChip(btn, value) {
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  activeCategoryFilter = value;
+  loadThreads(value);
+}
+
+/* ══════════════════════════════════════════
+   GLOBAL SEARCH
+══════════════════════════════════════════ */
+let _searchTimer = null;
+
+function initSearch() {
+  const input    = document.getElementById('globalSearch');
+  const dropdown = document.getElementById('searchDropdown');
+  if (!input) return;
+
+  input.addEventListener('input', () => {
+    clearTimeout(_searchTimer);
+    const q = input.value.trim();
+    if (q.length < 2) { dropdown.classList.remove('open'); return; }
+    _searchTimer = setTimeout(() => doSearch(q), 400);
+  });
+
+  // Close dropdown when clicking outside the search wrapper
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.search-wrapper')) dropdown.classList.remove('open');
+  });
+}
+
+async function doSearch(q) {
+  const dropdown = document.getElementById('searchDropdown');
+  dropdown.innerHTML = '<div class="search-result-item" style="color:var(--text-muted);cursor:default">Searching...</div>';
+  dropdown.classList.add('open');
+
+  try {
+    const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(q)}`);
+    if (!res.ok) throw new Error('Search failed');
+    const data = await res.json();
+
+    if (!data.total) {
+      dropdown.innerHTML = '<div class="search-result-item" style="color:var(--text-muted);cursor:default">No results found.</div>';
+      return;
+    }
+
+    let html = '';
+
+    if (data.threads.length) {
+      html += `<div class="search-result-item section-header">💬 Threads</div>`;
+      data.threads.forEach(t => {
+        const av = `https://ui-avatars.com/api/?name=${encodeURIComponent(t.username||'U')}&background=1a6fd4&color=fff&size=48`;
+        html += `
+          <div class="search-result-item" onclick="location.href='thread.html?id=${t.id}'">
+            <img class="search-mini-av" src="${av}" alt="">
+            <div style="min-width:0;">
+              <div class="search-result-title">${escHtml(t.title)}</div>
+              <div class="search-result-meta">@${escHtml(t.username)} · 👍 ${t.like_count} · 💬 ${t.comment_count}</div>
+            </div>
+          </div>`;
+      });
+    }
+
+    if (data.users.length) {
+      html += `<div class="search-result-item section-header">👤 Users</div>`;
+      data.users.forEach(u => {
+        const av = u.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.username||'U')}&background=161c2a&color=4db8ff&size=48`;
+        html += `
+          <div class="search-result-item" onclick="location.href='profile.html?userId=${u.id}'">
+            <img class="search-mini-av" src="${escHtml(av)}" alt="">
+            <div>
+              <div class="search-result-title">@${escHtml(u.username)}</div>
+              <div class="search-result-meta">View profile</div>
+            </div>
+          </div>`;
+      });
+    }
+
+    dropdown.innerHTML = html;
+  } catch {
+    dropdown.innerHTML = '<div class="search-result-item" style="color:var(--red);cursor:default">Search failed.</div>';
+  }
+}
+
+/* ══════════════════════════════════════════
    LOAD THREADS
 ══════════════════════════════════════════ */
-/**
- * Loads all threads from the backend and renders them to the UI.
- * Also synchronizes the like/dislike counts for each thread individually.
- */
-async function loadThreads() {
+async function loadThreads(categoryFilter) {
+  // Use the active chip filter if no argument is passed
+  if (categoryFilter === undefined) categoryFilter = activeCategoryFilter;
+
   const el = document.getElementById('threads-list');
   el.innerHTML = '<div class="loading-state"><div class="spinner"></div>Loading discussions...</div>';
-  
+
   try {
-    // 1. Fetch all threads from the API
-    const threads = await fetch(`${API_URL}/threads`).then(r => { 
-      if (!r.ok) throw new Error("Failed to fetch threads"); 
-      return r.json(); 
+    const url = categoryFilter
+      ? `${API_URL}/threads?category=${encodeURIComponent(categoryFilter)}`
+      : `${API_URL}/threads`;
+
+    const threads = await fetch(url).then(r => {
+      if (!r.ok) throw new Error('Failed to fetch threads');
+      return r.json();
     });
-    
+
     document.getElementById('stat-threads').textContent = threads.length;
 
-    // Handle empty state
     if (!threads.length) {
       el.innerHTML = `<div class="empty-state"><div class="empty-icon">🎮</div><p>No discussions yet. Be the first to post!</p></div>`;
       loadSidebarWidgets([]);
       return;
     }
 
-    // 2. Fetch comments for all threads to update the global stats
-    const commentResults = await Promise.all(
-      threads.map(t => fetch(`${API_URL}/comments/${t.id}`).then(r => r.ok ? r.json() : []).catch(() => []))
-    );
-    
+    // Fetch comment lists and batch like counts in parallel
+    const [commentResults, batchLikes] = await Promise.all([
+      Promise.all(
+        threads.map(t => fetch(`${API_URL}/comments/${t.id}`).then(r => r.ok ? r.json() : []).catch(() => []))
+      ),
+      fetchBatchLikes(threads.map(t => t.id))
+    ]);
+
     document.getElementById('stat-comments').textContent = commentResults.reduce((s, c) => s + c.length, 0);
 
-    // 3. Clear the list and render each thread
     el.innerHTML = '';
-    
     threads.forEach((t, i) => {
-      // Store comments in cache for the build function
       commentCache[t.id] = commentResults[i] || [];
-      
-      // Build the thread card element
-      const card = buildThreadCard(t, commentCache[t.id], i);
-      
-      // Append the card to the DOM list
-      el.appendChild(card);
-      
-      // 4. CRITICAL: Sync real-time interaction data (Likes/Dislikes/Votes)
-      // We call this AFTER appendChild so the element IDs exist in the DOM
-      if (typeof window.syncInteractions === 'function') {
-        window.syncInteractions(t.id, 'thread', card);
+
+      // Pre-populate likeCache from batch result before building the card
+      if (batchLikes[t.id]) {
+        likeCache[`thread_${t.id}`] = batchLikes[t.id];
       }
+
+      el.appendChild(buildThreadCard(t, commentCache[t.id], i));
     });
 
-    // 4. Load the right-side widgets
     loadSidebarWidgets(threads);
-
   } catch (e) {
-    console.error("Critical error in loadThreads:", e);
+    console.error('loadThreads error:', e);
     el.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Failed to load. Is the backend running?</p></div>`;
     loadSidebarWidgets([]);
+  }
+}
+
+/* ══════════════════════════════════════════
+   BATCH LIKES
+   Fetches like/dislike counts + userVote for
+   all visible threads in a single request.
+══════════════════════════════════════════ */
+async function fetchBatchLikes(threadIds) {
+  if (!threadIds.length) return {};
+  try {
+    const res = await fetch(`${API_URL}/likes/batch`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ threadIds, userId: ME.userId })
+    });
+    return res.ok ? res.json() : {};
+  } catch {
+    return {};
   }
 }
 
@@ -464,25 +636,18 @@ async function loadTopDiscussions(threads) {
   }
 
   try {
-    // Fetch like counts for all threads in parallel
-    const likeCounts = await Promise.all(
-      threads.map(t =>
-        fetch(`${API_URL}/likes/thread/${t.id}${ME.userId ? `?userId=${ME.userId}` : ''}`)
-          .then(r => r.ok ? r.json() : { likes: 0, dislikes: 0 })
-          .catch(() => ({ likes: 0, dislikes: 0 }))
-      )
-    );
+    // Use batch endpoint so we don't fire N requests
+    const batchLikes = await fetchBatchLikes(threads.map(t => t.id));
 
-    // Attach like scores and sort
-    const scored = threads.map((t, i) => ({
+    const scored = threads.map(t => ({
       ...t,
-      score: (likeCounts[i].likes || 0) - (likeCounts[i].dislikes || 0),
-      likes: likeCounts[i].likes || 0
+      score: (batchLikes[t.id]?.likes || 0) - (batchLikes[t.id]?.dislikes || 0),
+      likes: batchLikes[t.id]?.likes || 0
     })).sort((a, b) => b.score - a.score).slice(0, 5);
 
     const rankClasses = ['gold', 'silver', 'bronze', '', ''];
     el.innerHTML = scored.map((t, i) => `
-      <div class="top-item">
+      <div class="top-item" style="cursor:pointer" onclick="location.href='thread.html?id=${t.id}'">
         <div class="top-rank ${rankClasses[i]}">${i + 1}</div>
         <div class="top-info">
           <div class="top-title" title="${escHtml(t.title)}">${escHtml(t.title)}</div>
@@ -501,7 +666,6 @@ async function loadTopDiscussions(threads) {
 async function loadNewMembers() {
   const el = document.getElementById('widget-new-members');
   try {
-    // Fetch recent threads to extract unique recent users
     const threads = await fetch(`${API_URL}/threads`).then(r => r.ok ? r.json() : []).catch(() => []);
 
     if (!threads.length) {
@@ -509,22 +673,15 @@ async function loadNewMembers() {
       return;
     }
 
-    // Deduplicate users, keep latest thread per user
     const seen   = new Set();
     const recent = [];
     [...threads].reverse().forEach(t => {
-      if (!seen.has(t.user_id)) {
-        seen.add(t.user_id);
-        recent.push(t);
-      }
+      if (!seen.has(t.user_id)) { seen.add(t.user_id); recent.push(t); }
     });
 
-    // Fetch real profiles in parallel
     const profiles = await Promise.all(
       recent.slice(0, 5).map(t =>
-        fetch(`${API_URL}/auth/profile/${t.user_id}`)
-          .then(r => r.ok ? r.json() : null)
-          .catch(() => null)
+        fetch(`${API_URL}/auth/profile/${t.user_id}`).then(r => r.ok ? r.json() : null).catch(() => null)
       )
     );
 
@@ -533,14 +690,11 @@ async function loadNewMembers() {
       username:  profiles[i]?.username || t.username || 'User',
       avatarUrl: profiles[i]?.avatar_url || null,
       joinedAt:  profiles[i]?.created_at || t.created_at,
-    }));
-
-    // Sort by joinedAt desc to show newest first
-    members.sort((a, b) => new Date(b.joinedAt) - new Date(a.joinedAt));
+    })).sort((a, b) => new Date(b.joinedAt) - new Date(a.joinedAt));
 
     el.innerHTML = members.map(m => {
       const av = m.avatarUrl
-        ? `<img class="member-av" src="${escHtml(m.avatarUrl)}" alt="${escHtml(m.username)}" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(m.username)}&background=161c2a&color=4db8ff&size=60'">`
+        ? `<img class="member-av" src="${escHtml(m.avatarUrl)}" alt="${escHtml(m.username)}">`
         : `<img class="member-av" src="https://ui-avatars.com/api/?name=${encodeURIComponent(m.username)}&background=161c2a&color=4db8ff&size=60" alt="${escHtml(m.username)}">`;
       const isNew = m.joinedAt && (Date.now() - new Date(m.joinedAt)) < 7 * 24 * 60 * 60 * 1000;
       return `
@@ -553,8 +707,7 @@ async function loadNewMembers() {
             <div class="member-since">Joined ${timeAgo(new Date(m.joinedAt))}</div>
           </div>
           ${isNew ? '<span class="member-new">NEW</span>' : ''}
-        </div>
-      `;
+        </div>`;
     }).join('');
   } catch {
     el.innerHTML = `<div class="widget-empty"><div class="widget-empty-icon">⚠️</div><div class="widget-empty-text">Could not load members.</div></div>`;
@@ -570,12 +723,18 @@ function buildThreadCard(t, comments, i) {
   const lk    = likeCache[`thread_${t.id}`] || { likes: 0, dislikes: 0, userVote: 0 };
   const bk    = bookmarkCache.has(t.id);
   const card  = document.createElement('div');
-  card.className = 'thread-card'; card.id = `card-${t.id}`; card.style.animationDelay = `${i * 0.06}s`;
+  card.className = 'thread-card';
+  card.id = `card-${t.id}`;
+  card.style.animationDelay = `${i * 0.06}s`;
   card.style.cursor = 'pointer';
-  card.addEventListener('click', (e) => {
-    if (e.target.closest('button, input, a')) return;
+  card.addEventListener('click', e => {
+    if (e.target.closest('button, input, a, select')) return;
     window.location.href = `thread.html?id=${t.id}`;
   });
+
+  // Use category_name from the enriched threadRoutes response if available
+  const catLabel = t.category_name || 'Discussion';
+
   card.innerHTML = `
     <div class="thread-stripe ${STRIPES[i % 3]}"></div>
     <div class="thread-inner">
@@ -589,15 +748,15 @@ function buildThreadCard(t, comments, i) {
           </a>
           <div class="thread-time">${timeAgo(new Date(t.created_at))}</div>
         </div>
-        <span class="thread-cat">Discussion</span>
+        <span class="thread-cat">${escHtml(catLabel)}</span>
       </div>
       <div class="thread-title" style="cursor:pointer" onclick="event.stopPropagation();window.location.href='thread.html?id=${t.id}'">${escHtml(t.title)}</div>
       <div class="thread-content">${escHtml(t.content)}</div>
       <div class="thread-actions">
-        <button class="action-btn like-btn ${lk.userVote===1?'liked active':''}" id="tlike-${t.id}" onclick="event.stopPropagation(); voteThread(${t.id},1)">
+        <button class="action-btn like-btn ${lk.userVote===1?'liked':''}" id="tlike-${t.id}" onclick="event.stopPropagation(); voteThread(${t.id},1)">
           👍 <span id="tlike-count-${t.id}" class="count">${lk.likes}</span>
         </button>
-        <button class="action-btn dislike-btn ${lk.userVote===-1?'disliked active':''}" id="tdislike-${t.id}" onclick="event.stopPropagation(); voteThread(${t.id},-1)">
+        <button class="action-btn dislike-btn ${lk.userVote===-1?'disliked':''}" id="tdislike-${t.id}" onclick="event.stopPropagation(); voteThread(${t.id},-1)">
           👎 <span id="tdislike-count-${t.id}" class="count">${lk.dislikes}</span>
         </button>
         <button class="action-btn ${bk?'bookmarked':''}" id="tbookmark-${t.id}" onclick="event.stopPropagation(); toggleBookmark(${t.id})">
@@ -629,7 +788,8 @@ function buildCommentsHTML(comments, threadId, parentId = null, depth = 0) {
   let html = '<div class="comment-tree">';
   visible.forEach(c => { html += buildCommentItem(c, comments, threadId, depth); });
   if (hidden.length) html += `<button class="show-more-comments" onclick="showMore(this,${threadId},'${JSON.stringify(hidden.map(c=>c.id)).replace(/'/g,"\\'")}')">▾ Show ${hidden.length} more comment${hidden.length > 1 ? 's' : ''}</button>`;
-  html += '</div>'; return html;
+  html += '</div>';
+  return html;
 }
 
 function buildCommentItem(c, all, threadId, depth) {
@@ -663,7 +823,7 @@ function buildCommentItem(c, all, threadId, depth) {
 }
 
 function showMore(btn, threadId, idsJson) {
-  const ids     = JSON.parse(idsJson);
+  const ids      = JSON.parse(idsJson);
   const comments = commentCache[threadId] || [];
   const toShow   = comments.filter(c => ids.includes(c.id));
   let html = ''; toShow.forEach(c => { html += buildCommentItem(c, comments, threadId, 0); });
@@ -673,7 +833,8 @@ function showMore(btn, threadId, idsJson) {
 
 function toggleReplyForm(id) {
   const el = document.getElementById(id); if (!el) return;
-  const v = el.style.display !== 'none'; el.style.display = v ? 'none' : 'flex';
+  const v = el.style.display !== 'none';
+  el.style.display = v ? 'none' : 'flex';
   if (!v) el.querySelector('input')?.focus();
 }
 
@@ -683,7 +844,8 @@ async function refreshComments(threadId) {
     commentCache[threadId] = comments;
     const el = document.getElementById(`comments-${threadId}`);
     if (el) el.innerHTML = buildCommentsHTML(comments, threadId);
-    document.getElementById('stat-comments').textContent = Object.values(commentCache).reduce((s, c) => s + c.length, 0);
+    document.getElementById('stat-comments').textContent =
+      Object.values(commentCache).reduce((s, c) => s + c.length, 0);
   } catch (e) { console.error(e); }
 }
 
@@ -694,14 +856,15 @@ async function voteThread(threadId, value) {
   if (!ME.userId) { toast('Please login.', 'error'); return; }
   try {
     const res = await fetch(`${API_URL}/like`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` }, 
-      body: JSON.stringify({ userId: ME.userId, targetId: threadId, targetType: 'thread', value })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` },
+      body: JSON.stringify({ targetId: threadId, targetType: 'thread', value })
     }).then(r => r.json());
     likeCache[`thread_${threadId}`] = res;
-    document.getElementById(`tlike-count-${threadId}`).textContent = res.likes;
+    document.getElementById(`tlike-count-${threadId}`).textContent    = res.likes;
     document.getElementById(`tdislike-count-${threadId}`).textContent = res.dislikes;
-    document.getElementById(`tlike-${threadId}`).className    = `action-btn ${res.userVote === 1  ? 'liked'    : ''}`;
-    document.getElementById(`tdislike-${threadId}`).className = `action-btn ${res.userVote === -1 ? 'disliked' : ''}`;
+    document.getElementById(`tlike-${threadId}`).className    = `action-btn like-btn ${res.userVote === 1  ? 'liked'    : ''}`;
+    document.getElementById(`tdislike-${threadId}`).className = `action-btn dislike-btn ${res.userVote === -1 ? 'disliked' : ''}`;
   } catch { toast('Failed to vote.', 'error'); }
 }
 
@@ -709,11 +872,12 @@ async function voteComment(commentId, value, threadId) {
   if (!ME.userId) { toast('Please login.', 'error'); return; }
   try {
     const res = await fetch(`${API_URL}/like`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` },
-      body: JSON.stringify({ userId: ME.userId, targetId: commentId, targetType: 'comment', value })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` },
+      body: JSON.stringify({ targetId: commentId, targetType: 'comment', value })
     }).then(r => r.json());
     likeCache[`comment_${commentId}`] = res;
-    document.getElementById(`clike-count-${commentId}`).textContent = res.likes;
+    document.getElementById(`clike-count-${commentId}`).textContent    = res.likes;
     document.getElementById(`cdislike-count-${commentId}`).textContent = res.dislikes;
     document.getElementById(`clike-${commentId}`).className    = `comment-action c-like ${res.userVote === 1  ? 'active' : ''}`;
     document.getElementById(`cdislike-${commentId}`).className = `comment-action c-dislike ${res.userVote === -1 ? 'active' : ''}`;
@@ -724,8 +888,9 @@ async function toggleBookmark(threadId) {
   if (!ME.userId) { toast('Please login.', 'error'); return; }
   try {
     const res = await fetch(`${API_URL}/bookmark`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` },
-      body: JSON.stringify({ userId: ME.userId, threadId })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` },
+      body: JSON.stringify({ threadId })
     }).then(r => r.json());
     if (res.bookmarked) { bookmarkCache.add(threadId); } else { bookmarkCache.delete(threadId); }
     document.getElementById(`tbookmark-${threadId}`).className = `action-btn ${res.bookmarked ? 'bookmarked' : ''}`;
@@ -735,26 +900,24 @@ async function toggleBookmark(threadId) {
 }
 
 /* ══════════════════════════════════════════
-   DELETE (custom confirm)
+   DELETE
 ══════════════════════════════════════════ */
 async function deleteThread(threadId) {
   const ok = await showConfirm({
-    icon: '🗑',
-    title: 'Delete Discussion',
+    icon: '🗑', title: 'Delete Discussion',
     msg: 'This discussion and all its replies will be permanently removed.',
     okLabel: 'Delete'
   });
   if (!ok) return;
   try {
     const res = await fetch(`${API_URL}/threads/${threadId}`, {
-      method: 'DELETE', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: ME.userId })
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` }
     });
     if (!res.ok) throw new Error();
     document.getElementById(`card-${threadId}`)?.remove();
     delete commentCache[threadId];
     toast('Discussion deleted.', 'success');
-    // Refresh sidebar top discussions
     const threads = await fetch(`${API_URL}/threads`).then(r => r.ok ? r.json() : []).catch(() => []);
     loadTopDiscussions(threads);
   } catch { toast('Failed to delete.', 'error'); }
@@ -762,16 +925,15 @@ async function deleteThread(threadId) {
 
 async function deleteComment(commentId, threadId) {
   const ok = await showConfirm({
-    icon: '💬',
-    title: 'Delete Comment',
+    icon: '💬', title: 'Delete Comment',
     msg: 'Your comment will be marked as deleted and hidden from others.',
     okLabel: 'Delete'
   });
   if (!ok) return;
   try {
     const res = await fetch(`${API_URL}/comments/${commentId}`, {
-      method: 'DELETE', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: ME.userId })
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` }
     });
     if (!res.ok) throw new Error();
     await refreshComments(threadId);
@@ -780,25 +942,28 @@ async function deleteComment(commentId, threadId) {
 }
 
 /* ══════════════════════════════════════════
-   CREATE / REPLY
+   CREATE THREAD / REPLY
 ══════════════════════════════════════════ */
 async function createThread() {
-  const titleEl   = document.getElementById('thread-title');
-  const contentEl = document.getElementById('thread-content');
-  const btn       = document.getElementById('btn-post');
-  const title     = titleEl.value.trim();
-  const content   = contentEl.value.trim();
+  const titleEl      = document.getElementById('thread-title');
+  const contentEl    = document.getElementById('thread-content');
+  const categoryId   = document.getElementById('categorySelect')?.value || null;
+  const btn          = document.getElementById('btn-post');
+  const title        = titleEl.value.trim();
+  const content      = contentEl.value.trim();
   if (!title)   { toast('Please enter a title.', 'error'); titleEl.focus(); return; }
   if (!content) { toast('Please write something.', 'error'); contentEl.focus(); return; }
   if (!ME.userId) { toast('Session expired.', 'error'); return; }
   btn.disabled = true; btn.textContent = 'Posting...';
   try {
     const res = await fetch(`${API_URL}/threads`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, content, userId: ME.userId })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` },
+      body: JSON.stringify({ title, content, categoryId })
     });
     if (!res.ok) throw new Error();
     titleEl.value = ''; contentEl.value = '';
+    document.getElementById('categorySelect').value = '';
     toast('Discussion posted!', 'success');
     await loadThreads();
   } catch { toast('Failed to post.', 'error'); }
@@ -813,8 +978,9 @@ async function postReply(threadId, parentId) {
   if (!ME.userId) { toast('Session expired.', 'error'); return; }
   try {
     const res = await fetch(`${API_URL}/comments`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ threadId, userId: ME.userId, content, parentId: parentId || null })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${ME.token}` },
+      body: JSON.stringify({ threadId, content, parentId: parentId || null })
     });
     if (!res.ok) throw new Error();
     input.value = '';
@@ -830,139 +996,25 @@ async function postReply(threadId, parentId) {
 function handleLogout() { localStorage.clear(); window.location.href = 'index.html'; }
 
 function timeAgo(d) {
-  const date = new Date(d);
-  const now = new Date();
-  const diffMs = now - date;
+  const date     = new Date(d);
+  const now      = new Date();
+  const diffMs   = now - date;
   const diffMins = Math.floor(diffMs / 60000);
   const diffHours = diffMs / (1000 * 60 * 60);
-
   if (diffMins < 1)   return 'just now';
   if (diffMins < 60)  return `${diffMins}m ago`;
-
-  if (diffHours < 24) {
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-      timeZone: 'Europe/Istanbul'
-    });
-  }
-
-  const todayIst  = new Date(now.toLocaleString('en-US',  { timeZone: 'Europe/Istanbul' }));
-  const dateIst   = new Date(date.toLocaleString('en-US', { timeZone: 'Europe/Istanbul' }));
-  todayIst.setHours(0, 0, 0, 0);
-  dateIst.setHours(0, 0, 0, 0);
+  if (diffHours < 24) return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Istanbul' });
+  const todayIst = new Date(now.toLocaleString('en-US',  { timeZone: 'Europe/Istanbul' }));
+  const dateIst  = new Date(date.toLocaleString('en-US', { timeZone: 'Europe/Istanbul' }));
+  todayIst.setHours(0,0,0,0); dateIst.setHours(0,0,0,0);
   const dayDiff = Math.round((todayIst - dateIst) / 86400000);
-
   if (dayDiff === 1) return 'Yesterday';
   if (dayDiff < 7)   return `${dayDiff} days ago`;
-
-  return date.toLocaleDateString('en-US', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'Europe/Istanbul'
-  });
+  return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Europe/Istanbul' });
 }
 
 function escHtml(str) {
   const d = document.createElement('div'); d.textContent = str || ''; return d.innerHTML;
-}
-
-/**
- * Synchronizes likes and dislikes from the server.
- * Added console.logs to debug why it's not showing on Home.
- */
-window.syncInteractions = async function(targetId, targetType, cardElement) {
-  const userId = localStorage.getItem('userId');
-  try {
-    const res = await fetch(`${API_URL}/likes/${targetType}/${targetId}?userId=${userId}`);
-    const data = await res.json();
-
-    // Senin HTML'indeki spesifik ID'leri yakalıyoruz
-    const lSpan = document.getElementById(`tlike-count-${targetId}`);
-    const dSpan = document.getElementById(`tdislike-count-${targetId}`);
-    const lBtn  = document.getElementById(`tlike-${targetId}`);
-    const dBtn  = document.getElementById(`tdislike-${targetId}`);
-
-    if (lSpan) lSpan.innerText = data.likes || 0;
-    if (dSpan) dSpan.innerText = data.dislikes || 0;
-
-    // Renkleri/Aktiflik durumunu güncelle
-    lBtn?.classList.toggle('active', data.userVote === 1);
-    lBtn?.classList.toggle('liked', data.userVote === 1);
-    dBtn?.classList.toggle('active', data.userVote === -1);
-    dBtn?.classList.toggle('disliked', data.userVote === -1);
-
-    console.log(`[SYNC] Thread ${targetId} updated: ${data.likes} likes`);
-  } catch (err) {
-    console.error(`[SYNC ERROR] ID ${targetId}:`, err);
-  }
-};
-
-/**
- * Handles like/dislike button clicks.
- */
-async function handleLikeClick(targetId, targetType, value, btn) {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    alert("Please log in to interact with posts.");
-    return;
-  }
-
-  try {
-    const res = await fetch(`${API_URL}/like`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ targetId, targetType, value })
-    });
-
-    if (!res.ok) throw new Error('Failed to process vote');
-    const data = await res.json();
-    
-    const parent = btn.closest('.thread-card') || btn.closest('.comment-item') || btn.parentElement;
-    const likeBtn = parent.querySelector('.like-btn');
-    const dislikeBtn = parent.querySelector('.dislike-btn');
-    
-    const lc = likeBtn.querySelector('.count') || parent.querySelector('.like-count');
-    const dc = dislikeBtn.querySelector('.count') || parent.querySelector('.dislike-count');
-    if (lc) lc.innerText = data.likes;
-    if (dc) dc.innerText = data.dislikes;
-
-    likeBtn.classList.toggle('active', data.userVote === 1);
-    dislikeBtn.classList.toggle('active', data.userVote === -1);
-  } catch (err) {
-    console.error("Voting error:", err);
-  }
-}
-
-/**
- * Fetches real-time like/dislike counts for each thread on the Home page.
- * This ensures the numbers are not 0 when the page is refreshed.
- */
-async function refreshHomeInteractions(targetId, cardElement) {
-  try {
-    // We use the GET endpoint we created earlier
-    const res = await fetch(`${API_URL}/likes/thread/${targetId}?userId=${ME.userId}`);
-    const data = await res.json();
-
-    const likeCountSpan = cardElement.querySelector('.like-btn .count') || cardElement.querySelector('.like-count');
-    const dislikeCountSpan = cardElement.querySelector('.dislike-btn .count') || cardElement.querySelector('.dislike-count');
-    const likeBtn = cardElement.querySelector('.like-btn');
-    const dislikeBtn = cardElement.querySelector('.dislike-btn');
-
-    if (likeCountSpan) likeCountSpan.innerText = data.likes;
-    if (dislikeCountSpan) dislikeCountSpan.innerText = data.dislikes;
-
-    // Highlight buttons if the user has already interacted
-    if (data.userVote === 1) likeBtn.classList.add('active');
-    if (data.userVote === -1) dislikeBtn.classList.add('active');
-  } catch (err) {
-    console.error("Failed to sync home likes:", err);
-  }
 }
 </script>
 </body>
