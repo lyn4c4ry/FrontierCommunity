@@ -5,6 +5,9 @@ const authMiddleware = require('./middleware/authMiddleware');
 require('dotenv').config();
 console.log('JWT_SECRET:', process.env.JWT_SECRET);
 
+// Force PostgreSQL session timezone to UTC so timestamps are consistent
+process.env.PGTZ = 'UTC';
+
 // 1. Route Imports
 const authRoutes = require('./routes/authRoutes');
 const threadRoutes = require('./routes/threadRoutes');

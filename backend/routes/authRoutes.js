@@ -246,4 +246,88 @@ router.get('/stats', async (req, res) => {
   }
 });
 
+/**
+ * @route   PUT /api/auth/password
+ * @desc    Change password — requires current password verification
+ */
+router.put('/password', async (req, res) => {
+  try {
+    const { userId, currentPassword, newPassword } = req.body;
+
+    if (!userId || !currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'All fields are required.' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'New password must be at least 6 characters.' });
+    }
+
+    // Fetch current password hash from DB
+    const result = await db.query(
+      'SELECT password_hash FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (!result.rows[0]) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Verify current password
+    const isMatch = await bcrypt.compare(currentPassword, result.rows[0].password_hash);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Current password is incorrect.' });
+    }
+
+    // Hash new password and update
+    const salt = await bcrypt.genSalt(10);
+    const newHash = await bcrypt.hash(newPassword, salt);
+
+    await db.query(
+      'UPDATE users SET password_hash = $1 WHERE id = $2',
+      [newHash, userId]
+    );
+
+    res.json({ message: 'Password updated successfully!' });
+  } catch (err) {
+    console.error('Password change error:', err.message);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+/**
+ * @route   DELETE /api/auth/account
+ * @desc    Delete own account permanently — requires password confirmation
+ */
+router.delete('/account', async (req, res) => {
+  try {
+    const { userId, password } = req.body;
+
+    if (!userId || !password) {
+      return res.status(400).json({ message: 'userId and password are required.' });
+    }
+
+    const result = await db.query(
+      'SELECT password_hash FROM users WHERE id = $1',
+      [userId]
+    );
+
+    if (!result.rows[0]) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    const isMatch = await bcrypt.compare(password, result.rows[0].password_hash);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Password is incorrect.' });
+    }
+
+    // Hard delete — cascades to threads, comments, likes, bookmarks
+    await db.query('DELETE FROM users WHERE id = $1', [userId]);
+
+    res.json({ message: 'Account deleted successfully.' });
+  } catch (err) {
+    console.error('Account delete error:', err.message);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
 module.exports = router;

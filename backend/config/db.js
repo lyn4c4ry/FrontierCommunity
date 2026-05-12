@@ -9,6 +9,10 @@ const pool = new Pool({
   }
 });
 
+pool.on('connect', client => {
+  client.query("SET timezone = 'UTC'");
+});
+
 // Event listener for successful database connection
 pool.on('connect', () => {
   console.log('PostgreSQL: Database bridge established successfully! 🚀');

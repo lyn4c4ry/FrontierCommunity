@@ -106,7 +106,7 @@ router.get('/likes/:type/:targetId', async (req, res) => {
 // Fetches like/dislike counts and user vote for multiple threads in a single query.
 // Used on page load to pre-populate counts without N individual requests.
 router.post('/likes/batch', async (req, res) => {
-  const { threadIds, userId } = req.body;
+  const { threadIds, userId, targetType = 'thread' } = req.body;
 
   if (!Array.isArray(threadIds) || threadIds.length === 0) {
     return res.status(400).json({ error: 'threadIds array required' });
@@ -123,9 +123,9 @@ router.post('/likes/batch', async (req, res) => {
         COUNT(*) FILTER (WHERE value=1)  AS likes,
         COUNT(*) FILTER (WHERE value=-1) AS dislikes
        FROM likes
-       WHERE target_id = ANY($1) AND target_type = 'thread'
+       WHERE target_id = ANY($1) AND target_type = $2
        GROUP BY target_id`,
-      [ids]
+      [ids, targetType]
     );
 
     // Fetch the authenticated user's votes if userId is provided
@@ -133,8 +133,8 @@ router.post('/likes/batch', async (req, res) => {
     if (userId && userId !== 'undefined') {
       const votesResult = await pool.query(
         `SELECT target_id, value FROM likes
-         WHERE user_id=$1 AND target_id = ANY($2) AND target_type='thread'`,
-        [userId, ids]
+         WHERE user_id=$1 AND target_id = ANY($2) AND target_type=$3`,
+        [userId, ids, targetType]
       );
       votesResult.rows.forEach(r => {
         userVotes[r.target_id] = r.value;
