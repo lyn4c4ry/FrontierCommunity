@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Frontier Community — Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#080a0f; --bg2:#0d1018; --surface:#111520; --surface2:#161c2a;
+      --border:rgba(74,144,226,0.10); --border2:rgba(74,144,226,0.22);
+      --blue:#1a6fd4; --blue-light:#4db8ff; --blue-glow:rgba(26,111,212,0.35);
+      --gold:#f5c518; --text:#dce8f5; --text-muted:#6a7f99; --text-dim:#2e3c50;
+      --red:#ff4060; --green:#22d47a;
+      --r-sm:8px; --r:12px; --r-lg:18px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;line-height:1.6;min-height:100vh;display:flex;overflow-x:hidden;}
+    body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.35;}
+    ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:3px;}::-webkit-scrollbar-thumb:hover{background:var(--blue);}
+
+    /* ── TOAST ── */
+    #toast{position:fixed;bottom:28px;right:28px;z-index:10000;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+    .toast-msg{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);padding:11px 18px;font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;animation:toastIn 0.28s cubic-bezier(.22,1,.36,1) both;box-shadow:0 8px 32px rgba(0,0,0,0.4);}
+    .toast-msg.success{border-color:rgba(34,212,122,0.3);color:var(--green);}
+    .toast-msg.error{border-color:rgba(255,64,96,0.3);color:var(--red);}
+    .toast-msg.info{border-color:rgba(77,184,255,0.25);color:var(--blue-light);}
+    .toast-msg.out{animation:toastOut 0.22s ease both;}
+    @keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes toastOut{to{opacity:0;transform:translateY(6px)}}
+
+    /* ── CONFIRM MODAL ── */
+    #confirm-modal{position:fixed;inset:0;background:rgba(8,10,15,0.82);backdrop-filter:blur(6px);z-index:9998;display:none;align-items:center;justify-content:center;}
+    #confirm-modal.open{display:flex;}
+    .confirm-box{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-lg);padding:32px 28px 24px;width:380px;max-width:90vw;text-align:center;box-shadow:0 24px 64px rgba(0,0,0,0.6);animation:confirmIn 0.22s cubic-bezier(.22,1,.36,1) both;position:relative;overflow:hidden;}
+    .confirm-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),rgba(255,64,96,0.3));}
+    @keyframes confirmIn{from{opacity:0;transform:scale(0.92) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    .confirm-icon{font-size:36px;margin-bottom:12px;}
+    .confirm-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px;}
+    .confirm-msg{font-size:13px;color:var(--text-muted);margin-bottom:18px;line-height:1.5;}
+    .confirm-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 13px;color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;margin-bottom:18px;}
+    .confirm-input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(255,64,96,0.1);}
+    .confirm-input::placeholder{color:var(--text-dim);}
+    .confirm-btns{display:flex;gap:10px;justify-content:center;}
+    .confirm-cancel{padding:9px 22px;border-radius:var(--r);border:1px solid var(--border2);background:transparent;color:var(--text-muted);font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.18s;}
+    .confirm-cancel:hover{border-color:var(--blue);color:var(--text);}
+    .confirm-ok{padding:9px 22px;border-radius:var(--r);border:none;background:var(--red);color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:opacity 0.18s;}
+    .confirm-ok:hover{opacity:0.82;}
+
+    /* ── LEFT SIDEBAR ── */
+    .sidebar-left{position:fixed;top:0;left:0;width:228px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;overflow-y:auto;}
+    .logo-area{padding:22px 20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;}
+    .logo-area img{width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(77,184,255,0.45));}
+    .logo-text{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(90deg,var(--blue-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .sidebar-profile{margin:16px 13px 6px;padding:12px 14px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color 0.2s;text-decoration:none;}
+    .sidebar-profile:hover{border-color:var(--blue);}
+    .sidebar-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--blue);flex-shrink:0;}
+    .sidebar-uname{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--text);}
+    .sidebar-handle{font-size:11px;color:var(--text-muted);}
+    .nav-section{padding:14px 10px 8px;flex:1;}
+    .nav-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);padding:0 12px;margin-bottom:5px;display:block;}
+    .nav-item{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:var(--r-sm);color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:600;transition:all 0.2s;margin-bottom:2px;}
+    .nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
+    .nav-item.active{background:rgba(26,111,212,0.12);color:var(--blue-light);}
+    .nav-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
+    .sidebar-bottom{padding:14px;border-top:1px solid var(--border);}
+    .btn-logout{width:100%;padding:9px;background:rgba(255,64,96,0.07);border:1px solid rgba(255,64,96,0.18);border-radius:var(--r-sm);color:var(--red);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;}
+    .btn-logout:hover{background:rgba(255,64,96,0.16);border-color:rgba(255,64,96,0.4);}
+
+    /* ── MAIN ── */
+    .main{margin-left:228px;flex:1;display:flex;justify-content:center;padding:36px 28px 80px;min-height:100vh;}
+
+    /* ── SETTINGS LAYOUT ── */
+    .settings-container{width:100%;max-width:720px;display:flex;flex-direction:column;gap:0;}
+
+    /* Page header */
+    .page-header{margin-bottom:32px;}
+    .page-title{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;letter-spacing:1px;color:#fff;display:flex;align-items:center;gap:12px;}
+    .page-title-icon{font-size:24px;}
+    .page-subtitle{font-size:13px;color:var(--text-muted);margin-top:4px;}
+
+    /* Settings nav tabs */
+    .settings-tabs{display:flex;gap:4px;margin-bottom:28px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:5px;}
+    .stab{flex:1;padding:8px 12px;border-radius:var(--r-sm);border:none;background:transparent;color:var(--text-muted);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+    .stab:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+    .stab.active{background:rgba(26,111,212,0.15);color:var(--blue-light);border:1px solid rgba(26,111,212,0.25);}
+
+    /* Settings panel */
+    .settings-panel{display:none;flex-direction:column;gap:20px;animation:fadeUp 0.25s ease both;}
+    .settings-panel.active{display:flex;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+    /* Settings card */
+    .scard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;}
+    .scard-header{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+    .scard-icon{font-size:18px;}
+    .scard-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.5px;color:var(--text);}
+    .scard-desc{font-size:11px;color:var(--text-muted);margin-top:1px;}
+    .scard-body{padding:20px 22px;}
+
+    /* Form fields */
+    .field-group{display:flex;flex-direction:column;gap:5px;margin-bottom:16px;}
+    .field-group:last-child{margin-bottom:0;}
+    .field-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);}
+    .field-input{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 13px;color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s,box-shadow 0.2s;width:100%;}
+    .field-input::placeholder{color:var(--text-dim);}
+    .field-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,212,0.12);}
+    .field-select{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 13px;color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;width:100%;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236a7f99' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;}
+    .field-select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,212,0.12);}
+    .field-select option{background:var(--surface2);color:var(--text);}
+    .field-hint{font-size:11px;color:var(--text-dim);margin-top:3px;}
+
+    /* Save button */
+    .btn-save{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--blue),#1255a8);border:none;padding:10px 28px;border-radius:var(--r-sm);cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px var(--blue-glow);}
+    .btn-save:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 26px var(--blue-glow);}
+    .btn-save:disabled{opacity:0.5;cursor:not-allowed;}
+    .btn-row{display:flex;justify-content:flex-end;margin-top:20px;}
+
+    /* ── THEME SWITCHER ── */
+    .theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+    .theme-option{border:2px solid var(--border);border-radius:var(--r);padding:14px 10px;cursor:pointer;transition:all 0.2s;text-align:center;background:var(--surface2);position:relative;overflow:hidden;}
+    .theme-option:hover{border-color:var(--border2);}
+    .theme-option.selected{border-color:var(--blue);background:rgba(26,111,212,0.08);}
+    .theme-option.selected::after{content:'✓';position:absolute;top:7px;right:9px;font-size:10px;font-weight:700;color:var(--blue-light);}
+    .theme-preview{height:52px;border-radius:var(--r-sm);margin-bottom:10px;overflow:hidden;position:relative;}
+    .theme-preview-dark{background:linear-gradient(135deg,#080a0f 0%,#111520 50%,#1a6fd4 100%);}
+    .theme-preview-light{background:linear-gradient(135deg,#f0f4f8 0%,#ffffff 50%,#3b82f6 100%);}
+    .theme-preview-game{background:linear-gradient(135deg,#0a0010 0%,#1a0030 50%,#a020f0 100%);}
+    .theme-name{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--text);}
+    .theme-tag{font-size:10px;color:var(--text-muted);margin-top:2px;}
+
+    /* ── TOGGLE SWITCH ── */
+    .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+    .toggle-row:last-child{border-bottom:none;padding-bottom:0;}
+    .toggle-info{}
+    .toggle-label{font-size:13px;font-weight:700;color:var(--text);}
+    .toggle-sub{font-size:11px;color:var(--text-muted);margin-top:2px;}
+    .toggle{position:relative;width:40px;height:22px;flex-shrink:0;}
+    .toggle input{opacity:0;width:0;height:0;}
+    .toggle-track{position:absolute;inset:0;background:var(--surface2);border:1px solid var(--border2);border-radius:11px;cursor:pointer;transition:all 0.25s;}
+    .toggle input:checked + .toggle-track{background:var(--blue);border-color:var(--blue);}
+    .toggle-track::before{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;left:2px;transition:transform 0.25s;box-shadow:0 1px 4px rgba(0,0,0,0.3);}
+    .toggle input:checked + .toggle-track::before{transform:translateX(18px);}
+
+    /* ── DANGER ZONE ── */
+    .danger-card{background:var(--surface);border:1px solid rgba(255,64,96,0.2);border-radius:var(--r-lg);overflow:hidden;}
+    .danger-header{padding:18px 22px 14px;border-bottom:1px solid rgba(255,64,96,0.12);display:flex;align-items:center;gap:10px;background:rgba(255,64,96,0.04);}
+    .danger-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--red);}
+    .danger-body{padding:20px 22px;}
+    .danger-item{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--border);}
+    .danger-item:last-child{border-bottom:none;padding-bottom:0;}
+    .danger-info{}
+    .danger-item-title{font-size:13px;font-weight:700;color:var(--text);}
+    .danger-item-desc{font-size:11px;color:var(--text-muted);margin-top:2px;}
+    .btn-danger{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);background:rgba(255,64,96,0.08);border:1px solid rgba(255,64,96,0.25);padding:8px 18px;border-radius:var(--r-sm);cursor:pointer;transition:all 0.2s;white-space:nowrap;flex-shrink:0;}
+    .btn-danger:hover{background:rgba(255,64,96,0.18);border-color:rgba(255,64,96,0.5);}
+
+    /* Password strength */
+    .pw-strength{height:3px;border-radius:2px;margin-top:6px;transition:all 0.3s;background:var(--border);}
+    .pw-strength.weak{background:var(--red);width:33%;}
+    .pw-strength.medium{background:var(--gold);width:66%;}
+    .pw-strength.strong{background:var(--green);width:100%;}
+    .pw-strength-label{font-size:10px;margin-top:4px;font-weight:700;}
+    .pw-strength-label.weak{color:var(--red);}
+    .pw-strength-label.medium{color:var(--gold);}
+    .pw-strength-label.strong{color:var(--green);}
+
+    @media(max-width:700px){
+      .sidebar-left{width:60px;}
+      .logo-text,.sidebar-uname,.sidebar-handle,.nav-item span,.nav-label{display:none;}
+      .main{margin-left:60px;padding:20px 14px 60px;}
+      .logo-area{justify-content:center;padding:14px 8px;}
+      .sidebar-profile{justify-content:center;padding:10px;}
+      .nav-item{justify-content:center;padding:10px;}
+      .theme-grid{grid-template-columns:1fr 1fr;}
+      .stab span{display:none;}
+    }
+  </style>
+</head>
+<body onload="initSettings()">
+
+<div id="toast"></div>
+
+<!-- Delete account confirm modal -->
+<div id="confirm-modal" onclick="if(event.target===this)closeConfirm(false)">
+  <div class="confirm-box">
+    <div class="confirm-icon">⚠️</div>
+    <div class="confirm-title">Delete Account</div>
+    <div class="confirm-msg">This will permanently delete your account, all threads, and comments. This cannot be undone. Enter your password to confirm.</div>
+    <input type="password" class="confirm-input" id="delete-password-input" placeholder="Enter your password...">
+    <div class="confirm-btns">
+      <button class="confirm-cancel" onclick="closeConfirm(false)">Cancel</button>
+      <button class="confirm-ok" onclick="closeConfirm(true)">Delete Forever</button>
+    </div>
+  </div>
+</div>
+
+<!-- Left sidebar — same as other pages -->
+<aside class="sidebar-left">
+  <div class="logo-area">
+    <img src="logo_v1.png" alt="Frontier Logo" onerror="this.style.display='none'">
+    <span class="logo-text">Frontier</span>
+  </div>
+  <a href="profile.html" class="sidebar-profile">
+    <img id="sidebar-avatar" src="" class="sidebar-avatar" alt="avatar">
+    <div>
+      <div class="sidebar-uname" id="sidebar-name">—</div>
+      <div class="sidebar-handle" id="sidebar-handle">@—</div>
+    </div>
+  </a>
+  <nav class="nav-section">
+    <span class="nav-label">Navigate</span>
+    <a href="home.html"    class="nav-item"><span class="nav-icon">🏠</span><span>Home</span></a>
+    <a href="news.html"    class="nav-item"><span class="nav-icon">🎮</span><span>Game News</span></a>
+    <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span><span>Profile</span></a>
+    <a href="settings.html" class="nav-item active"><span class="nav-icon">⚙️</span><span>Settings</span></a>
+  </nav>
+  <div class="sidebar-bottom">
+    <button class="btn-logout" onclick="handleLogout()">⏻ &nbsp;Logout</button>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="settings-container">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div class="page-title"><span class="page-title-icon">⚙️</span> Settings</div>
+      <div class="page-subtitle">Manage your account, appearance, and preferences.</div>
+    </div>
+
+    <!-- Tab navigation -->
+    <div class="settings-tabs">
+      <button class="stab active" onclick="switchTab('appearance')" id="tab-appearance">
+        🎨 <span>Appearance</span>
+      </button>
+      <button class="stab" onclick="switchTab('account')" id="tab-account">
+        🔐 <span>Account</span>
+      </button>
+      <button class="stab" onclick="switchTab('preferences')" id="tab-preferences">
+        🌍 <span>Preferences</span>
+      </button>
+      <button class="stab" onclick="switchTab('notifications')" id="tab-notifications">
+        🔔 <span>Notifications</span>
+      </button>
+    </div>
+
+    <!-- ══ APPEARANCE PANEL ══ -->
+    <div class="settings-panel active" id="panel-appearance">
+
+      <div class="scard">
+        <div class="scard-header">
+          <span class="scard-icon">🎨</span>
+          <div>
+            <div class="scard-title">Theme</div>
+            <div class="scard-desc">Choose your preferred color scheme</div>
+          </div>
+        </div>
+        <div class="scard-body">
+          <div class="theme-grid">
+            <div class="theme-option" id="theme-dark" onclick="selectTheme('dark')">
+              <div class="theme-preview theme-preview-dark"></div>
+              <div class="theme-name">Dark</div>
+              <div class="theme-tag">Default</div>
+            </div>
+            <div class="theme-option" id="theme-light" onclick="selectTheme('light')">
+              <div class="theme-preview theme-preview-light"></div>
+              <div class="theme-name">Light</div>
+              <div class="theme-tag">Coming soon</div>
+            </div>
+            <div class="theme-option" id="theme-game" onclick="selectTheme('game')">
+              <div class="theme-preview theme-preview-game"></div>
+              <div class="theme-name">Game Mode</div>
+              <div class="theme-tag">Coming soon</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ ACCOUNT PANEL ══ -->
+    <div class="settings-panel" id="panel-account">
+
+      <!-- Change password -->
+      <div class="scard">
+        <div class="scard-header">
+          <span class="scard-icon">🔑</span>
+          <div>
+            <div class="scard-title">Change Password</div>
+            <div class="scard-desc">Keep your account secure with a strong password</div>
+          </div>
+        </div>
+        <div class="scard-body">
+          <div class="field-group">
+            <label class="field-label">Current Password</label>
+            <input type="password" class="field-input" id="pw-current" placeholder="Enter current password...">
+          </div>
+          <div class="field-group">
+            <label class="field-label">New Password</label>
+            <input type="password" class="field-input" id="pw-new" placeholder="Enter new password..." oninput="checkPasswordStrength(this.value)">
+            <div class="pw-strength" id="pw-strength-bar"></div>
+            <div class="pw-strength-label" id="pw-strength-label"></div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Confirm New Password</label>
+            <input type="password" class="field-input" id="pw-confirm" placeholder="Repeat new password...">
+          </div>
+          <div class="btn-row">
+            <button class="btn-save" id="btn-change-pw" onclick="changePassword()">Update Password</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Danger zone -->
+      <div class="danger-card">
+        <div class="danger-header">
+          <span class="scard-icon">⚠️</span>
+          <div class="danger-title">Danger Zone</div>
+        </div>
+        <div class="danger-body">
+          <div class="danger-item">
+            <div class="danger-info">
+              <div class="danger-item-title">Delete Account</div>
+              <div class="danger-item-desc">Permanently remove your account, threads, and all activity. This cannot be undone.</div>
+            </div>
+            <button class="btn-danger" onclick="confirmDeleteAccount()">Delete Account</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ PREFERENCES PANEL ══ -->
+    <div class="settings-panel" id="panel-preferences">
+
+      <div class="scard">
+        <div class="scard-header">
+          <span class="scard-icon">🌐</span>
+          <div>
+            <div class="scard-title">Language</div>
+            <div class="scard-desc">Interface display language</div>
+          </div>
+        </div>
+        <div class="scard-body">
+          <div class="field-group">
+            <label class="field-label">Language</label>
+            <select class="field-select" id="pref-language" onchange="savePref('language', this.value)">
+              <option value="en">🇬🇧 English</option>
+              <option value="tr">🇹🇷 Türkçe</option>
+              <option value="de">🇩🇪 Deutsch</option>
+              <option value="fr">🇫🇷 Français</option>
+              <option value="es">🇪🇸 Español</option>
+              <option value="ja">🇯🇵 日本語</option>
+              <option value="ko">🇰🇷 한국어</option>
+              <option value="pt">🇧🇷 Português</option>
+            </select>
+            <div class="field-hint">UI language support coming in a future update.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scard">
+        <div class="scard-header">
+          <span class="scard-icon">🕐</span>
+          <div>
+            <div class="scard-title">Timezone</div>
+            <div class="scard-desc">Used to display timestamps correctly across the site</div>
+          </div>
+        </div>
+        <div class="scard-body">
+          <div class="field-group">
+            <label class="field-label">Timezone</label>
+            <select class="field-select" id="pref-timezone" onchange="savePref('timezone', this.value)">
+              <!-- Populated by JS -->
+            </select>
+            <div class="field-hint">Detected from your browser automatically. You can override it here.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ NOTIFICATIONS PANEL ══ -->
+    <div class="settings-panel" id="panel-notifications">
+
+      <div class="scard">
+        <div class="scard-header">
+          <span class="scard-icon">🔔</span>
+          <div>
+            <div class="scard-title">Notification Preferences</div>
+            <div class="scard-desc">Choose what you want to be notified about</div>
+          </div>
+        </div>
+        <div class="scard-body">
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">Replies to my threads</div>
+              <div class="toggle-sub">Get notified when someone replies to your discussion</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="notif-replies" onchange="saveNotifPref('replies', this.checked)" checked>
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">Likes on my posts</div>
+              <div class="toggle-sub">Get notified when someone likes your thread or comment</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="notif-likes" onchange="saveNotifPref('likes', this.checked)">
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">New followers</div>
+              <div class="toggle-sub">Get notified when someone follows your profile</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="notif-followers" onchange="saveNotifPref('followers', this.checked)" checked>
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-label">Community announcements</div>
+              <div class="toggle-sub">Important updates and news from Frontier Community</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="notif-announcements" onchange="saveNotifPref('announcements', this.checked)" checked>
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+      <div style="padding:12px 16px;background:rgba(77,184,255,0.06);border:1px solid rgba(77,184,255,0.15);border-radius:var(--r);font-size:12px;color:var(--text-muted);display:flex;gap:10px;align-items:flex-start;">
+        <span style="font-size:16px;flex-shrink:0;">ℹ️</span>
+        <span>Notification delivery is coming in a future update. Your preferences are saved and will be applied when the system launches.</span>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+var sState = { userId: null, username: null, token: null };
+var sConfirmResolve = null;
+
+/* ══════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════ */
+function toast(msg, type = 'info') {
+  const wrap = document.getElementById('toast');
+  const el   = document.createElement('div');
+  el.className = `toast-msg ${type}`;
+  el.innerHTML = `<span>${type==='success'?'✓':type==='error'?'✕':'ℹ'}</span> ${msg}`;
+  wrap.appendChild(el);
+  setTimeout(() => { el.classList.add('out'); el.addEventListener('animationend', () => el.remove()); }, 3000);
+}
+
+/* ══════════════════════════════════════════
+   CONFIRM MODAL
+══════════════════════════════════════════ */
+function closeConfirm(val = false) {
+  document.getElementById('confirm-modal').classList.remove('open');
+  if (sConfirmResolve) { sConfirmResolve(val); sConfirmResolve = null; }
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeConfirm(false); });
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+function initSettings() {
+  if (!localStorage.getItem('token')) { window.location.href = 'index.html'; return; }
+
+  sState.userId   = localStorage.getItem('userId');
+  sState.username = localStorage.getItem('username') || 'User';
+  sState.token    = localStorage.getItem('token');
+
+  // Set sidebar avatar and name
+  const av = localStorage.getItem('userAvatar') ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(sState.username)}&background=1a6fd4&color=fff&size=128&bold=true`;
+  document.getElementById('sidebar-avatar').src  = av;
+  document.getElementById('sidebar-name').textContent   = sState.username;
+  document.getElementById('sidebar-handle').textContent = `@${sState.username.toLowerCase()}`;
+
+  // Load saved theme
+  const savedTheme = localStorage.getItem('fc_theme') || 'dark';
+  highlightTheme(savedTheme);
+
+  // Load saved preferences
+  loadPreferences();
+
+  // Load notification preferences
+  loadNotifPrefs();
+
+  // Populate timezone list
+  populateTimezones();
+}
+
+/* ══════════════════════════════════════════
+   TAB SWITCHING
+══════════════════════════════════════════ */
+function switchTab(name) {
+  // Deactivate all tabs and panels
+  document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+
+  // Activate selected
+  document.getElementById(`tab-${name}`).classList.add('active');
+  document.getElementById(`panel-${name}`).classList.add('active');
+}
+
+/* ══════════════════════════════════════════
+   THEME SWITCHER
+══════════════════════════════════════════ */
+function selectTheme(theme) {
+  // Light and game mode are placeholders for now
+  if (theme !== 'dark') {
+    toast('This theme is coming soon!', 'info');
+    return;
+  }
+  localStorage.setItem('fc_theme', theme);
+  highlightTheme(theme);
+  toast('Theme saved!', 'success');
+}
+
+function highlightTheme(theme) {
+  document.querySelectorAll('.theme-option').forEach(el => el.classList.remove('selected'));
+  const el = document.getElementById(`theme-${theme}`);
+  if (el) el.classList.add('selected');
+}
+
+/* ══════════════════════════════════════════
+   PASSWORD STRENGTH CHECKER
+══════════════════════════════════════════ */
+function checkPasswordStrength(val) {
+  const bar   = document.getElementById('pw-strength-bar');
+  const label = document.getElementById('pw-strength-label');
+  if (!val) { bar.className = 'pw-strength'; label.textContent = ''; return; }
+
+  const hasUpper  = /[A-Z]/.test(val);
+  const hasNumber = /[0-9]/.test(val);
+  const hasSymbol = /[^A-Za-z0-9]/.test(val);
+  const score = (val.length >= 8 ? 1 : 0) + (hasUpper ? 1 : 0) + (hasNumber ? 1 : 0) + (hasSymbol ? 1 : 0);
+
+  if (score <= 1) {
+    bar.className   = 'pw-strength weak';
+    label.className = 'pw-strength-label weak';
+    label.textContent = 'Weak';
+  } else if (score <= 3) {
+    bar.className   = 'pw-strength medium';
+    label.className = 'pw-strength-label medium';
+    label.textContent = 'Medium';
+  } else {
+    bar.className   = 'pw-strength strong';
+    label.className = 'pw-strength-label strong';
+    label.textContent = 'Strong';
+  }
+}
+
+/* ══════════════════════════════════════════
+   CHANGE PASSWORD
+══════════════════════════════════════════ */
+async function changePassword() {
+  const current = document.getElementById('pw-current').value.trim();
+  const newPw   = document.getElementById('pw-new').value.trim();
+  const confirm = document.getElementById('pw-confirm').value.trim();
+  const btn     = document.getElementById('btn-change-pw');
+
+  if (!current) { toast('Please enter your current password.', 'error'); return; }
+  if (!newPw)   { toast('Please enter a new password.', 'error'); return; }
+  if (newPw.length < 6) { toast('Password must be at least 6 characters.', 'error'); return; }
+  if (newPw !== confirm) { toast('Passwords do not match.', 'error'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Updating...';
+
+  try {
+    const res = await fetch(`${API_URL}/auth/password`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sState.token}`
+      },
+      body: JSON.stringify({
+        userId:          sState.userId,
+        currentPassword: current,
+        newPassword:     newPw
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      toast(data.message || 'Failed to update password.', 'error');
+      return;
+    }
+
+    // Clear fields on success
+    document.getElementById('pw-current').value = '';
+    document.getElementById('pw-new').value     = '';
+    document.getElementById('pw-confirm').value = '';
+    document.getElementById('pw-strength-bar').className   = 'pw-strength';
+    document.getElementById('pw-strength-label').textContent = '';
+
+    toast('Password updated successfully!', 'success');
+  } catch {
+    toast('Server error. Is the backend running?', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Update Password';
+  }
+}
+
+/* ══════════════════════════════════════════
+   DELETE ACCOUNT
+══════════════════════════════════════════ */
+function confirmDeleteAccount() {
+  document.getElementById('delete-password-input').value = '';
+  document.getElementById('confirm-modal').classList.add('open');
+  sConfirmResolve = async (confirmed) => {
+    if (!confirmed) return;
+    const password = document.getElementById('delete-password-input').value.trim();
+    if (!password) { toast('Please enter your password to confirm.', 'error'); return; }
+    await deleteAccount(password);
+  };
+}
+
+async function deleteAccount(password) {
+  try {
+    const res = await fetch(`${API_URL}/auth/account`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sState.token}`
+      },
+      body: JSON.stringify({ userId: sState.userId, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      toast(data.message || 'Failed to delete account.', 'error');
+      return;
+    }
+
+    // Clear all local storage and redirect to login
+    localStorage.clear();
+    toast('Account deleted. Goodbye!', 'success');
+    setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+  } catch {
+    toast('Server error. Is the backend running?', 'error');
+  }
+}
+
+/* ══════════════════════════════════════════
+   PREFERENCES (language + timezone)
+══════════════════════════════════════════ */
+function savePref(key, value) {
+  localStorage.setItem(`fc_pref_${key}`, value);
+  toast('Preference saved!', 'success');
+}
+
+function loadPreferences() {
+  const lang = localStorage.getItem('fc_pref_language') || 'en';
+  const sel  = document.getElementById('pref-language');
+  if (sel) sel.value = lang;
+}
+
+function populateTimezones() {
+  // Common timezones list
+  const zones = [
+    'Africa/Cairo', 'Africa/Johannesburg', 'Africa/Lagos', 'Africa/Nairobi',
+    'America/Anchorage', 'America/Argentina/Buenos_Aires', 'America/Bogota',
+    'America/Chicago', 'America/Denver', 'America/Los_Angeles', 'America/Mexico_City',
+    'America/New_York', 'America/Sao_Paulo', 'America/Toronto', 'America/Vancouver',
+    'Asia/Bangkok', 'Asia/Dubai', 'Asia/Hong_Kong', 'Asia/Jakarta', 'Asia/Karachi',
+    'Asia/Kolkata', 'Asia/Seoul', 'Asia/Shanghai', 'Asia/Singapore', 'Asia/Taipei',
+    'Asia/Tehran', 'Asia/Tokyo', 'Atlantic/Reykjavik',
+    'Australia/Melbourne', 'Australia/Sydney',
+    'Europe/Amsterdam', 'Europe/Athens', 'Europe/Berlin', 'Europe/Brussels',
+    'Europe/Bucharest', 'Europe/Copenhagen', 'Europe/Dublin', 'Europe/Helsinki',
+    'Europe/Istanbul', 'Europe/Kiev', 'Europe/Lisbon', 'Europe/London',
+    'Europe/Madrid', 'Europe/Moscow', 'Europe/Oslo', 'Europe/Paris',
+    'Europe/Prague', 'Europe/Rome', 'Europe/Stockholm', 'Europe/Vienna',
+    'Europe/Warsaw', 'Europe/Zurich',
+    'Pacific/Auckland', 'Pacific/Honolulu', 'Pacific/Sydney',
+    'UTC'
+  ];
+
+  const sel = document.getElementById('pref-timezone');
+  if (!sel) return;
+
+  // Detect browser timezone
+  const browserTZ = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  const savedTZ   = localStorage.getItem('fc_pref_timezone') || browserTZ;
+
+  // Add browser-detected option first if not in the list
+  const allZones = zones.includes(browserTZ) ? zones : [browserTZ, ...zones];
+
+  allZones.forEach(tz => {
+    const opt = document.createElement('option');
+    opt.value = tz;
+    // Show UTC offset for context
+    try {
+      const offset = new Intl.DateTimeFormat('en', {
+        timeZone: tz, timeZoneName: 'shortOffset'
+      }).formatToParts(new Date()).find(p => p.type === 'timeZoneName')?.value || '';
+      opt.textContent = `${tz.replace(/_/g, ' ')} (${offset})`;
+    } catch {
+      opt.textContent = tz;
+    }
+    if (tz === savedTZ) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+/* ══════════════════════════════════════════
+   NOTIFICATION PREFERENCES
+══════════════════════════════════════════ */
+function saveNotifPref(key, value) {
+  localStorage.setItem(`fc_notif_${key}`, value ? '1' : '0');
+  toast(value ? 'Notifications enabled.' : 'Notifications disabled.', 'info');
+}
+
+function loadNotifPrefs() {
+  const prefs = { replies: true, likes: false, followers: true, announcements: true };
+  Object.entries(prefs).forEach(([key, defaultVal]) => {
+    const saved = localStorage.getItem(`fc_notif_${key}`);
+    const el    = document.getElementById(`notif-${key}`);
+    if (el) el.checked = saved !== null ? saved === '1' : defaultVal;
+  });
+}
+
+/* ══════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════ */
+function handleLogout() {
+  localStorage.clear();
+  window.location.href = 'index.html';
+}
+</script>
+</body>
+</html>

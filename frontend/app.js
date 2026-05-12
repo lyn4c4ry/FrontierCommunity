@@ -236,3 +236,56 @@ async function doSearch(q) {
     dropdown.innerHTML = '<div class="search-result-item" style="color:var(--red);cursor:default">Search failed.</div>';
   }
 }
+
+// ─── TIME AGO (shared across all pages) ──────────────────────────────────────
+function parseDateSafely(d) {
+  if (!d) return new Date();
+  if (d instanceof Date) return isNaN(d.getTime()) ? new Date() : d;
+  let dStr = String(d);
+  if (dStr.endsWith('Z') || dStr.includes('+') || dStr.includes('GMT')) {
+    const parsed = new Date(dStr);
+    if (!isNaN(parsed.getTime())) return parsed;
+  }
+  dStr = dStr.replace(' ', 'T');
+  if (!dStr.includes('T')) dStr += 'T00:00:00';
+  if (!dStr.endsWith('Z')) dStr += 'Z';
+  const parsedZ = new Date(dStr);
+  return isNaN(parsedZ.getTime()) ? new Date(d) : parsedZ;
+}
+
+function timeAgo(d) {
+  if (!d) return '';
+  const date = parseDateSafely(d);
+  if (isNaN(date.getTime())) return '';
+
+  const now       = new Date();
+  const diffMs    = now - date;
+  const diffMins  = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+
+  if (diffMins < 1 && diffMs >= 0) return 'just now';
+  if (diffMins < 60 && diffMs >= 0) return `${diffMins}m ago`;
+
+  // Use saved timezone from settings, fallback to browser timezone
+  const userTZ     = localStorage.getItem('fc_pref_timezone') || Intl.DateTimeFormat().resolvedOptions().timeZone || undefined;
+  const userLocale = navigator.language || undefined;
+
+  if (diffHours < 24 && diffMs >= 0) {
+    return new Intl.DateTimeFormat(userLocale, {
+      hour: '2-digit', minute: '2-digit', hour12: false, timeZone: userTZ
+    }).format(date);
+  }
+
+  const today      = new Date(now.toLocaleString('en-US', { timeZone: userTZ }));
+  const targetDate = new Date(date.toLocaleString('en-US', { timeZone: userTZ }));
+  today.setHours(0,0,0,0);
+  targetDate.setHours(0,0,0,0);
+  const dayDiff = Math.round((today - targetDate) / 86400000);
+
+  if (dayDiff === 1) return 'Yesterday';
+  if (dayDiff < 7 && dayDiff > 0) return `${dayDiff} days ago`;
+
+  return new Intl.DateTimeFormat(userLocale, {
+    day: 'numeric', month: 'short', year: 'numeric', timeZone: userTZ
+  }).format(date);
+}

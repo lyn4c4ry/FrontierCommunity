@@ -182,7 +182,8 @@
     .show-more-comments:hover{opacity:0.7;}
 
     /* ── RIGHT SIDEBAR ── */
-    .sidebar-right{width:272px;flex-shrink:0;padding:26px 16px;display:flex;flex-direction:column;gap:13px;position:sticky;top:0;height:100vh;overflow-y:auto;margin-left: 0;}
+    .sidebar-right{width:272px;flex-shrink:0;padding:26px 16px;display:flex;flex-direction:column;gap:13px;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width: none; margin-left: 0;}
+    .sidebar-ad::-webkit-scrollbar{display: none;}
     .widget{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;}
     .widget-title{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:13px;}
     .stat-row{display:flex;gap:8px;}
@@ -228,6 +229,70 @@
       .nav-item{justify-content:center;padding:10px;}
       .feed{padding:16px 12px 60px;}
     }
+
+    /* ── AD SIDEBAR ── */
+    .sidebar-ad {
+      width: 480px;
+      flex-shrink: 0;
+      padding: 26px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      scrollbar-width: none; /* Firefox */
+    }
+    .sidebar-ad::-webkit-scrollbar {
+      display: none; /* Chrome, Safari */
+    }
+
+    /* Ad slot container */
+    .ad-slot {
+      background: var(--surface);
+      border: 1px dashed rgba(74,144,226,0.2);
+      border-radius: var(--r-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text-dim);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Standard banner sizes */
+    .ad-slot.ad-banner    { width: 100%; height: 220px; min-width: 460px; }
+    .ad-slot.ad-square    { width: 100%; height: 150px; min-width: 460px; }
+    .ad-slot.ad-tall      { width: 100%; height: 280px; min-width: 460px; }
+
+    /* "Advertisement" label */
+    .ad-slot::before {
+      content: 'Advertisement';
+      position: absolute;
+      top: 8px;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      opacity: 0.5;
+    }
+
+    /* Placeholder icon + text */
+    .ad-placeholder-icon { font-size: 22px; opacity: 0.25; margin-top: 16px;display: block;text-align: center;width: 100%;}
+    .ad-placeholder-text { font-size: 9px; color: var(--text-dim); opacity: 0.4; }
+
+    /* Hide on smaller screens */
+    @media(max-width:1700px) { .sidebar-ad { display: none; } }
+
   </style>
 </head>
 <body onload="initHome()">
@@ -270,6 +335,7 @@
     <a href="home.html" class="nav-item active"><span class="nav-icon">🏠</span><span>Home</span></a>
     <a href="news.html" class="nav-item"><span class="nav-icon">🎮</span><span>Game News</span></a>
     <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span><span>Profile</span></a>
+    <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span><span>Settings</span></a>
   </nav>
   <div class="sidebar-bottom">
     <button class="btn-logout" onclick="handleLogout()">⏻ &nbsp;Logout</button>
@@ -324,6 +390,28 @@
       <div id="widget-new-members"><div class="spinner"></div></div>
     </div>
   </aside>
+  <!-- Ad sidebar — reserved space for display ads or sponsorships -->
+    <aside class="sidebar-ad">
+
+      <!-- Ad unit #1: half-page banner (160x250) -->
+      <div class="ad-slot ad-banner">
+        <span class="ad-placeholder-icon">📢</span>
+        <span class="ad-placeholder-text">160 × 250</span>
+      </div>
+
+      <!-- Ad unit #2: small square (160x160) -->
+      <div class="ad-slot ad-square">
+        <span class="ad-placeholder-icon">🎮</span>
+        <span class="ad-placeholder-text">160 × 160</span>
+      </div>
+
+      <!-- Ad unit #3: tall unit -->
+      <div class="ad-slot ad-tall">
+        <span class="ad-placeholder-icon">⚡</span>
+        <span class="ad-placeholder-text">160 × 400</span>
+      </div>
+
+    </aside>
 </div>
 
 <script src="app.js"></script>
@@ -557,6 +645,21 @@ async function loadThreads(categoryFilter) {
       ),
       fetchBatchLikes(threads.map(t => t.id))
     ]);
+
+    // Pre-fetch like states for all comments across all threads
+    const allCommentIds = commentResults.flat().map(c => c.id);
+    if (allCommentIds.length && hState.userId) {
+      const commentLikes = await fetch(`${API_URL}/likes/batch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ threadIds: allCommentIds, userId: hState.userId, targetType: 'comment' })
+      }).then(r => r.ok ? r.json() : {}).catch(() => {});
+      if (commentLikes) {
+        Object.entries(commentLikes).forEach(([id, data]) => {
+          hLikeCache[`comment_${id}`] = data;
+        });
+      }
+    }
 
     document.getElementById('stat-comments').textContent = commentResults.reduce((s, c) => s + c.length, 0);
 
@@ -800,9 +903,26 @@ function showMore(btn, threadId, idsJson) {
   const ids      = JSON.parse(idsJson);
   const comments = hCommentCache[threadId] || [];
   const toShow   = comments.filter(c => ids.includes(c.id));
-  let html = ''; toShow.forEach(c => { html += buildCommentItem(c, comments, threadId, 0); });
-  const w = document.createElement('div'); w.innerHTML = html;
-  btn.parentNode.insertBefore(w, btn); btn.remove();
+
+  // Wrap newly shown comments in a collapsible container
+  const wrapper = document.createElement('div');
+  wrapper.className = 'extra-comments';
+
+  let html = ''; 
+  toShow.forEach(c => { html += buildCommentItem(c, comments, threadId, 0); });
+  wrapper.innerHTML = html;
+
+  // Replace show button with hide button
+  const hideBtn = document.createElement('button');
+  hideBtn.className = 'show-more-comments';
+  hideBtn.textContent = `▴ Hide ${toShow.length} comment${toShow.length > 1 ? 's' : ''}`;
+  hideBtn.onclick = () => {
+    wrapper.remove();
+    hideBtn.replaceWith(btn); // Restore original show button
+  };
+
+  btn.parentNode.insertBefore(wrapper, btn);
+  btn.replaceWith(hideBtn);
 }
 
 function toggleReplyForm(id) {
@@ -968,70 +1088,6 @@ async function postReply(threadId, parentId) {
    HELPERS
 ══════════════════════════════════════════ */
 function handleLogout() { localStorage.clear(); window.location.href = 'index.html'; }
-
-// TARİH DÜZELTİCİ: Postgres saatini doğrudan UTC olarak yakalar.
-function parseDateSafely(d) {
-  if (!d) return new Date();
-  if (d instanceof Date) return isNaN(d.getTime()) ? new Date() : d; 
-  
-  let dStr = String(d);
-  if (dStr.endsWith('Z') || dStr.includes('+') || dStr.includes('GMT')) {
-    let parsed = new Date(dStr);
-    if (!isNaN(parsed.getTime())) return parsed;
-  }
-  
-  dStr = dStr.replace(' ', 'T');
-  if (!dStr.includes('T')) dStr += 'T00:00:00';
-  if (!dStr.endsWith('Z')) dStr += 'Z';
-  
-  let parsedZ = new Date(dStr);
-  return isNaN(parsedZ.getTime()) ? new Date(d) : parsedZ;
-}
-
-// YEREL ZAMAN GÖSTERİCİ: Bilgisayarın KENDİ işletim sistemi ayarlarını kullanır.
-function timeAgo(d) {
-  if (!d) return '';
-  const date = parseDateSafely(d);
-  if (isNaN(date.getTime())) return ''; 
-
-  const now      = new Date();
-  const diffMs   = now - date;
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-
-  if (diffMins < 1 && diffMs >= 0) return 'just now';
-  if (diffMins < 60 && diffMs >= 0) return `${diffMins}m ago`;
-
-  // Cihazın zaman dilimini (Örn: "Europe/Istanbul") ve dilini sistemden otomatik al
-  const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone || undefined;
-  const userLocale = navigator.language || undefined;
-
-  // 24 saatten kısaysa sadece saat ve dakikayı yerel ayarla göster
-  if (diffHours < 24 && diffMs >= 0) {
-    return new Intl.DateTimeFormat(userLocale, {
-      hour: '2-digit', minute: '2-digit',
-      hour12: false,
-      timeZone: userTZ
-    }).format(date);
-  }
-
-  // Gece yarısı hesaplaması
-  const today = new Date(now.toLocaleString('en-US', { timeZone: userTZ }));
-  const targetDate = new Date(date.toLocaleString('en-US', { timeZone: userTZ }));
-  today.setHours(0,0,0,0);
-  targetDate.setHours(0,0,0,0);
-
-  const dayDiff = Math.round((today - targetDate) / 86400000);
-
-  if (dayDiff === 1) return 'Yesterday';
-  if (dayDiff < 7 && dayDiff > 0) return `${dayDiff} days ago`;
-
-  // Daha eski veriler için yerel tarih formatı (Örn: "12 Şub 2026")
-  return new Intl.DateTimeFormat(userLocale, {
-    day: 'numeric', month: 'short', year: 'numeric',
-    timeZone: userTZ
-  }).format(date);
-}
 
 function escHtml(str) {
   const d = document.createElement('div'); d.textContent = str || ''; return d.innerHTML;
