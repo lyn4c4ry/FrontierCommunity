@@ -4,29 +4,22 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const db = require('../config/db');
+const authMiddleware = require('../middleware/authMiddleware');
 
 /**
  * @route   POST /api/auth/register
- * @desc    Register a new user and hash their password
  */
 router.post('/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;
-
     const existingUser = await User.findByEmail(email);
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists with this email.' });
     }
-
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-
     const newUser = await User.create(username, email, hashedPassword);
-
-    res.status(201).json({
-      message: 'User registered successfully!',
-      user: newUser
-    });
+    res.status(201).json({ message: 'User registered successfully!', user: newUser });
   } catch (err) {
     console.error('Registration Error:', err.message);
     res.status(500).json({ message: 'Server Error during registration.' });
@@ -35,26 +28,18 @@ router.post('/register', async (req, res) => {
 
 /**
  * @route   POST /api/auth/login
- * @desc    Authenticate user, verify password, and return a JWT token
  */
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const user = await User.findByEmail(email);
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials.' });
-    }
+    if (!user) return res.status(400).json({ message: 'Invalid credentials.' });
 
     const isMatch = await bcrypt.compare(password, user.password_hash);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials.' });
-    }
+    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials.' });
 
-    // GÜVENLİK DÜZELTMESİ: 'secretkey' fallback'i kaldırıldı (TODO listesine istinaden)
-    // Sadece .env içindeki JWT_SECRET kullanılacak.
     const token = jwt.sign(
-      { userId: user.id, username: user.username }, 
+      { userId: user.id, username: user.username },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -72,44 +57,35 @@ router.post('/login', async (req, res) => {
 
 /**
  * @route   PUT /api/auth/profile
- * @desc    Update user profile (bio, avatar_url, username)
+ * @desc    Update user profile — userId JWT'den alınır, body'den değil
  */
-router.put('/profile', async (req, res) => {
+router.put('/profile', authMiddleware, async (req, res) => {
   try {
-    const { userId, username, bio, avatar_url } = req.body;
+    const userId = req.user.userId;
+    const { username, bio, avatar_url } = req.body;
 
-    if (!userId) return res.status(400).json({ message: 'userId is required' });
-
-    // AVATAR BUG DÜZELTMESİ: Dinamik SQL Sorgusu oluşturuluyor.
-    // COALESCE kullanmak yerine, sadece frontend'den gelen verileri güncelliyoruz.
     let updateFields = [];
     let values = [];
     let counter = 1;
 
-    // Eğer username gönderildiyse ve boş değilse
-    if (username !== undefined && username.trim() !== "") {
+    if (username !== undefined && username.trim() !== '') {
       updateFields.push(`username = $${counter++}`);
       values.push(username.trim());
     }
-
-    // Eğer bio gönderildiyse (boş string "" olsa bile kaydet)
     if (bio !== undefined) {
       updateFields.push(`bio = $${counter++}`);
       values.push(bio);
     }
-
-    // Eğer avatar_url gönderildiyse (kaldırılmak istendiyse "" gelir, bunu NULL'a çevir)
     if (avatar_url !== undefined) {
       updateFields.push(`avatar_url = $${counter++}`);
       values.push(avatar_url === '' ? null : avatar_url);
     }
 
-    // Güncellenecek hiçbir alan yoksa hata dön
     if (updateFields.length === 0) {
       return res.status(400).json({ message: 'No fields to update' });
     }
 
-    values.push(userId); // WHERE id = $X için son parametre
+    values.push(userId);
 
     const query = `
       UPDATE users
@@ -119,7 +95,6 @@ router.put('/profile', async (req, res) => {
     `;
 
     const { rows } = await db.query(query, values);
-
     if (!rows[0]) return res.status(404).json({ message: 'User not found' });
 
     res.json({ message: 'Profile updated successfully!', user: rows[0] });
@@ -131,62 +106,39 @@ router.put('/profile', async (req, res) => {
 
 /**
  * @route   GET /api/auth/profile/:userId
- * @desc    Get user profile with full stats (thread count, comment count, level, rank, streak)
  */
 router.get('/profile/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
-
     if (!userId || isNaN(userId)) {
       return res.status(400).json({ message: 'Invalid user ID' });
     }
 
-    // 1) Fetch base user info
     const userResult = await db.query(
-      `SELECT id, username, email, avatar_url, bio, created_at
-       FROM users WHERE id = $1`,
+      `SELECT id, username, email, avatar_url, bio, created_at FROM users WHERE id = $1`,
       [userId]
     );
-
-    if (!userResult.rows[0]) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+    if (!userResult.rows[0]) return res.status(404).json({ message: 'User not found' });
 
     const user = userResult.rows[0];
 
-    // 2) Total thread count
-    const threadResult = await db.query(
-      `SELECT COUNT(*) AS count FROM threads WHERE user_id = $1`,
-      [userId]
-    );
-
-    // 3) Total comment count
-    const commentResult = await db.query(
-      `SELECT COUNT(*) AS count FROM comments WHERE user_id = $1`,
-      [userId]
-    );
+    const threadResult  = await db.query(`SELECT COUNT(*) AS count FROM threads  WHERE user_id = $1`, [userId]);
+    const commentResult = await db.query(`SELECT COUNT(*) AS count FROM comments WHERE user_id = $1`, [userId]);
 
     const threadCount  = parseInt(threadResult.rows[0].count);
     const commentCount = parseInt(commentResult.rows[0].count);
 
-    // 4) Rank — position among all users by total activity (threads + comments)
     const rankResult = await db.query(
       `SELECT rank FROM (
-         SELECT
-           u.id,
-           RANK() OVER (
-             ORDER BY (COUNT(DISTINCT t.id) + COUNT(DISTINCT c.id)) DESC
-           ) AS rank
+         SELECT u.id, RANK() OVER (ORDER BY (COUNT(DISTINCT t.id) + COUNT(DISTINCT c.id)) DESC) AS rank
          FROM users u
          LEFT JOIN threads  t ON t.user_id = u.id
          LEFT JOIN comments c ON c.user_id = u.id
          GROUP BY u.id
-       ) ranked
-       WHERE id = $1`,
+       ) ranked WHERE id = $1`,
       [userId]
     );
 
-    // 5) Streak — number of distinct active days in the last 30 days
     const streakResult = await db.query(
       `SELECT COUNT(DISTINCT DATE(created_at)) AS streak_days
        FROM (
@@ -197,9 +149,7 @@ router.get('/profile/:userId', async (req, res) => {
       [userId]
     );
 
-    // 6) Level — 1 level per every 5 activities
-    const totalActivity = threadCount + commentCount;
-    const level = Math.max(1, Math.floor(totalActivity / 5));
+    const level = Math.max(1, Math.floor((threadCount + commentCount) / 5));
 
     res.json({
       id:            user.id,
@@ -208,14 +158,12 @@ router.get('/profile/:userId', async (req, res) => {
       avatar_url:    user.avatar_url || null,
       bio:           user.bio        || '',
       created_at:    user.created_at,
-
       thread_count:  threadCount,
       comment_count: commentCount,
-      level:         level,
+      level,
       rank:          rankResult.rows[0]?.rank || null,
       streak:        parseInt(streakResult.rows[0].streak_days) || 0,
     });
-
   } catch (err) {
     console.error('Profile fetch error:', err.message);
     res.status(500).json({ message: 'Server Error', error: err.message });
@@ -224,7 +172,6 @@ router.get('/profile/:userId', async (req, res) => {
 
 /**
  * @route   GET /api/auth/stats
- * @desc    Public — Get overall forum stats (total members, threads, replies) for homepage display
  */
 router.get('/stats', async (req, res) => {
   try {
@@ -248,44 +195,29 @@ router.get('/stats', async (req, res) => {
 
 /**
  * @route   PUT /api/auth/password
- * @desc    Change password — requires current password verification
+ * @desc    Change password — userId JWT'den alınır
  */
-router.put('/password', async (req, res) => {
+router.put('/password', authMiddleware, async (req, res) => {
   try {
-    const { userId, currentPassword, newPassword } = req.body;
+    const userId = req.user.userId;
+    const { currentPassword, newPassword } = req.body;
 
-    if (!userId || !currentPassword || !newPassword) {
+    if (!currentPassword || !newPassword) {
       return res.status(400).json({ message: 'All fields are required.' });
     }
-
     if (newPassword.length < 6) {
       return res.status(400).json({ message: 'New password must be at least 6 characters.' });
     }
 
-    // Fetch current password hash from DB
-    const result = await db.query(
-      'SELECT password_hash FROM users WHERE id = $1',
-      [userId]
-    );
+    const result = await db.query('SELECT password_hash FROM users WHERE id = $1', [userId]);
+    if (!result.rows[0]) return res.status(404).json({ message: 'User not found.' });
 
-    if (!result.rows[0]) {
-      return res.status(404).json({ message: 'User not found.' });
-    }
-
-    // Verify current password
     const isMatch = await bcrypt.compare(currentPassword, result.rows[0].password_hash);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Current password is incorrect.' });
-    }
+    if (!isMatch) return res.status(400).json({ message: 'Current password is incorrect.' });
 
-    // Hash new password and update
     const salt = await bcrypt.genSalt(10);
     const newHash = await bcrypt.hash(newPassword, salt);
-
-    await db.query(
-      'UPDATE users SET password_hash = $1 WHERE id = $2',
-      [newHash, userId]
-    );
+    await db.query('UPDATE users SET password_hash = $1 WHERE id = $2', [newHash, userId]);
 
     res.json({ message: 'Password updated successfully!' });
   } catch (err) {
@@ -296,33 +228,24 @@ router.put('/password', async (req, res) => {
 
 /**
  * @route   DELETE /api/auth/account
- * @desc    Delete own account permanently — requires password confirmation
+ * @desc    Delete own account — userId JWT'den alınır
  */
-router.delete('/account', async (req, res) => {
+router.delete('/account', authMiddleware, async (req, res) => {
   try {
-    const { userId, password } = req.body;
+    const userId = req.user.userId;
+    const { password } = req.body;
 
-    if (!userId || !password) {
-      return res.status(400).json({ message: 'userId and password are required.' });
+    if (!password) {
+      return res.status(400).json({ message: 'Password is required.' });
     }
 
-    const result = await db.query(
-      'SELECT password_hash FROM users WHERE id = $1',
-      [userId]
-    );
-
-    if (!result.rows[0]) {
-      return res.status(404).json({ message: 'User not found.' });
-    }
+    const result = await db.query('SELECT password_hash FROM users WHERE id = $1', [userId]);
+    if (!result.rows[0]) return res.status(404).json({ message: 'User not found.' });
 
     const isMatch = await bcrypt.compare(password, result.rows[0].password_hash);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Password is incorrect.' });
-    }
+    if (!isMatch) return res.status(400).json({ message: 'Password is incorrect.' });
 
-    // Hard delete — cascades to threads, comments, likes, bookmarks
     await db.query('DELETE FROM users WHERE id = $1', [userId]);
-
     res.json({ message: 'Account deleted successfully.' });
   } catch (err) {
     console.error('Account delete error:', err.message);

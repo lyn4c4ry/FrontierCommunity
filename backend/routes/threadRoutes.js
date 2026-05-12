@@ -4,10 +4,8 @@ const pool    = require('../config/db');
 const authMiddleware = require('../middleware/authMiddleware');
 
 // GET /api/threads
-// Returns all threads with author info, category, and aggregated counts.
-// Optional filter: ?category=slug  or  ?category=id
 router.get('/', async (req, res) => {
-  const { category } = req.query;
+  const { category, userId } = req.query;
 
   try {
     let query = `
@@ -28,16 +26,25 @@ router.get('/', async (req, res) => {
     `;
 
     const params = [];
+    const conditions = [];
 
     if (category) {
-      // Accept either a slug string or a numeric id
       if (isNaN(category)) {
         params.push(category);
-        query += ` WHERE c.slug = $1`;
+        conditions.push(`c.slug = $${params.length}`);
       } else {
         params.push(Number(category));
-        query += ` WHERE t.category_id = $1`;
+        conditions.push(`t.category_id = $${params.length}`);
       }
+    }
+
+    if (userId) {
+      params.push(Number(userId));
+      conditions.push(`t.user_id = $${params.length}`);
+    }
+
+    if (conditions.length > 0) {
+      query += ` WHERE ` + conditions.join(' AND ');
     }
 
     query += ` GROUP BY t.id, u.username, u.avatar_url, c.name, c.slug ORDER BY t.created_at DESC`;
@@ -50,7 +57,6 @@ router.get('/', async (req, res) => {
 });
 
 // GET /api/threads/categories
-// Returns all categories — used to populate the compose dropdown
 router.get('/categories', async (req, res) => {
   try {
     const result = await pool.query('SELECT id, name, slug FROM categories ORDER BY name');
@@ -61,7 +67,6 @@ router.get('/categories', async (req, res) => {
 });
 
 // POST /api/threads
-// Creates a new thread. categoryId is optional.
 router.post('/', authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   const { title, content, categoryId } = req.body;
@@ -71,7 +76,6 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 
   try {
-    // Validate categoryId if provided — fall back to null if not found
     let resolvedCategoryId = null;
     if (categoryId) {
       const catCheck = await pool.query('SELECT id FROM categories WHERE id=$1', [categoryId]);
@@ -83,7 +87,6 @@ router.post('/', authMiddleware, async (req, res) => {
       [title.trim(), content.trim(), userId, resolvedCategoryId]
     );
 
-    // Return the full thread object including joined fields
     const full = await pool.query(
       `SELECT t.*, u.username, u.avatar_url,
               c.name AS category_name, c.slug AS category_slug,
@@ -102,7 +105,6 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 // DELETE /api/threads/:threadId
-// Hard deletes a thread — only the owner is allowed
 router.delete('/:threadId', authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   const { threadId } = req.params;
