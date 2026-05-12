@@ -705,6 +705,12 @@
         });
         const data = await res.json();
         if (res.ok) {
+          // Register — tüm register inputları
+          ['username', 'email', 'password'].forEach(id => {
+            document.getElementById(id).addEventListener('keydown', e => {
+              if (e.key === 'Enter') document.getElementById('registerBtn').click();
+            });
+          });
           msg.className = 'form-message success';
           msg.innerText = '✓ Account created! Switching to login...';
           setTimeout(() => switchTab('login'), 1500);
@@ -734,6 +740,13 @@
         });
         const data = await res.json();
         if (res.ok) {
+          // Login — email ve password inputlarına
+          document.getElementById('login-email').addEventListener('keydown', e => {
+            if (e.key === 'Enter') document.getElementById('loginBtn').click();
+          });
+          document.getElementById('login-password').addEventListener('keydown', e => {
+            if (e.key === 'Enter') document.getElementById('loginBtn').click();
+          });
           localStorage.setItem('token',    data.token);
           localStorage.setItem('username', data.user.username);
           localStorage.setItem('userId',   data.user.id);
