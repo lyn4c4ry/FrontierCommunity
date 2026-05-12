@@ -12,6 +12,7 @@ const commentRoutes = require('./routes/commentRoutes');
 const newsRoutes = require('./routes/newsRoutes');
 const interactionRoutes = require('./routes/interactionRoutes');
 const searchRoutes = require('./routes/searchRoutes');
+const followRoutes = require('./routes/followRoutes');
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use('/api/threads', threadRoutes); // Forum Thread endpoints (Create, List)
 app.use('/api/comments', commentRoutes); // Comment routes (GET by thread, POST, DELETE)
 app.use('/api', interactionRoutes); // Like, Dislike, Bookmark routes
 app.use('/api/search', searchRoutes); // Search endpoint (GET /api/search?q=keyword&type=all|threads|users)
+app.use('/api/follow', followRoutes);
 
 // 3. Health Check Route
 app.get('/api/status', (req, res) => {
