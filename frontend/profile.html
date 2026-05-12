@@ -190,9 +190,193 @@
     .user-list-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
     .user-list-username { font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); }
     .user-list-handle { font-size: 11px; color: var(--text-muted); }
+
+    /* ── NOTIFICATION BELL ── */
+    #notif-bell {
+      position: fixed;
+      top: 18px;
+      right: 24px;
+      z-index: 5000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    #notif-bell:hover { border-color: var(--blue); background: var(--surface2); }
+
+    #notif-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--red);
+      color: #fff;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      border: 2px solid var(--bg);
+      line-height: 1;
+    }
+    #notif-badge.visible { display: flex; }
+
+    #notif-dropdown {
+      position: fixed;
+      top: 66px;
+      right: 24px;
+      width: 340px;
+      max-height: 480px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--r-lg);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+      z-index: 4999;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      animation: notifIn 0.2s cubic-bezier(.22,1,.36,1) both;
+    }
+    #notif-dropdown.open { display: flex; }
+    @keyframes notifIn {
+      from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .notif-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .notif-header-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .notif-read-all {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--blue-light);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-family: 'Nunito', sans-serif;
+      transition: opacity 0.15s;
+    }
+    .notif-read-all:hover { opacity: 0.7; }
+
+    .notif-list {
+      overflow-y: auto;
+      flex: 1;
+      scrollbar-width: thin;
+      scrollbar-color: var(--surface2) transparent;
+    }
+    .notif-list::-webkit-scrollbar { width: 4px; }
+    .notif-list::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 2px; }
+
+    .notif-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s;
+      position: relative;
+    }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-item:hover { background: var(--surface2); }
+    .notif-item.unread { background: rgba(26,111,212,0.05); }
+    .notif-item.unread::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--blue);
+      border-radius: 0 2px 2px 0;
+    }
+
+    .notif-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid var(--border2);
+      flex-shrink: 0;
+    }
+    .notif-avatar-placeholder {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1.5px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .notif-body { flex: 1; min-width: 0; }
+    .notif-text { font-size: 12px; color: var(--text); line-height: 1.5; margin-bottom: 3px; }
+    .notif-text strong { color: var(--blue-light); font-weight: 700; }
+    .notif-ref { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .notif-time { font-size: 10px; color: var(--text-dim); margin-top: 3px; }
+
+    .notif-empty { padding: 36px 20px; text-align: center; color: var(--text-dim); font-size: 13px; }
+    .notif-empty-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.35; }
   </style>
 </head>
 <body>
+
+  <!-- Notification Bell -->
+<div id="notif-bell" onclick="toggleNotifDropdown()" title="Notifications">
+  🔔
+  <span id="notif-badge"></span>
+</div>
+
+<div id="notif-dropdown">
+  <div class="notif-header">
+    <span class="notif-header-title">Notifications</span>
+    <div class="notif-header-actions">
+      <button class="notif-read-all" onclick="markAllNotifRead()">Mark all read</button>
+      <button class="notif-read-all notif-clear-all" onclick="clearAllNotifs()">Clear all</button>
+    </div>
+  </div>
+  <div class="notif-list" id="notif-list">
+    <div class="notif-empty"><div class="notif-empty-icon">🔔</div>No notifications yet</div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<div id="confirm-modal" onclick="if(event.target===this)closeConfirm(false)">
+  <div class="confirm-box">
+    <div class="confirm-icon" id="confirm-icon">🗑</div>
+    <div class="confirm-title" id="confirm-title">Are you sure?</div>
+    <div class="confirm-msg" id="confirm-msg">This action cannot be undone.</div>
+    <div class="confirm-btns">
+      <button class="confirm-cancel" onclick="closeConfirm(false)">Cancel</button>
+      <button class="confirm-ok" id="confirm-ok" onclick="closeConfirm(true)">Delete</button>
+    </div>
+  </div>
+</div>
 
   <aside class="sidebar-left">
     <div class="logo-area">
@@ -377,9 +561,11 @@
       setTimeout(() => { el.classList.add('out'); el.addEventListener('animationend', () => el.remove()); }, 3000);
     }
 
-    function initProfile() {
+    async function initProfile() {
       pState.token = localStorage.getItem('token');
       if (!pState.token) { location.href = 'index.html'; return; }
+
+      await syncUserAvatar();
       
       pState.myUserId = localStorage.getItem('userId');
       pState.myUsername = localStorage.getItem('username') || 'User';
@@ -395,6 +581,7 @@
       pState.viewedUserId = params.get('userId') || pState.myUserId;
 
       loadProfileData();
+      initNotifications();
     }
 
     async function loadProfileData() {

@@ -429,6 +429,23 @@
       .auth-wrapper { grid-template-columns: 1fr; }
       .auth-brand   { display: none; }
     }
+    .forgot-link-wrap {
+    text-align: right;
+    margin-top: 6px;
+    }
+    .forgot-link {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 11px;
+      cursor: pointer;
+      padding: 0;
+      font-family: 'Exo 2', sans-serif;
+      transition: color 0.2s;
+    }
+    .forgot-link:hover { color: var(--blue-light); }
+    /* Hide tab bar on forgot/reset panels */
+    .hide-tabs .auth-tabs { display: none; }
   </style>
 </head>
 <body>
@@ -494,6 +511,9 @@
             <input class="input" type="password" id="login-password" placeholder="••••••••">
           </div>
         </div>
+        <div class="forgot-link-wrap">
+          <button class="forgot-link" onclick="switchTab('forgot')">Forgot your password?</button>
+        </div>
         <button class="btn-submit" onclick="handleLogin()">Enter the Frontier</button>
         <div class="form-message" id="login-message"></div>
       </div>
@@ -525,6 +545,56 @@
         </div>
         <button class="btn-submit" onclick="handleRegister()">Create Account</button>
         <div class="form-message" id="register-message"></div>
+      </div>
+    </div>
+
+    <!-- Forgot Password -->
+<div class="form-panel" id="panel-forgot">
+  <div class="form-title">Forgot password</div>
+  <div class="form-subtitle">Enter your email — we'll send a reset link</div>
+  <div class="field">
+    <label>Email</label>
+    <div class="field-icon-wrap">
+      <span class="field-icon">✉</span>
+      <input class="input" type="email" id="forgot-email" placeholder="you@example.com">
+    </div>
+  </div>
+  <button class="btn-submit" onclick="handleForgotPassword()">Send Reset Link</button>
+  <div class="form-message" id="forgot-message"></div>
+  <div class="forgot-link-wrap" style="margin-top:10px;">
+    <button class="forgot-link" onclick="switchTab('login')">← Back to login</button>
+  </div>
+</div>
+
+    <!-- Reset Password -->
+    <div class="form-panel" id="panel-reset">
+      <div class="form-title">Set new password</div>
+      <div class="form-subtitle">Enter your email and choose a new password</div>
+      <div class="field">
+        <label>Email</label>
+        <div class="field-icon-wrap">
+          <span class="field-icon">✉</span>
+          <input class="input" type="email" id="reset-email" placeholder="you@example.com">
+        </div>
+      </div>
+      <div class="field">
+        <label>New Password</label>
+        <div class="field-icon-wrap">
+          <span class="field-icon">🔒</span>
+          <input class="input" type="password" id="reset-password" placeholder="Min. 6 characters">
+        </div>
+      </div>
+      <div class="field">
+        <label>Confirm Password</label>
+        <div class="field-icon-wrap">
+          <span class="field-icon">🔒</span>
+          <input class="input" type="password" id="reset-password-confirm" placeholder="Repeat password">
+        </div>
+      </div>
+      <button class="btn-submit" onclick="handleResetPassword()">Update Password</button>
+      <div class="form-message" id="reset-message"></div>
+      <div class="forgot-link-wrap" style="margin-top:10px;">
+        <button class="forgot-link" onclick="switchTab('login')">← Back to login</button>
       </div>
     </div>
 
@@ -605,12 +675,18 @@
        TAB SWITCHER
     ══════════════════════════════════════════ */
     function switchTab(tab) {
-      document.querySelectorAll('.auth-tab').forEach((t, i) => {
-        t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'));
-      });
-      document.getElementById('panel-login').classList.toggle('active', tab === 'login');
-      document.getElementById('panel-register').classList.toggle('active', tab === 'register');
-    }
+    const tabs = ['login', 'register'];
+    document.querySelectorAll('.auth-tab').forEach((t, i) => {
+      t.classList.toggle('active', tabs[i] === tab);
+    });
+    ['login', 'register', 'forgot', 'reset'].forEach(p => {
+      document.getElementById(`panel-${p}`).classList.toggle('active', p === tab);
+    });
+    // Hide tab bar on forgot/reset, show on login/register
+    document.querySelector('.auth-forms').classList.toggle(
+      'hide-tabs', tab === 'forgot' || tab === 'reset'
+    );
+  }
 
 
     /* ══════════════════════════════════════════
@@ -661,6 +737,7 @@
           localStorage.setItem('token',    data.token);
           localStorage.setItem('username', data.user.username);
           localStorage.setItem('userId',   data.user.id);
+          localStorage.setItem('userAvatar', data.user.avatar_url || '');
           msg.className = 'form-message success';
           msg.innerText = '✓ Welcome back! Loading...';
           setTimeout(() => window.location.href = 'home.html', 800);
@@ -690,6 +767,87 @@
         document.getElementById('stat-replies').textContent = fmt(data.replies);
       } catch { /* leave — placeholders */ }
     })();
+
+    /* ══════════════════════════════════════════
+   FORGOT PASSWORD — demo, just shows success
+══════════════════════════════════════════ */
+async function handleForgotPassword() {
+  const email = document.getElementById('forgot-email').value.trim();
+  const msg   = document.getElementById('forgot-message');
+
+  if (!email) {
+    msg.className = 'form-message error';
+    msg.innerText = 'Please enter your email address.';
+    return;
+  }
+
+  msg.className = 'form-message';
+  msg.innerText = 'Sending...';
+
+  // Simulate network delay for realism
+  await new Promise(r => setTimeout(r, 900));
+
+  msg.className = 'form-message success';
+  msg.innerText = '✓ Reset link sent! Check your inbox.';
+
+  // Auto-redirect to reset panel after 1.5s
+  setTimeout(() => {
+    document.getElementById('reset-email').value = email;
+    switchTab('reset');
+    msg.innerText = '';
+  }, 1500);
+}
+
+
+/* ══════════════════════════════════════════
+   RESET PASSWORD — hits real backend endpoint
+══════════════════════════════════════════ */
+async function handleResetPassword() {
+  const email           = document.getElementById('reset-email').value.trim();
+  const newPassword     = document.getElementById('reset-password').value;
+  const confirmPassword = document.getElementById('reset-password-confirm').value;
+  const msg             = document.getElementById('reset-message');
+
+  if (!email) {
+    msg.className = 'form-message error';
+    msg.innerText = 'Email is required.';
+    return;
+  }
+  if (newPassword !== confirmPassword) {
+    msg.className = 'form-message error';
+    msg.innerText = 'Passwords do not match.';
+    return;
+  }
+  if (newPassword.length < 6) {
+    msg.className = 'form-message error';
+    msg.innerText = 'Password must be at least 6 characters.';
+    return;
+  }
+
+  try {
+    const res  = await fetch(`${API_URL}/auth/reset-password-demo`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, newPassword })
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      msg.className = 'form-message success';
+      msg.innerText = '✓ Password updated! Redirecting to login...';
+      setTimeout(() => {
+        switchTab('login');
+        msg.innerText = '';
+      }, 2000);
+    } else {
+      msg.className = 'form-message error';
+      msg.innerText = data.message;
+    }
+  } catch {
+    msg.className = 'form-message error';
+    msg.innerText = 'Server unreachable.';
+  }
+}
 
   </script>
 </body>

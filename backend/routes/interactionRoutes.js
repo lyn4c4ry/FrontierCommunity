@@ -2,6 +2,7 @@ const express = require('express');
 const router  = express.Router();
 const pool    = require('../config/db');
 const authMiddleware = require('../middleware/authMiddleware');
+const { createNotification } = require('./notificationRoutes');
 
 // ── LIKE / DISLIKE ──────────────────────────────────────────────────────────
 // POST /api/like  { targetId, targetType, value }
@@ -38,6 +39,27 @@ router.post('/like', authMiddleware, async (req, res) => {
       );
     }
 
+    // --- Notification: like ---
+    if (value === 1) {
+      let ownerId;
+      if (targetType === 'thread') {
+        const r = await pool.query(`SELECT user_id FROM threads WHERE id=$1`, [targetId]);
+        ownerId = r.rows[0]?.user_id;
+      } else {
+        const r = await pool.query(`SELECT user_id FROM comments WHERE id=$1`, [targetId]);
+        ownerId = r.rows[0]?.user_id;
+      }
+      if (ownerId) {
+        await createNotification({
+          userId:   ownerId,
+          actorId:  userId,
+          type:     'like',
+          refId:    targetId,
+          refType:  targetType
+        });
+      }
+    }
+    
     await pool.query('COMMIT');
 
     // Return updated counts after the operation

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
 const authMiddleware = require('../middleware/authMiddleware');
+const { createNotification } = require('./notificationRoutes');
 
 // GET /api/follow/stats/:userId — Public
 router.get('/stats/:userId', async (req, res) => {
@@ -75,10 +76,30 @@ router.post('/', authMiddleware, async (req, res) => {
     );
 
     if (check.rows.length > 0) {
-      await pool.query('DELETE FROM user_follows WHERE follower_id = $1 AND following_id = $2', [followerId, targetId]);
+      await pool.query(
+        'DELETE FROM user_follows WHERE follower_id = $1 AND following_id = $2',
+        [followerId, targetId]
+      );
       res.json({ isFollowing: false });
     } else {
-      await pool.query('INSERT INTO user_follows (follower_id, following_id) VALUES ($1, $2)', [followerId, targetId]);
+      await pool.query(
+        'INSERT INTO user_follows (follower_id, following_id) VALUES ($1, $2)',
+        [followerId, targetId]
+      );
+
+      // Takip bildirimi gönder (hata follow işlemini engellemesin)
+      try {
+        await createNotification({
+          userId:  targetId,   // takip edilen
+          actorId: followerId, // takip eden
+          type:    'follow',
+          refId:   null,
+          refType: null
+        });
+      } catch (notifErr) {
+        console.error('Notification error:', notifErr.message);
+      }
+
       res.json({ isFollowing: true });
     }
   } catch (e) { res.status(500).json({ error: e.message }); }

@@ -2,6 +2,7 @@ const express = require('express');
 const router  = express.Router();
 const pool    = require('../config/db');
 const authMiddleware = require('../middleware/authMiddleware');
+const { createNotification } = require('./notificationRoutes');
 
 // GET all comments for a thread — public
 router.get('/:threadId', async (req, res) => {
@@ -45,7 +46,59 @@ router.post('/', authMiddleware, async (req, res) => {
       `INSERT INTO comments (thread_id, user_id, content, parent_id) VALUES ($1,$2,$3,$4) RETURNING *`,
       [threadId, userId, content.trim(), parentId || null]
     );
-    
+    const newComment = result.rows[0];
+
+    // --- Notification: reply ---
+// Thread sahibini bul
+const threadOwner = await pool.query(
+  `SELECT user_id FROM threads WHERE id = $1`, [threadId]
+);
+if (threadOwner.rows.length > 0) {
+  await createNotification({
+    userId:   threadOwner.rows[0].user_id,
+    actorId:  userId,
+    type:     'reply',
+    refId:    newComment.id,
+    refType:  'comment'
+  });
+}
+
+// Eğer parentId varsa parent comment sahibini de bildir
+if (parentId) {
+  const parentOwner = await pool.query(
+    `SELECT user_id FROM comments WHERE id = $1`, [parentId]
+  );
+  if (parentOwner.rows.length > 0 && parentOwner.rows[0].user_id !== threadOwner.rows[0]?.user_id) {
+    await createNotification({
+      userId:   parentOwner.rows[0].user_id,
+      actorId:  userId,
+      type:     'reply',
+      refId:    newComment.id,
+      refType:  'comment'
+    });
+  }
+}
+
+// --- Notification: mention (@username) ---
+const mentions = content.match(/@(\w+)/g);
+if (mentions) {
+  for (const mention of mentions) {
+    const uname = mention.slice(1);
+    const mentioned = await pool.query(
+      `SELECT id FROM users WHERE username ILIKE $1`, [uname]
+    );
+    if (mentioned.rows.length > 0) {
+      await createNotification({
+        userId:   mentioned.rows[0].id,
+        actorId:  userId,
+        type:     'mention',
+        refId:    newComment.id,
+        refType:  'comment'
+      });
+    }
+  }
+}
+
     // GÜNCELLEME: Hatalı olan c.thread_id sorgusu c.id olarak düzeltildi.
     const full = await pool.query(
       `SELECT c.*, u.username, u.avatar_url 

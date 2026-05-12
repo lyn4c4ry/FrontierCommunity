@@ -45,10 +45,10 @@ router.post('/login', async (req, res) => {
     );
 
     res.json({
-      message: 'Login successful!',
-      token,
-      user: { id: user.id, username: user.username, email: user.email }
-    });
+    message: 'Login successful!',
+    token,
+    user: { id: user.id, username: user.username, email: user.email, avatar_url: user.avatar_url }
+  });
   } catch (err) {
     console.error('Login Error:', err.message);
     res.status(500).json({ message: 'Server Error during login.' });
@@ -249,6 +249,38 @@ router.delete('/account', authMiddleware, async (req, res) => {
     res.json({ message: 'Account deleted successfully.' });
   } catch (err) {
     console.error('Account delete error:', err.message);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+/**
+ * @route   POST /api/auth/reset-password-demo
+ * @desc    Demo reset — no JWT, email + new password only
+ */
+router.post('/reset-password-demo', async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+
+    if (!email || !newPassword) {
+      return res.status(400).json({ message: 'Email and new password are required.' });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters.' });
+    }
+
+    const result = await db.query('SELECT id FROM users WHERE email = $1', [email]);
+    if (!result.rows[0]) {
+      // Don't reveal whether email exists
+      return res.json({ message: 'Password updated successfully!' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const newHash = await bcrypt.hash(newPassword, salt);
+    await db.query('UPDATE users SET password_hash = $1 WHERE id = $2', [newHash, result.rows[0].id]);
+
+    res.json({ message: 'Password updated successfully!' });
+  } catch (err) {
+    console.error('Demo reset error:', err.message);
     res.status(500).json({ message: 'Server Error' });
   }
 });

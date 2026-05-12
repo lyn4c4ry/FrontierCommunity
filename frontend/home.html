@@ -16,6 +16,186 @@
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;line-height:1.6;min-height:100vh;display:flex;overflow-x:hidden;}
+
+    /* ── NOTIFICATION BELL ── */
+    #notif-bell {
+      position: fixed;
+      top: 18px;
+      right: 24px;
+      z-index: 5000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    #notif-bell:hover { border-color: var(--blue); background: var(--surface2); }
+
+    #notif-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--red);
+      color: #fff;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      border: 2px solid var(--bg);
+      line-height: 1;
+    }
+    #notif-badge.visible { display: flex; }
+
+    #notif-dropdown {
+      position: fixed;
+      top: 66px;
+      right: 24px;
+      width: 340px;
+      max-height: 480px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--r-lg);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+      z-index: 4999;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      animation: notifIn 0.2s cubic-bezier(.22,1,.36,1) both;
+    }
+    #notif-dropdown.open { display: flex; }
+    @keyframes notifIn {
+      from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .notif-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .notif-header-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .notif-read-all {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--blue-light);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-family: 'Nunito', sans-serif;
+      transition: opacity 0.15s;
+    }
+    .notif-read-all:hover { opacity: 0.7; }
+
+    .notif-list {
+      overflow-y: auto;
+      flex: 1;
+      scrollbar-width: thin;
+      scrollbar-color: var(--surface2) transparent;
+    }
+    .notif-list::-webkit-scrollbar { width: 4px; }
+    .notif-list::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 2px; }
+
+    .notif-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s;
+      position: relative;
+    }
+    .notif-item:last-child { border-bottom: none; }
+    .notif-item:hover { background: var(--surface2); }
+    .notif-item.unread { background: rgba(26,111,212,0.05); }
+    .notif-item.unread::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--blue);
+      border-radius: 0 2px 2px 0;
+    }
+
+    .notif-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid var(--border2);
+      flex-shrink: 0;
+    }
+    .notif-avatar-placeholder {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1.5px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .notif-body { flex: 1; min-width: 0; }
+    .notif-text {
+      font-size: 12px;
+      color: var(--text);
+      line-height: 1.5;
+      margin-bottom: 3px;
+    }
+    .notif-text strong { color: var(--blue-light); font-weight: 700; }
+    .notif-ref {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .notif-time { font-size: 10px; color: var(--text-dim); margin-top: 3px; }
+
+    .notif-empty {
+      padding: 36px 20px;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 13px;
+    }
+    .notif-empty-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.35; },
+    .notif-header-actions {
+      display: flex;
+      gap: 16px;
+    }
+
+    .notif-clear-all {
+      color: #e74c3c !important;
+    }
+
     body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.35;}
     ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:3px;}::-webkit-scrollbar-thumb:hover{background:var(--blue);}
 
@@ -98,7 +278,6 @@
     .compose-input::placeholder,.compose-textarea::placeholder{color:var(--text-dim);}
     .compose-input:focus,.compose-textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,212,0.12);}
     .compose-textarea{resize:none;height:74px;}
-    /* Category select */
     .compose-select{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 13px;color:var(--text-muted);font-family:'Nunito',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s;width:100%;cursor:pointer;appearance:none;-webkit-appearance:none;}
     .compose-select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,212,0.12);}
     .compose-select option{background:var(--surface2);color:var(--text);}
@@ -114,7 +293,6 @@
     .live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 
-    /* Category filter chips */
     .category-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
     .cat-chip{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;transition:all 0.18s;font-family:'Nunito',sans-serif;}
     .cat-chip:hover{border-color:var(--border2);color:var(--text);}
@@ -242,13 +420,10 @@
       top: 0;
       height: 100vh;
       overflow-y: auto;
-      scrollbar-width: none; /* Firefox */
+      scrollbar-width: none;
     }
-    .sidebar-ad::-webkit-scrollbar {
-      display: none; /* Chrome, Safari */
-    }
+    .sidebar-ad::-webkit-scrollbar { display: none; }
 
-    /* Ad slot container */
     .ad-slot {
       background: var(--surface);
       border: 1px dashed rgba(74,144,226,0.2);
@@ -267,13 +442,9 @@
       overflow: hidden;
       position: relative;
     }
-
-    /* Standard banner sizes */
     .ad-slot.ad-banner    { width: 100%; height: 220px; min-width: 460px; }
     .ad-slot.ad-square    { width: 100%; height: 150px; min-width: 460px; }
     .ad-slot.ad-tall      { width: 100%; height: 280px; min-width: 460px; }
-
-    /* "Advertisement" label */
     .ad-slot::before {
       content: 'Advertisement';
       position: absolute;
@@ -285,18 +456,32 @@
       color: var(--text-dim);
       opacity: 0.5;
     }
-
-    /* Placeholder icon + text */
     .ad-placeholder-icon { font-size: 22px; opacity: 0.25; margin-top: 16px;display: block;text-align: center;width: 100%;}
     .ad-placeholder-text { font-size: 9px; color: var(--text-dim); opacity: 0.4; }
-
-    /* Hide on smaller screens */
     @media(max-width:1700px) { .sidebar-ad { display: none; } }
 
   </style>
 </head>
 <body onload="initHome()">
 
+<!-- Notification Bell -->
+<div id="notif-bell" onclick="toggleNotifDropdown()" title="Notifications">
+  🔔
+  <span id="notif-badge"></span>
+</div>
+
+<div id="notif-dropdown">
+  <div class="notif-header">
+    <span class="notif-header-title">Notifications</span>
+    <div class="notif-header-actions">
+        <button class="notif-read-all" onclick="markAllNotifRead()">Mark all read</button>
+        <button class="notif-read-all notif-clear-all" onclick="clearAllNotifs()">Clear all</button>
+    </div>
+  </div>
+  <div class="notif-list" id="notif-list">
+    <div class="notif-empty"><div class="notif-empty-icon">🔔</div>No notifications yet</div>
+  </div>
+</div>
 <div id="toast"></div>
 
 <div id="confirm-modal" onclick="if(event.target===this)closeConfirm(false)">
@@ -390,28 +575,21 @@
       <div id="widget-new-members"><div class="spinner"></div></div>
     </div>
   </aside>
-  <!-- Ad sidebar — reserved space for display ads or sponsorships -->
-    <aside class="sidebar-ad">
 
-      <!-- Ad unit #1: half-page banner (160x250) -->
-      <div class="ad-slot ad-banner">
-        <span class="ad-placeholder-icon">📢</span>
-        <span class="ad-placeholder-text">160 × 250</span>
-      </div>
-
-      <!-- Ad unit #2: small square (160x160) -->
-      <div class="ad-slot ad-square">
-        <span class="ad-placeholder-icon">🎮</span>
-        <span class="ad-placeholder-text">160 × 160</span>
-      </div>
-
-      <!-- Ad unit #3: tall unit -->
-      <div class="ad-slot ad-tall">
-        <span class="ad-placeholder-icon">⚡</span>
-        <span class="ad-placeholder-text">160 × 400</span>
-      </div>
-
-    </aside>
+  <aside class="sidebar-ad">
+    <div class="ad-slot ad-banner">
+      <span class="ad-placeholder-icon">📢</span>
+      <span class="ad-placeholder-text">160 × 250</span>
+    </div>
+    <div class="ad-slot ad-square">
+      <span class="ad-placeholder-icon">🎮</span>
+      <span class="ad-placeholder-text">160 × 160</span>
+    </div>
+    <div class="ad-slot ad-tall">
+      <span class="ad-placeholder-icon">⚡</span>
+      <span class="ad-placeholder-text">160 × 400</span>
+    </div>
+  </aside>
 </div>
 
 <script src="app.js"></script>
@@ -458,8 +636,11 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeConfirm
 /* ══════════════════════════════════════════
    INIT
 ══════════════════════════════════════════ */
-function initHome() {
+async function initHome() {
   if (!localStorage.getItem('token')) { window.location.href = 'index.html'; return; }
+  
+  await syncUserAvatar(); 
+  
   hState.userId   = localStorage.getItem('userId');
   hState.username = localStorage.getItem('username') || 'User';
   hState.token    = localStorage.getItem('token');
@@ -489,6 +670,7 @@ function initHome() {
   loadCategories();
   initSearch();
   loadThreads();
+  initNotifications();
 }
 
 function setAvatars(src) {
@@ -646,7 +828,6 @@ async function loadThreads(categoryFilter) {
       fetchBatchLikes(threads.map(t => t.id))
     ]);
 
-    // Pre-fetch like states for all comments across all threads
     const allCommentIds = commentResults.flat().map(c => c.id);
     if (allCommentIds.length && hState.userId) {
       const commentLikes = await fetch(`${API_URL}/likes/batch`, {
@@ -666,11 +847,7 @@ async function loadThreads(categoryFilter) {
     el.innerHTML = '';
     threads.forEach((t, i) => {
       hCommentCache[t.id] = commentResults[i] || [];
-
-      if (batchLikes[t.id]) {
-        hLikeCache[`thread_${t.id}`] = batchLikes[t.id];
-      }
-
+      if (batchLikes[t.id]) { hLikeCache[`thread_${t.id}`] = batchLikes[t.id]; }
       el.appendChild(buildThreadCard(t, hCommentCache[t.id], i));
     });
 
@@ -694,9 +871,7 @@ async function fetchBatchLikes(threadIds) {
       body: JSON.stringify({ threadIds, userId: hState.userId })
     });
     return res.ok ? res.json() : {};
-  } catch {
-    return {};
-  }
+  } catch { return {}; }
 }
 
 /* ══════════════════════════════════════════
@@ -716,7 +891,6 @@ async function loadTopDiscussions(threads) {
 
   try {
     const batchLikes = await fetchBatchLikes(threads.map(t => t.id));
-
     const scored = threads.map(t => ({
       ...t,
       score: (batchLikes[t.id]?.likes || 0) - (batchLikes[t.id]?.dislikes || 0),
@@ -745,7 +919,6 @@ async function loadNewMembers() {
   const el = document.getElementById('widget-new-members');
   try {
     const threads = await fetch(`${API_URL}/threads`).then(r => r.ok ? r.json() : []).catch(() => []);
-
     if (!threads.length) {
       el.innerHTML = `<div class="widget-empty"><div class="widget-empty-icon">👥</div><div class="widget-empty-text">No members yet.</div></div>`;
       return;
@@ -904,21 +1077,19 @@ function showMore(btn, threadId, idsJson) {
   const comments = hCommentCache[threadId] || [];
   const toShow   = comments.filter(c => ids.includes(c.id));
 
-  // Wrap newly shown comments in a collapsible container
   const wrapper = document.createElement('div');
   wrapper.className = 'extra-comments';
 
-  let html = ''; 
+  let html = '';
   toShow.forEach(c => { html += buildCommentItem(c, comments, threadId, 0); });
   wrapper.innerHTML = html;
 
-  // Replace show button with hide button
   const hideBtn = document.createElement('button');
   hideBtn.className = 'show-more-comments';
   hideBtn.textContent = `▴ Hide ${toShow.length} comment${toShow.length > 1 ? 's' : ''}`;
   hideBtn.onclick = () => {
     wrapper.remove();
-    hideBtn.replaceWith(btn); // Restore original show button
+    hideBtn.replaceWith(btn);
   };
 
   btn.parentNode.insertBefore(wrapper, btn);
