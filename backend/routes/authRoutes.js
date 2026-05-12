@@ -222,4 +222,28 @@ router.get('/profile/:userId', async (req, res) => {
   }
 });
 
+/**
+ * @route   GET /api/auth/stats
+ * @desc    Public — Get overall forum stats (total members, threads, replies) for homepage display
+ */
+router.get('/stats', async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT
+        (SELECT COUNT(*) FROM users)                              AS member_count,
+        (SELECT COUNT(*) FROM threads)                           AS thread_count,
+        (SELECT COUNT(*) FROM comments WHERE is_deleted = FALSE) AS reply_count
+    `);
+    const row = result.rows[0];
+    res.json({
+      members: parseInt(row.member_count),
+      threads: parseInt(row.thread_count),
+      replies: parseInt(row.reply_count)
+    });
+  } catch (err) {
+    console.error('Stats error:', err.message);
+    res.status(500).json({ message: 'Stats could not be loaded' });
+  }
+});
+
 module.exports = router;
