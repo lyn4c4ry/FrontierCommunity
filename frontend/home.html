@@ -856,7 +856,7 @@ async function loadThreads() {
       }
     }
 
-    document.getElementById('stat-comments').textContent = commentResults.reduce((s,c) => s+c.length, 0);
+    document.getElementById('stat-comments').textContent = commentResults.reduce((s,c) => s + c.filter(x => !x.is_deleted).length, 0);
 
     threads.forEach((t, i) => {
       hCommentCache[t.id] = commentResults[i] || [];
@@ -1097,7 +1097,7 @@ async function refreshComments(threadId) {
     hCommentCache[threadId] = comments;
     const el = document.getElementById(`comments-${threadId}`);
     if (el) el.innerHTML = buildCommentsHTML(comments, threadId);
-    document.getElementById('stat-comments').textContent = Object.values(hCommentCache).reduce((s,c) => s+c.length, 0);
+    document.getElementById('stat-comments').textContent = Object.values(hCommentCache).reduce((s,c) => s + c.filter(x => !x.is_deleted).length, 0);
   } catch(e) { console.error(e); }
 }
 
