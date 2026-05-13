@@ -333,6 +333,12 @@
 
     .notif-empty { padding: 36px 20px; text-align: center; color: var(--text-dim); font-size: 13px; }
     .notif-empty-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.35; }
+
+    /* ── THREAD TAGS ── */
+  .thread-tag-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;}
+  .thread-tag{font-size:9px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;padding:3px 8px;border-radius:5px;display:inline-flex;align-items:center;gap:4px;}
+  .tag-game{background:rgba(155,109,255,0.12);border:1px solid rgba(155,109,255,0.25);color:rgba(155,109,255,0.9);}
+  .tag-genre{background:rgba(26,111,212,0.1);border:1px solid rgba(26,111,212,0.2);color:rgba(77,184,255,0.85);}
   </style>
 </head>
 <body onload="initThread()">
@@ -560,6 +566,19 @@ function renderThread(t, lk, bk) {
   const isOwn = String(t.user_id) === String(ME.userId);
   const av = t.avatar_url ? escHtml(t.avatar_url) : `https://ui-avatars.com/api/?name=${encodeURIComponent(t.username||'U')}&background=1a6fd4&color=fff&size=64&bold=true`;
 
+  // Genre tags
+  const genres = (t.genre || '').split(',').map(g => g.trim()).filter(Boolean);
+  const gameName = t.game_name || '';
+  let tagHtml = '';
+  if (gameName || genres.length) {
+    tagHtml = `<div class="thread-tag-row">`;
+    genres.forEach(g => {
+      tagHtml += `<span class="thread-tag tag-genre">🎭 ${escHtml(g)}</span>`;
+    });
+    if (gameName) tagHtml += `<span class="thread-tag tag-game">🎮 ${escHtml(gameName)}</span>`;
+    tagHtml += `</div>`;
+  }
+
   document.getElementById('thread-container').innerHTML = `
     <div class="thread-body">
       <div class="thread-stripe"></div>
@@ -573,6 +592,7 @@ function renderThread(t, lk, bk) {
           <span class="thread-cat">${escHtml(t.category_name || 'Discussion')}</span>
         </div>
         <div class="thread-title">${escHtml(t.title)}</div>
+        ${tagHtml}
         <div class="thread-content">${escHtml(t.content)}</div>
         <div class="thread-actions">
           <button class="action-btn ${lk.userVote===1?'liked':''}" id="tlike-btn" onclick="voteThread(${t.id},1)">👍 <span id="tlike-count">${lk.likes}</span></button>

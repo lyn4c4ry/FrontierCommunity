@@ -718,8 +718,11 @@ function renderFilteredThreads() {
     );
   }
   if (hState.activeGenreFilter.size > 0) {
-    filtered = filtered.filter(t => hState.activeGenreFilter.has(t.genre||''));
-  }
+  filtered = filtered.filter(t => {
+    const threadGenres = (t.genre || '').split(',').map(g => g.trim());
+    return [...hState.activeGenreFilter].every(g => threadGenres.includes(g));
+  });
+}
 
   const el = document.getElementById('threads-list');
   const count = document.getElementById('resultsCount');
@@ -939,11 +942,13 @@ function buildThreadCard(t, comments, i) {
 
   // Game + genre tags
   const gameName = t.game_name || '';
-  const genre    = t.genre || '';
+  const genres   = (t.genre || '').split(',').map(g => g.trim()).filter(Boolean);
   let tagHtml = '';
-  if (gameName || genre) {
+  if (gameName || genres.length) {
     tagHtml = `<div class="thread-tag-row">`;
-    if (genre)    tagHtml += `<span class="thread-tag tag-genre">🎭 ${escHtml(genre)}</span>`;
+    genres.forEach(g => {
+      tagHtml += `<span class="thread-tag tag-genre">🎭 ${escHtml(g)}</span>`;
+    });
     if (gameName) tagHtml += `<span class="thread-tag tag-game">🎮 ${escHtml(gameName)}</span>`;
     tagHtml += `</div>`;
   }
@@ -1321,8 +1326,7 @@ async function fetchGameSuggestions(q) {
   _gameAcItems = [];
 
   try {
-    // RAWG public API — API key olmadan da çalışır
-    const url = `https://api.rawg.io/api/games?search=${encodeURIComponent(q)}&page_size=7&ordering=-rating`;
+    const url = `${API_URL}/news/games?search=${encodeURIComponent(q)}&page_size=7`;
     const res = await fetch(url);
     if (!res.ok) throw new Error();
     const data = await res.json();

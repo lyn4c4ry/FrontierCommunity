@@ -69,7 +69,7 @@ router.get('/categories', async (req, res) => {
 // POST /api/threads
 router.post('/', authMiddleware, async (req, res) => {
   const userId = req.user.userId;
-  const { title, content, categoryId } = req.body;
+  const { title, content, categoryId, genre, gameName } = req.body;
 
   if (!title?.trim() || !content?.trim()) {
     return res.status(400).json({ error: 'Title and content are required' });
@@ -82,9 +82,14 @@ router.post('/', authMiddleware, async (req, res) => {
       if (catCheck.rows.length) resolvedCategoryId = categoryId;
     }
 
+    let genreStr = null;
+    if (Array.isArray(genre)) genreStr = genre.filter(Boolean).join(',');
+    else if (typeof genre === 'string') genreStr = genre.trim() || null;
+
     const result = await pool.query(
-      `INSERT INTO threads (title, content, user_id, category_id) VALUES ($1,$2,$3,$4) RETURNING *`,
-      [title.trim(), content.trim(), userId, resolvedCategoryId]
+      `INSERT INTO threads (title, content, user_id, category_id, genre, game_name)
+       VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
+      [title.trim(), content.trim(), userId, resolvedCategoryId, genreStr, gameName?.trim()||null]
     );
 
     const full = await pool.query(

@@ -34,36 +34,29 @@
     .logo-area{padding:22px 20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;}
     .logo-area img{width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(77,184,255,0.45));}
     .logo-text{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(90deg,var(--blue-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    
-    .nav-section{padding:14px 10px 8px;flex:1; margin-top: 10px;}
+    .nav-section{padding:14px 10px 8px;flex:1;margin-top:10px;}
     .nav-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);padding:0 12px;margin-bottom:5px;display:block;}
     .nav-item{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:var(--r-sm);color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:600;transition:all 0.2s;margin-bottom:2px;cursor:pointer;border:none;background:none;width:100%;text-align:left;}
     .nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
     .nav-item.active{background:rgba(26,111,212,0.12);color:var(--blue-light);}
     .nav-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
-    
-    /* ── YENİ SIDEBAR ALT PROFİL VE AÇILIR MENÜ (DROPDOWN) ── */
-    .sidebar-bottom { padding: 14px; border-top: 1px solid var(--border); position: relative; }
-    .sidebar-profile-box { padding: 10px; background: transparent; border-radius: 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: background 0.2s; margin: 0; user-select: none; }
-    .sidebar-profile-box:hover { background: rgba(255,255,255,0.04); }
-    .sidebar-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--blue); flex-shrink: 0; }
-    .sidebar-uname { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 14px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .sidebar-handle { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .dropdown-icon { margin-left: auto; color: var(--text-dim); font-size: 16px; font-weight: bold; transition: color 0.2s; }
-    .sidebar-profile-box:hover .dropdown-icon { color: var(--text-muted); }
-
-    .profile-dropdown { position: absolute; bottom: calc(100% + 5px); left: 14px; right: 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 6px; display: none; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 201; }
-    .profile-dropdown.open { display: flex; animation: fadeUp 0.2s ease; }
-    .dropdown-item { background: transparent; border: none; padding: 10px 12px; border-radius: 6px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 10px; transition: background 0.2s; }
-    .dropdown-item:hover { background: rgba(255,255,255,0.05); }
-    .dropdown-item.text-red { color: var(--red); }
-    .dropdown-item.text-red:hover { background: rgba(255,64,96,0.1); }
+    .sidebar-bottom{padding:14px;border-top:1px solid var(--border);position:relative;}
+    .sidebar-profile-box{padding:10px;background:transparent;border-radius:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background 0.2s;margin:0;user-select:none;}
+    .sidebar-profile-box:hover{background:rgba(255,255,255,0.04);}
+    .sidebar-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--blue);flex-shrink:0;}
+    .sidebar-uname{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .sidebar-handle{font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .dropdown-icon{margin-left:auto;color:var(--text-dim);font-size:16px;font-weight:bold;transition:color 0.2s;}
+    .profile-dropdown{position:absolute;bottom:calc(100% + 5px);left:14px;right:14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:6px;display:none;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,0.5);z-index:201;}
+    .profile-dropdown.open{display:flex;animation:fadeUp 0.2s ease;}
+    .dropdown-item{background:transparent;border:none;padding:10px 12px;border-radius:6px;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;transition:background 0.2s;}
+    .dropdown-item:hover{background:rgba(255,255,255,0.05);}
+    .dropdown-item.text-red{color:var(--red);}
+    .dropdown-item.text-red:hover{background:rgba(255,64,96,0.1);}
     @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
     /* MAIN */
     .main{margin-left:228px;flex:1;display:flex;min-height:100vh;}
-
-    /* CONTENT */
     .content{flex:1;padding:24px 24px 80px;border-right:1px solid var(--border);min-width:0;}
 
     /* PAGE HEADER */
@@ -77,12 +70,24 @@
 
     /* TOOLBAR */
     .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
-    .filter-search{flex:1;min-width:200px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 14px 9px 36px;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s;position:relative;}
-    .search-wrap{position:relative;flex:1;min-width:200px;}
-    .search-wrap::before{content:'⌕';position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:16px;pointer-events:none;z-index:1;}
-    .search-wrap input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 14px 9px 34px;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s;}
-    .search-wrap input::placeholder{color:var(--text-dim);}
-    .search-wrap input:focus{border-color:var(--blue);}
+
+    /* ── GAME SEARCH AUTOCOMPLETE (news page) ── */
+    .news-search-wrap{position:relative;flex:1;min-width:200px;}
+    .news-search-wrap::before{content:'⌕';position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:16px;pointer-events:none;z-index:1;}
+    .news-search-wrap input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 14px 9px 34px;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s;}
+    .news-search-wrap input::placeholder{color:var(--text-dim);}
+    .news-search-wrap input:focus{border-color:var(--blue);}
+    /* Autocomplete dropdown for news search */
+    .news-ac-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);z-index:500;max-height:300px;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,0.55);display:none;scrollbar-width:thin;scrollbar-color:var(--surface2) transparent;}
+    .news-ac-dropdown.open{display:block;}
+    .news-ac-item{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border);transition:background 0.13s;}
+    .news-ac-item:last-child{border-bottom:none;}
+    .news-ac-item:hover,.news-ac-item.focused{background:var(--surface2);}
+    .news-ac-thumb{width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--surface2);}
+    .news-ac-name{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .news-ac-meta{font-size:10px;color:var(--text-muted);margin-top:1px;}
+    .news-ac-loading,.news-ac-empty{padding:10px 14px;font-size:12px;color:var(--text-muted);}
+
     .filter-select{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 12px;color:var(--text-muted);font-family:'Nunito',sans-serif;font-size:12px;outline:none;cursor:pointer;transition:border-color 0.2s;}
     .filter-select:focus{border-color:var(--blue);color:var(--text);}
     .filter-select option{background:var(--surface2);}
@@ -100,13 +105,11 @@
     .watchlist-chip{border-color:rgba(245,197,24,0.2);color:var(--text-muted);}
     .watchlist-chip.active{background:rgba(245,197,24,0.1);border-color:rgba(245,197,24,0.5);color:var(--gold);}
 
-    /* ── GRID VIEW ── */
+    /* GRID VIEW */
     .game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
     .game-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;transition:border-color 0.22s,transform 0.18s,box-shadow 0.22s;animation:fadeUp 0.35s ease both;cursor:default;position:relative;}
     .game-card:hover{border-color:rgba(74,144,226,0.3);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.4);}
     .game-card.followed{border-color:rgba(245,197,24,0.25);}
-
-    /* cover */
     .cover-wrap{position:relative;overflow:hidden;height:130px;}
     .game-cover{width:100%;height:100%;object-fit:cover;display:block;background:var(--surface2);transition:transform 0.4s ease;}
     .game-card:hover .game-cover{transform:scale(1.05);}
@@ -124,8 +127,6 @@
     .follow-btn{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:rgba(8,10,15,0.55);backdrop-filter:blur(8px);color:var(--text-muted);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
     .follow-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(245,197,24,0.15);}
     .follow-btn.active{background:rgba(245,197,24,0.2);border-color:rgba(245,197,24,0.5);color:var(--gold);}
-
-    /* card body */
     .game-body{padding:11px 13px 12px;}
     .game-title{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:#e8f0fa;line-height:1.3;margin-bottom:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .game-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:7px;}
@@ -135,7 +136,7 @@
     .game-date{font-size:10px;color:var(--text-muted);display:flex;align-items:center;gap:4px;}
     .game-date::before{content:'';width:3px;height:3px;border-radius:50%;background:var(--text-dim);flex-shrink:0;}
 
-    /* ── LIST VIEW ── */
+    /* LIST VIEW */
     .game-list{display:flex;flex-direction:column;gap:6px;}
     .game-list-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;display:flex;align-items:center;gap:0;transition:border-color 0.2s,background 0.2s;animation:fadeUp 0.3s ease both;cursor:default;}
     .game-list-item:hover{border-color:rgba(74,144,226,0.25);background:rgba(17,21,32,0.95);}
@@ -163,8 +164,6 @@
     .widget{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;}
     .widget-title{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
     .widget-count{font-size:10px;color:var(--text-muted);font-family:'Nunito',sans-serif;letter-spacing:0;}
-
-    /* WATCHLIST */
     .watchlist-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:opacity 0.2s;}
     .watchlist-item:last-child{border-bottom:none;padding-bottom:0;}
     .watchlist-item:first-child{padding-top:0;}
@@ -176,8 +175,6 @@
     .watchlist-unfollow{background:none;border:none;color:var(--text-dim);font-size:13px;cursor:pointer;padding:2px 4px;transition:color 0.2s;flex-shrink:0;}
     .watchlist-unfollow:hover{color:var(--red);}
     .watchlist-empty{font-size:12px;color:var(--text-dim);text-align:center;padding:10px 0;}
-
-    /* STATS */
     .stat-row{display:flex;gap:7px;}
     .stat-box{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 8px;text-align:center;}
     .stat-num{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;line-height:1;}
@@ -196,12 +193,11 @@
     .sk-line.xs{width:40%;}
     .empty-state{padding:60px 20px;text-align:center;color:var(--text-muted);font-size:13px;}
     .empty-icon{font-size:40px;margin-bottom:12px;}
-
-    /* LOAD MORE */
     .load-more-wrap{display:flex;justify-content:center;margin-top:22px;}
     .btn-load-more{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:10px 32px;border-radius:var(--r-sm);cursor:pointer;transition:all 0.2s;}
     .btn-load-more:hover{border-color:var(--blue);color:var(--blue-light);}
     .btn-load-more:disabled{opacity:0.4;cursor:not-allowed;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
     @media(max-width:1100px){.sidebar-right{display:none;}.content{border-right:none;}}
     @media(max-width:900px){.game-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));}}
@@ -214,7 +210,7 @@
       .nav-item{justify-content:center;padding:10px;}
       .content{padding:12px 10px 60px;}
       .game-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
-      .profile-dropdown { left: 5px; right: 5px; }
+      .profile-dropdown{left:5px;right:5px;}
     }
   </style>
 </head>
@@ -223,30 +219,27 @@
 <div id="toast"></div>
 
 <aside class="sidebar-left">
-  <a href="home.html" style="text-decoration: none;">
+  <a href="home.html" style="text-decoration:none;">
     <div class="logo-area">
       <img src="logo_v1.png" alt="Frontier Logo">
       <span class="logo-text">Frontier</span>
     </div>
   </a>
-
   <nav class="nav-section">
     <span class="nav-label">Navigate</span>
     <a href="home.html" class="nav-item"><span class="nav-icon">🏠</span><span>Home</span></a>
     <a href="news.html" class="nav-item active"><span class="nav-icon">🎮</span><span>Game News</span></a>
     <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span><span>Profile</span></a>
   </nav>
-  
   <div class="sidebar-bottom">
     <div class="sidebar-profile-box" onclick="toggleProfileDropdown(event)">
       <img id="sidebar-avatar" src="" class="sidebar-avatar" alt="avatar">
-      <div style="flex:1; min-width:0;">
+      <div style="flex:1;min-width:0;">
         <div class="sidebar-uname" id="sidebar-name">—</div>
         <div class="sidebar-handle" id="sidebar-handle">@—</div>
       </div>
       <div class="dropdown-icon">⋮</div>
     </div>
-    
     <div class="profile-dropdown" id="profileDropdown">
       <button class="dropdown-item" onclick="location.href='settings.html'">⚙️ Settings</button>
       <button class="dropdown-item text-red" onclick="handleLogout()">⏻ Log out</button>
@@ -261,16 +254,26 @@
       <div class="page-header-row">
         <div>
           <div class="page-title">🎮 Game News</div>
-          <div class="page-subtitle">Latest releases, ratings & updates — powered by RAWG</div>
+          <div class="page-subtitle">Latest releases, ratings &amp; updates — powered by RAWG</div>
         </div>
         <span class="api-badge" id="api-status">● Connecting...</span>
       </div>
     </div>
 
     <div class="toolbar">
-      <div class="search-wrap">
-        <input id="search-input" placeholder="Search games..." oninput="onSearch()">
+      <!-- ── AUTOCOMPLETE SEARCH (replaces plain input) ── -->
+      <div class="news-search-wrap">
+        <input
+          id="search-input"
+          placeholder="Search games..."
+          autocomplete="off"
+          oninput="onNewsSearch()"
+          onkeydown="onNewsSearchKeydown(event)"
+        >
+        <!-- Dropdown for live suggestions -->
+        <div class="news-ac-dropdown" id="newsAcDropdown"></div>
       </div>
+
       <select class="filter-select" id="sort-select" onchange="applyFilters()">
         <option value="-released">Newest</option>
         <option value="-rating">Top Rated</option>
@@ -294,9 +297,7 @@
     </div>
 
     <div class="genre-bar" id="genre-bar"></div>
-
     <div id="game-grid"></div>
-
     <div class="load-more-wrap" id="load-more-wrap" style="display:none;">
       <button class="btn-load-more" id="btn-load-more" onclick="loadMore()">Load More</button>
     </div>
@@ -328,49 +329,190 @@
 </div>
 
 <script>
-// RAWG_BASE yerine artık senin backend'indeki proxy endpoint'ini kullanıyoruz
-const API_BASE = 'http://localhost:5000/api/news'; 
+// Backend proxy base (your Express server forwards to RAWG)
+const API_BASE = 'http://localhost:5000/api/news';
 
 const GENRES = [
-  { id: 4, name: 'Action' }, { id: 51, name: 'Indie' }, { id: 3, name: 'Adventure' },
-  { id: 5, name: 'RPG' }, { id: 2, name: 'Shooter' }, { id: 7, name: 'Puzzle' },
-  { id: 11, name: 'Arcade' }, { id: 83, name: 'Platformer' }, { id: 1, name: 'Racing' },
-  { id: 15, name: 'Sports' }, { id: 6, name: 'Fighting' }, { id: 14, name: 'Simulation' },
+  { id: 4,  name: 'Action' },   { id: 51, name: 'Indie' },     { id: 3,  name: 'Adventure' },
+  { id: 5,  name: 'RPG' },      { id: 2,  name: 'Shooter' },   { id: 7,  name: 'Puzzle' },
+  { id: 11, name: 'Arcade' },   { id: 83, name: 'Platformer' },{ id: 1,  name: 'Racing' },
+  { id: 15, name: 'Sports' },   { id: 6,  name: 'Fighting' },  { id: 14, name: 'Simulation' },
   { id: 10, name: 'Strategy' },
 ];
 
-let state = { games:[], page:1, nextUrl:null, activeGenre:null, activePlatform:'', activeSort:'-released', searchQuery:'', watchlistOnly:false, loading:false, view:'grid' };
-let watchlist = {};
-let searchTimer = null;
+// ── Global state ──────────────────────────────────────────────────────────────
+let state = {
+  games: [], page: 1, nextUrl: null,
+  activeGenre: null, activePlatform: '', activeSort: '-released',
+  searchQuery: '', watchlistOnly: false, loading: false, view: 'grid'
+};
+let watchlist    = {};
+let searchTimer  = null;
 
+// ── Autocomplete state (news page search bar) ─────────────────────────────────
+let _newsAcTimer = null;
+let _newsAcIndex = -1;
+let _newsAcItems = [];
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  INIT
+// ═════════════════════════════════════════════════════════════════════════════
 function initNews() {
   if (!localStorage.getItem('token')) { window.location.href = 'index.html'; return; }
-  
-  const username = localStorage.getItem('username') || 'User';
-  const storedAvatar = localStorage.getItem('userAvatar'); // Hafızadaki (DB'den gelen) fotoğrafı al
-  
-  // Eğer özel bir avatar varsa onu kullan, yoksa ismin baş harfinden avatar üret
-  const av = storedAvatar ? storedAvatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=1a6fd4&color=fff&size=128&bold=true`;
-  
-  document.getElementById('sidebar-avatar').src = av;
-  document.getElementById('sidebar-name').textContent = username;
-  document.getElementById('sidebar-handle').textContent = `@${username.toLowerCase()}`;
-  
+
+  const username     = localStorage.getItem('username') || 'User';
+  const storedAvatar = localStorage.getItem('userAvatar');
+  const av = storedAvatar
+    ? storedAvatar
+    : `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=1a6fd4&color=fff&size=128&bold=true`;
+
+  document.getElementById('sidebar-avatar').src        = av;
+  document.getElementById('sidebar-name').textContent  = username;
+  document.getElementById('sidebar-handle').textContent= `@${username.toLowerCase()}`;
+
   try { watchlist = JSON.parse(localStorage.getItem('fc_watchlist') || '{}'); } catch { watchlist = {}; }
+
   buildGenreBar();
   renderWatchlist();
-  
-  // API key kontrolü kalktı, doğrudan sunucudan (proxy) veri çekiyoruz
+  fetchGames(true);
+
+  // Close autocomplete when clicking outside the search box
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.news-search-wrap')) closeNewsAc();
+  });
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  NEWS SEARCH AUTOCOMPLETE
+// ═════════════════════════════════════════════════════════════════════════════
+
+/** Called on every keystroke in the search input */
+function onNewsSearch() {
+  clearTimeout(_newsAcTimer);
+  const q = document.getElementById('search-input').value.trim();
+
+  // If the field is cleared, reset to default listing
+  if (!q) {
+    closeNewsAc();
+    state.searchQuery = '';
+    fetchGames(true);
+    return;
+  }
+
+  // Show suggestions after 2+ chars with a short debounce
+  if (q.length >= 2) {
+    _newsAcTimer = setTimeout(() => fetchNewsAcSuggestions(q), 300);
+  }
+}
+
+/** Fetches up to 7 suggestions from RAWG (via backend proxy) */
+async function fetchNewsAcSuggestions(q) {
+  const drop = document.getElementById('newsAcDropdown');
+  drop.innerHTML = '<div class="news-ac-loading">🔍 Searching...</div>';
+  drop.classList.add('open');
+  _newsAcIndex = -1;
+  _newsAcItems = [];
+
+  try {
+    const params = new URLSearchParams({ search: q, page_size: '7', ordering: '-rating' });
+    const res    = await fetch(`${API_BASE}/games?${params.toString()}`);
+    if (!res.ok) throw new Error('Server error');
+    const data    = await res.json();
+    const results = data.results || [];
+
+    if (!results.length) {
+      drop.innerHTML = '<div class="news-ac-empty">No games found.</div>';
+      return;
+    }
+
+    _newsAcItems = results;
+    drop.innerHTML = results.map((g, i) => {
+      const thumb  = g.background_image
+        ? `<img class="news-ac-thumb" src="${escHtml(g.background_image)}" alt="" loading="lazy">`
+        : `<div class="news-ac-thumb" style="background:var(--surface2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;">🎮</div>`;
+      const year   = g.released ? g.released.slice(0, 4) : '—';
+      const genres = (g.genres || []).slice(0, 2).map(x => x.name).join(', ');
+      const rating = g.rating ? `⭐ ${g.rating.toFixed(1)}` : '';
+      return `<div class="news-ac-item" data-index="${i}" onclick="selectNewsAc(${i})">
+        ${thumb}
+        <div style="min-width:0;">
+          <div class="news-ac-name">${escHtml(g.name)}</div>
+          <div class="news-ac-meta">${year}${genres ? ' · ' + escHtml(genres) : ''}${rating ? ' · ' + rating : ''}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch {
+    drop.innerHTML = '<div class="news-ac-empty">Could not load suggestions.</div>';
+  }
+}
+
+/** User clicks (or presses Enter on) a suggestion */
+function selectNewsAc(index) {
+  const g = _newsAcItems[index];
+  if (!g) return;
+  // Fill the search box and close dropdown
+  document.getElementById('search-input').value = g.name;
+  closeNewsAc();
+  // Trigger a full search with the chosen game name
+  state.searchQuery = g.name;
   fetchGames(true);
 }
 
-/* ── GENRE BAR ─────────────────────────────────────────── */
+/** Keyboard navigation for the autocomplete dropdown */
+function onNewsSearchKeydown(e) {
+  const drop  = document.getElementById('newsAcDropdown');
+  const items = drop.querySelectorAll('.news-ac-item');
+
+  if (!drop.classList.contains('open') || !items.length) {
+    // Enter without dropdown = plain search
+    if (e.key === 'Enter') {
+      closeNewsAc();
+      state.searchQuery = document.getElementById('search-input').value.trim();
+      fetchGames(true);
+    }
+    return;
+  }
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    _newsAcIndex = Math.min(_newsAcIndex + 1, items.length - 1);
+    items.forEach((el, i) => el.classList.toggle('focused', i === _newsAcIndex));
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    _newsAcIndex = Math.max(_newsAcIndex - 1, 0);
+    items.forEach((el, i) => el.classList.toggle('focused', i === _newsAcIndex));
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (_newsAcIndex >= 0) {
+      selectNewsAc(_newsAcIndex);
+    } else {
+      // No item highlighted → search with whatever is typed
+      closeNewsAc();
+      state.searchQuery = document.getElementById('search-input').value.trim();
+      fetchGames(true);
+    }
+  } else if (e.key === 'Escape') {
+    closeNewsAc();
+  }
+}
+
+function closeNewsAc() {
+  const drop = document.getElementById('newsAcDropdown');
+  if (drop) { drop.classList.remove('open'); drop.innerHTML = ''; }
+  _newsAcIndex = -1;
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+//  GENRE BAR
+// ═════════════════════════════════════════════════════════════════════════════
 function buildGenreBar() {
   const bar = document.getElementById('genre-bar');
   bar.innerHTML =
     `<button class="genre-chip active" data-genre="" onclick="selectGenre(this,null)">All</button>` +
     `<button class="genre-chip watchlist-chip" id="watchlist-chip" onclick="toggleWatchlistFilter()">⭐ My List</button>` +
-    GENRES.map(g => `<button class="genre-chip" data-genre="${g.id}" onclick="selectGenre(this,${g.id})">${g.name}</button>`).join('');
+    GENRES.map(g =>
+      `<button class="genre-chip" data-genre="${g.id}" onclick="selectGenre(this,${g.id})">${g.name}</button>`
+    ).join('');
 }
 
 function selectGenre(btn, genreId) {
@@ -382,20 +524,13 @@ function selectGenre(btn, genreId) {
   fetchGames(true);
 }
 
-/* ── FILTERS ───────────────────────────────────────────── */
+// ═════════════════════════════════════════════════════════════════════════════
+//  FILTERS
+// ═════════════════════════════════════════════════════════════════════════════
 function applyFilters() {
-  state.activeSort = document.getElementById('sort-select').value;
+  state.activeSort     = document.getElementById('sort-select').value;
   state.activePlatform = document.getElementById('platform-select').value;
   fetchGames(true);
-}
-
-function onSearch() {
-  clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => {
-    state.searchQuery = document.getElementById('search-input').value.trim();
-    state.loading = false; // ← bunu ekle, loading takılı kalmasın
-    fetchGames(true);
-  }, 600);
 }
 
 function toggleWatchlistFilter() {
@@ -405,7 +540,9 @@ function toggleWatchlistFilter() {
   else fetchGames(true);
 }
 
-/* ── VIEW TOGGLE ───────────────────────────────────────── */
+// ═════════════════════════════════════════════════════════════════════════════
+//  VIEW TOGGLE
+// ═════════════════════════════════════════════════════════════════════════════
 function setView(v) {
   state.view = v;
   document.getElementById('view-grid').classList.toggle('active', v === 'grid');
@@ -413,25 +550,28 @@ function setView(v) {
   renderGames(state.games, true);
 }
 
-/* ── FETCH ─────────────────────────────────────────────── */
+// ═════════════════════════════════════════════════════════════════════════════
+//  FETCH GAMES (main listing + search)
+// ═════════════════════════════════════════════════════════════════════════════
 async function fetchGames(reset = false) {
-  state.loading = false;
   if (state.loading) return;
   state.loading = true;
   if (reset) { state.page = 1; state.games = []; state.nextUrl = null; }
 
   const grid = document.getElementById('game-grid');
-  if (reset) { grid.innerHTML = buildSkeletons(12); document.getElementById('load-more-wrap').style.display = 'none'; }
+  if (reset) {
+    grid.innerHTML = buildSkeletons(12);
+    document.getElementById('load-more-wrap').style.display = 'none';
+  }
 
+  // Build query params — use larger page size so results are richer
   const params = new URLSearchParams();
-  params.set('page_size', '20');
+  params.set('page_size', '24');
   params.set('page', String(state.page));
   params.set('ordering', state.activeSort);
-  if (state.activeGenre)    params.set('genres', state.activeGenre);
+  if (state.activeGenre)    params.set('genres',    state.activeGenre);
   if (state.activePlatform) params.set('platforms', state.activePlatform);
-  if (state.searchQuery)    params.set('search', state.searchQuery);
-
-  console.log('Fetching:', `${API_BASE}/games?${params.toString()}`);
+  if (state.searchQuery)    params.set('search',    state.searchQuery);
 
   try {
     const response = await fetch(`${API_BASE}/games?${params.toString()}`);
@@ -440,26 +580,31 @@ async function fetchGames(reset = false) {
 
     const results = data.results || [];
     if (reset) { state.games = results; grid.innerHTML = ''; }
-    else { state.games = [...state.games, ...results]; }
+    else        { state.games = [...state.games, ...results]; }
 
     state.nextUrl = data.next || null;
     renderGames(state.games, reset);
     updateStats();
-    document.getElementById('results-info').textContent = `${(data.count||0).toLocaleString()} games`;
+    document.getElementById('results-info').textContent  = `${(data.count || 0).toLocaleString()} games`;
     document.getElementById('load-more-wrap').style.display = data.next ? 'flex' : 'none';
 
-    document.getElementById('api-status').textContent = '● Server Connected';
-    document.getElementById('api-status').style.color = 'var(--green)';
-    document.getElementById('api-status').style.borderColor = 'rgba(34,212,122,0.3)';
-    document.getElementById('api-status').style.background = 'rgba(34,212,122,0.1)';
+    // Update API status badge
+    const badge = document.getElementById('api-status');
+    badge.textContent    = '● Server Connected';
+    badge.style.color    = 'var(--green)';
+    badge.style.borderColor = 'rgba(34,212,122,0.3)';
+    badge.style.background  = 'rgba(34,212,122,0.1)';
   } catch (e) {
     console.error('fetchGames error:', e);
     if (reset) showStaticFallback();
-    document.getElementById('api-status').textContent = '● Server Error';
-    document.getElementById('api-status').style.color = 'var(--red)';
-    document.getElementById('api-status').style.borderColor = 'rgba(255,64,96,0.3)';
-    document.getElementById('api-status').style.background = 'rgba(255,64,96,0.1)';
-  } finally { state.loading = false; }
+    const badge = document.getElementById('api-status');
+    badge.textContent    = '● Server Error';
+    badge.style.color    = 'var(--red)';
+    badge.style.borderColor = 'rgba(255,64,96,0.3)';
+    badge.style.background  = 'rgba(255,64,96,0.1)';
+  } finally {
+    state.loading = false;
+  }
 }
 
 async function loadMore() {
@@ -471,7 +616,9 @@ async function loadMore() {
   btn.disabled = false; btn.textContent = 'Load More';
 }
 
-/* ── RENDER ────────────────────────────────────────────── */
+// ═════════════════════════════════════════════════════════════════════════════
+//  RENDER GAMES
+// ═════════════════════════════════════════════════════════════════════════════
 function renderGames(games, replace = true) {
   const grid = document.getElementById('game-grid');
   if (replace) {
@@ -490,23 +637,26 @@ function renderGames(games, replace = true) {
 
 function buildGameCard(g, idx) {
   const followed = !!watchlist[g.id];
-  const score = g.rating ? g.rating.toFixed(1) : null;
+  const score    = g.rating ? g.rating.toFixed(1) : null;
   const scoreCls = !score ? '' : score >= 4 ? 'score-high' : score >= 3 ? 'score-mid' : 'score-low';
-  const genre = g.genres?.[0]?.name || null;
+  const genre    = g.genres?.[0]?.name || null;
   const platform = g.parent_platforms?.[0]?.platform?.name || null;
-  const cover = g.background_image;
-  const released = g.released ? new Date(g.released).toLocaleDateString('en-US', { year:'numeric', month:'short' }) : 'TBA';
-
-  // OYUN ADINDAKİ TIRNAK İŞARETLERİNİ HTML İÇİN GÜVENLİ HALE GETİRİYORUZ
+  const cover    = g.background_image;
+  const released = g.released
+    ? new Date(g.released).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
+    : 'TBA';
+  // Safely encode the game name for use in an onclick attribute
   const safeGameName = JSON.stringify(g.name).replace(/"/g, '&quot;');
 
   const card = document.createElement('div');
   card.className = `game-card${followed ? ' followed' : ''}`;
-  card.id = `gc-${g.id}`;
+  card.id        = `gc-${g.id}`;
   card.style.animationDelay = `${(idx % 20) * 0.04}s`;
   card.innerHTML = `
     <div class="cover-wrap">
-      ${cover ? `<img class="game-cover" src="${cover}" alt="${escHtml(g.name)}" loading="lazy">` : `<div class="game-cover-placeholder">🎮</div>`}
+      ${cover
+        ? `<img class="game-cover" src="${escHtml(cover)}" alt="${escHtml(g.name)}" loading="lazy">`
+        : `<div class="game-cover-placeholder">🎮</div>`}
       ${score ? `<span class="score-badge ${scoreCls}">★ ${score}</span>` : ''}
       <button class="follow-btn ${followed ? 'active' : ''}" id="fb-${g.id}" onclick="toggleFollow(${g.id})">${followed ? '⭐' : '☆'}</button>
       <div class="cover-overlay"></div>
@@ -517,7 +667,7 @@ function buildGameCard(g, idx) {
     <div class="game-body">
       <div class="game-title" title="${escHtml(g.name)}">${escHtml(g.name)}</div>
       <div class="game-tags">
-        ${genre ? `<span class="tag tag-genre">${escHtml(genre)}</span>` : ''}
+        ${genre    ? `<span class="tag tag-genre">${escHtml(genre)}</span>`       : ''}
         ${platform ? `<span class="tag tag-platform">${escHtml(platform)}</span>` : ''}
       </div>
       <div class="game-date">${released}</div>
@@ -527,26 +677,28 @@ function buildGameCard(g, idx) {
 
 function buildListItem(g, idx) {
   const followed = !!watchlist[g.id];
-  const score = g.rating ? g.rating.toFixed(1) : null;
+  const score    = g.rating ? g.rating.toFixed(1) : null;
   const scoreCls = !score ? '' : score >= 4 ? 'ls-high' : score >= 3 ? 'ls-mid' : 'ls-low';
-  const genre = g.genres?.[0]?.name || null;
-  const released = g.released ? new Date(g.released).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }) : 'TBA';
-  const cover = g.background_image;
-
-  // OYUN ADINDAKİ TIRNAK İŞARETLERİNİ HTML İÇİN GÜVENLİ HALE GETİRİYORUZ
+  const genre    = g.genres?.[0]?.name || null;
+  const released = g.released
+    ? new Date(g.released).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+    : 'TBA';
+  const cover    = g.background_image;
   const safeGameName = JSON.stringify(g.name).replace(/"/g, '&quot;');
 
   const item = document.createElement('div');
   item.className = `game-list-item${followed ? ' followed' : ''}`;
-  item.id = `gc-${g.id}`;
+  item.id        = `gc-${g.id}`;
   item.style.animationDelay = `${(idx % 20) * 0.03}s`;
   item.innerHTML = `
-    ${cover ? `<img class="list-cover" src="${cover}" alt="${escHtml(g.name)}" loading="lazy">` : `<div class="list-cover-placeholder">🎮</div>`}
+    ${cover
+      ? `<img class="list-cover" src="${escHtml(cover)}" alt="${escHtml(g.name)}" loading="lazy">`
+      : `<div class="list-cover-placeholder">🎮</div>`}
     <div class="list-body">
       <div class="list-title">${escHtml(g.name)}</div>
       <div class="list-meta">
-        ${score ? `<span class="list-score ${scoreCls}">★ ${score}</span>` : ''}
-        ${genre ? `<span class="list-tag">${escHtml(genre)}</span>` : ''}
+        ${score  ? `<span class="list-score ${scoreCls}">★ ${score}</span>` : ''}
+        ${genre  ? `<span class="list-tag">${escHtml(genre)}</span>`        : ''}
         <span class="list-date">${released}</span>
       </div>
     </div>
@@ -557,23 +709,25 @@ function buildListItem(g, idx) {
   return item;
 }
 
-/* ── WATCHLIST ─────────────────────────────────────────── */
+// ═════════════════════════════════════════════════════════════════════════════
+//  WATCHLIST
+// ═════════════════════════════════════════════════════════════════════════════
 function toggleFollow(gameId) {
   const game = state.games.find(g => g.id === gameId);
   if (!game) return;
   if (watchlist[gameId]) { delete watchlist[gameId]; toast(`Unfollowed ${game.name}`, 'info'); }
-  else { watchlist[gameId] = game; toast(`Following ${game.name} ⭐`, 'success'); }
+  else                   { watchlist[gameId] = game; toast(`Following ${game.name} ⭐`, 'success'); }
   localStorage.setItem('fc_watchlist', JSON.stringify(watchlist));
   const card = document.getElementById(`gc-${gameId}`);
   const btn  = document.getElementById(`fb-${gameId}`);
   if (card) card.classList.toggle('followed', !!watchlist[gameId]);
-  if (btn) { btn.classList.toggle('active', !!watchlist[gameId]); btn.textContent = watchlist[gameId] ? '⭐' : '☆'; }
+  if (btn)  { btn.classList.toggle('active', !!watchlist[gameId]); btn.textContent = watchlist[gameId] ? '⭐' : '☆'; }
   renderWatchlist();
   updateStats();
 }
 
 function renderWatchlist() {
-  const el = document.getElementById('watchlist-list');
+  const el    = document.getElementById('watchlist-list');
   const count = document.getElementById('watchlist-count');
   const items = Object.values(watchlist);
   count.textContent = `${items.length} game${items.length !== 1 ? 's' : ''}`;
@@ -581,8 +735,13 @@ function renderWatchlist() {
   el.innerHTML = items.slice(0, 8).map(g => {
     const score = g.rating ? `★ ${g.rating.toFixed(1)}` : 'Unrated';
     return `<div class="watchlist-item" onclick="scrollToGame(${g.id})">
-      ${g.background_image ? `<img class="watchlist-cover" src="${g.background_image}" alt="">` : `<div class="watchlist-cover" style="display:flex;align-items:center;justify-content:center;font-size:14px;">🎮</div>`}
-      <div class="watchlist-info"><div class="watchlist-name">${escHtml(g.name)}</div><div class="watchlist-score">${score}</div></div>
+      ${g.background_image
+        ? `<img class="watchlist-cover" src="${escHtml(g.background_image)}" alt="">`
+        : `<div class="watchlist-cover" style="display:flex;align-items:center;justify-content:center;font-size:14px;">🎮</div>`}
+      <div class="watchlist-info">
+        <div class="watchlist-name">${escHtml(g.name)}</div>
+        <div class="watchlist-score">${score}</div>
+      </div>
       <button class="watchlist-unfollow" onclick="event.stopPropagation();toggleFollow(${g.id})">✕</button>
     </div>`;
   }).join('');
@@ -590,12 +749,15 @@ function renderWatchlist() {
 }
 
 function renderWatchlistOnly() {
-  const grid = document.getElementById('game-grid');
+  const grid  = document.getElementById('game-grid');
   const items = Object.values(watchlist);
-  document.getElementById('results-info').textContent = `${items.length} followed`;
-  document.getElementById('load-more-wrap').style.display = 'none';
-  if (!items.length) { grid.innerHTML = '<div class="empty-state"><div class="empty-icon">⭐</div><p>No followed games yet.</p></div>'; return; }
-  state.games = items;
+  document.getElementById('results-info').textContent         = `${items.length} followed`;
+  document.getElementById('load-more-wrap').style.display     = 'none';
+  if (!items.length) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">⭐</div><p>No followed games yet.</p></div>';
+    return;
+  }
+  state.games    = items;
   grid.className = state.view === 'grid' ? 'game-grid' : 'game-list';
   grid.innerHTML = '';
   items.forEach((g, i) => grid.appendChild(state.view === 'grid' ? buildGameCard(g, i) : buildListItem(g, i)));
@@ -606,62 +768,72 @@ function scrollToGame(gameId) {
   if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
+// Navigate to home with game name pre-filled in the compose box
 function openDiscuss(gameName) {
   sessionStorage.setItem('compose_prefill', gameName);
   window.location.href = 'home.html';
 }
 
+// ═════════════════════════════════════════════════════════════════════════════
+//  STATS & FALLBACK
+// ═════════════════════════════════════════════════════════════════════════════
 function updateStats() {
-  document.getElementById('stat-shown').textContent = state.games.length;
-  document.getElementById('stat-followed').textContent = Object.keys(watchlist).length;
+  document.getElementById('stat-shown').textContent   = state.games.length;
+  document.getElementById('stat-followed').textContent= Object.keys(watchlist).length;
 }
 
 function showStaticFallback() {
   const STATIC = [
-    { id:1, name:'Elden Ring: Nightreign', rating:4.6, released:'2025-05-30', genres:[{name:'RPG'}], parent_platforms:[{platform:{name:'PC'}}], background_image:null },
-    { id:2, name:'GTA VI', rating:null, released:'2025 (TBA)', genres:[{name:'Action'}], parent_platforms:[{platform:{name:'PS5'}}], background_image:null },
-    { id:3, name:'Monster Hunter Wilds', rating:4.3, released:'2025-02-28', genres:[{name:'RPG'}], parent_platforms:[{platform:{name:'PC'}}], background_image:null },
-    { id:4, name:'Hollow Knight: Silksong', rating:null, released:'TBA', genres:[{name:'Indie'}], parent_platforms:[{platform:{name:'Switch'}}], background_image:null },
-    { id:5, name:'Death Stranding 2', rating:4.1, released:'2025-06-26', genres:[{name:'Action'}], parent_platforms:[{platform:{name:'PS5'}}], background_image:null },
-    { id:6, name:'Civilization VII', rating:3.8, released:'2025-02-11', genres:[{name:'Strategy'}], parent_platforms:[{platform:{name:'PC'}}], background_image:null },
+    { id:1, name:'Elden Ring: Nightreign', rating:4.6, released:'2025-05-30', genres:[{name:'RPG'}],      parent_platforms:[{platform:{name:'PC'}}],  background_image:null },
+    { id:2, name:'GTA VI',                 rating:null, released:null,         genres:[{name:'Action'}],   parent_platforms:[{platform:{name:'PS5'}}], background_image:null },
+    { id:3, name:'Monster Hunter Wilds',   rating:4.3, released:'2025-02-28', genres:[{name:'RPG'}],      parent_platforms:[{platform:{name:'PC'}}],  background_image:null },
+    { id:4, name:'Hollow Knight: Silksong',rating:null, released:null,         genres:[{name:'Indie'}],    parent_platforms:[{platform:{name:'Switch'}}],background_image:null},
+    { id:5, name:'Death Stranding 2',      rating:4.1, released:'2025-06-26', genres:[{name:'Action'}],   parent_platforms:[{platform:{name:'PS5'}}], background_image:null },
+    { id:6, name:'Civilization VII',       rating:3.8, released:'2025-02-11', genres:[{name:'Strategy'}], parent_platforms:[{platform:{name:'PC'}}],  background_image:null },
   ];
-  state.games = STATIC;
-  const grid = document.getElementById('game-grid');
-  grid.className = 'game-grid';
-  grid.innerHTML = '';
+  state.games        = STATIC;
+  const grid         = document.getElementById('game-grid');
+  grid.className     = 'game-grid';
+  grid.innerHTML     = '';
   STATIC.forEach((g, i) => grid.appendChild(buildGameCard(g, i)));
-  document.getElementById('results-info').textContent = 'Static fallback — API not available';
+  document.getElementById('results-info').textContent = 'Static fallback — server not available';
   updateStats();
 }
 
+// ═════════════════════════════════════════════════════════════════════════════
+//  MISC HELPERS
+// ═════════════════════════════════════════════════════════════════════════════
 function handleLogout() { localStorage.clear(); window.location.href = 'index.html'; }
 
-/* ── DROPDOWN & SIDEBAR LOGIC ── */
 function toggleProfileDropdown(e) {
   e.stopPropagation();
   document.getElementById('profileDropdown').classList.toggle('open');
 }
 
-document.addEventListener('click', (e) => {
-  const dropdown = document.getElementById('profileDropdown');
-  if (dropdown && dropdown.classList.contains('open')) {
-    dropdown.classList.remove('open');
-  }
+document.addEventListener('click', e => {
+  const dd = document.getElementById('profileDropdown');
+  if (dd && dd.classList.contains('open')) dd.classList.remove('open');
 });
 
 function toast(msg, type = 'info') {
   const wrap = document.getElementById('toast');
-  const el = document.createElement('div');
+  const el   = document.createElement('div');
   el.className = `toast-msg ${type}`;
   el.innerHTML = `<span>${type==='success'?'✓':type==='error'?'✕':'ℹ'}</span> ${escHtml(msg)}`;
   wrap.appendChild(el);
   setTimeout(() => { el.classList.add('out'); el.addEventListener('animationend', () => el.remove()); }, 3000);
 }
 
-function escHtml(str) { const d = document.createElement('div'); d.textContent = str || ''; return d.innerHTML; }
-
 function buildSkeletons(n) {
-  return `<div class="skeleton-grid">${Array(n).fill(`<div class="skeleton-card"><div class="sk-img"></div><div class="sk-body"><div class="sk-line"></div><div class="sk-line short"></div><div class="sk-line xs"></div></div></div>`).join('')}</div>`;
+  return `<div class="skeleton-grid">${Array(n).fill(
+    `<div class="skeleton-card"><div class="sk-img"></div><div class="sk-body"><div class="sk-line"></div><div class="sk-line short"></div><div class="sk-line xs"></div></div></div>`
+  ).join('')}</div>`;
+}
+
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str || '';
+  return d.innerHTML;
 }
 </script>
 </body>
