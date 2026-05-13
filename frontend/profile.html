@@ -324,32 +324,33 @@
   </div>
 
   <aside class="sidebar-left">
+  <a href="home.html" style="text-decoration: none;">
     <div class="logo-area">
       <img src="logo_v1.png" alt="Frontier Logo" onerror="this.style.display='none'">
       <span class="logo-text">Frontier</span>
     </div>
-    <nav class="nav-section">
-      <span class="nav-label">Navigate</span>
-      <a href="home.html" class="nav-item"><span class="nav-icon">🏠</span><span>Home</span></a>
-      <a href="news.html" class="nav-item"><span class="nav-icon">🎮</span><span>Game News</span></a>
-      <a href="profile.html" class="nav-item active"><span class="nav-icon">👤</span><span>Profile</span></a>
-    </nav>
-    <div class="sidebar-bottom">
-      <div class="sidebar-profile-box" onclick="toggleProfileDropdown(event)">
-        <img id="sidebar-avatar" src="" class="sidebar-avatar" alt="avatar">
-        <div style="flex:1; min-width:0;">
-          <div class="sidebar-uname" id="sidebar-name">—</div>
-          <div class="sidebar-handle" id="sidebar-handle">@—</div>
-        </div>
-        <div class="dropdown-icon">⋮</div>
+  </a>
+  <nav class="nav-section">
+    <span class="nav-label">Navigate</span>
+    <a href="home.html" class="nav-item"><span class="nav-icon">🏠</span><span>Home</span></a>
+    <a href="news.html" class="nav-item"><span class="nav-icon">🎮</span><span>Game News</span></a>
+    <a href="profile.html" class="nav-item active"><span class="nav-icon">👤</span><span>Profile</span></a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="sidebar-profile-box" onclick="toggleProfileDropdown(event)">
+      <img id="sidebar-avatar" src="" class="sidebar-avatar" alt="avatar">
+      <div style="flex:1; min-width:0;">
+        <div class="sidebar-uname" id="sidebar-name">—</div>
+        <div class="sidebar-handle" id="sidebar-handle">@—</div>
       </div>
-      
-      <div class="profile-dropdown" id="profileDropdown">
-        <button class="dropdown-item" onclick="location.href='settings.html'">⚙️ Settings</button>
-        <button class="dropdown-item text-red" onclick="handleLogout()">⏻ Log out</button>
-      </div>
+      <div class="dropdown-icon">⋮</div>
     </div>
-  </aside>
+    <div class="profile-dropdown" id="profileDropdown">
+      <button class="dropdown-item" onclick="location.href='settings.html'">⚙️ Settings</button>
+      <button class="dropdown-item text-red" onclick="handleLogout()">⏻ Log out</button>
+    </div>
+  </div>
+</aside>
 
   <div class="main">
     <div class="profile-page">

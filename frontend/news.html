@@ -223,10 +223,12 @@
 <div id="toast"></div>
 
 <aside class="sidebar-left">
-  <div class="logo-area">
-    <img src="logo_v1.png" alt="Frontier Logo">
-    <span class="logo-text">Frontier</span>
-  </div>
+  <a href="home.html" style="text-decoration: none;">
+    <div class="logo-area">
+      <img src="logo_v1.png" alt="Frontier Logo">
+      <span class="logo-text">Frontier</span>
+    </div>
+  </a>
 
   <nav class="nav-section">
     <span class="nav-label">Navigate</span>
@@ -391,8 +393,9 @@ function onSearch() {
   clearTimeout(searchTimer);
   searchTimer = setTimeout(() => {
     state.searchQuery = document.getElementById('search-input').value.trim();
+    state.loading = false; // ← bunu ekle, loading takılı kalmasın
     fetchGames(true);
-  }, 400);
+  }, 600);
 }
 
 function toggleWatchlistFilter() {
@@ -412,35 +415,45 @@ function setView(v) {
 
 /* ── FETCH ─────────────────────────────────────────────── */
 async function fetchGames(reset = false) {
+  state.loading = false;
   if (state.loading) return;
   state.loading = true;
   if (reset) { state.page = 1; state.games = []; state.nextUrl = null; }
-  
+
   const grid = document.getElementById('game-grid');
   if (reset) { grid.innerHTML = buildSkeletons(12); document.getElementById('load-more-wrap').style.display = 'none'; }
-  
-  // Parametreleri senin backend'ine gönderiyoruz. Backend bu parametreleri alıp RAWG'a iletecek.
-  const params = new URLSearchParams({ page_size: 20, page: state.page, ordering: state.activeSort });
+
+  const params = new URLSearchParams();
+  params.set('page_size', '20');
+  params.set('page', String(state.page));
+  params.set('ordering', state.activeSort);
   if (state.activeGenre)    params.set('genres', state.activeGenre);
   if (state.activePlatform) params.set('platforms', state.activePlatform);
   if (state.searchQuery)    params.set('search', state.searchQuery);
-  
+
+  console.log('Fetching:', `${API_BASE}/games?${params.toString()}`);
+
   try {
-    const data = await fetch(`${API_BASE}/games?${params}`).then(r => { if (!r.ok) throw new Error('Server error'); return r.json(); });
-    if (reset) { state.games = data.results; grid.innerHTML = ''; }
-    else { state.games = [...state.games, ...data.results]; }
-    state.nextUrl = data.next;
-    renderGames(data.results, reset);
+    const response = await fetch(`${API_BASE}/games?${params.toString()}`);
+    if (!response.ok) throw new Error('Server error');
+    const data = await response.json();
+
+    const results = data.results || [];
+    if (reset) { state.games = results; grid.innerHTML = ''; }
+    else { state.games = [...state.games, ...results]; }
+
+    state.nextUrl = data.next || null;
+    renderGames(state.games, reset);
     updateStats();
-    document.getElementById('results-info').textContent = `${data.count.toLocaleString()} games`;
+    document.getElementById('results-info').textContent = `${(data.count||0).toLocaleString()} games`;
     document.getElementById('load-more-wrap').style.display = data.next ? 'flex' : 'none';
-    
+
     document.getElementById('api-status').textContent = '● Server Connected';
     document.getElementById('api-status').style.color = 'var(--green)';
     document.getElementById('api-status').style.borderColor = 'rgba(34,212,122,0.3)';
     document.getElementById('api-status').style.background = 'rgba(34,212,122,0.1)';
   } catch (e) {
-    console.error(e);
+    console.error('fetchGames error:', e);
     if (reset) showStaticFallback();
     document.getElementById('api-status').textContent = '● Server Error';
     document.getElementById('api-status').style.color = 'var(--red)';

@@ -208,31 +208,32 @@
 
 <!-- Left sidebar — same as other pages -->
 <aside class="sidebar-left">
-  <div class="logo-area">
-    <img src="logo_v1.png" alt="Frontier Logo" onerror="this.style.display='none'">
-    <span class="logo-text">Frontier</span>
-  </div>
+  <a href="home.html" style="text-decoration: none;">
+    <div class="logo-area">
+      <img src="logo_v1.png" alt="Frontier Logo" onerror="this.style.display='none'">
+      <span class="logo-text">Frontier</span>
+    </div>
+  </a>
   <nav class="nav-section">
     <span class="nav-label">Navigate</span>
     <a href="home.html"    class="nav-item"><span class="nav-icon">🏠</span><span>Home</span></a>
     <a href="news.html"    class="nav-item"><span class="nav-icon">🎮</span><span>Game News</span></a>
     <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span><span>Profile</span></a>
   </nav>
-<div class="sidebar-bottom">
-      <div class="sidebar-profile-box" onclick="toggleProfileDropdown(event)">
-        <img id="sidebar-avatar" src="" class="sidebar-avatar" alt="avatar">
-        <div style="flex:1; min-width:0;">
-          <div class="sidebar-uname" id="sidebar-name">—</div>
-          <div class="sidebar-handle" id="sidebar-handle">@—</div>
-        </div>
-        <div class="dropdown-icon">⋮</div>
+  <div class="sidebar-bottom">
+    <div class="sidebar-profile-box" onclick="toggleProfileDropdown(event)">
+      <img id="sidebar-avatar" src="" class="sidebar-avatar" alt="avatar">
+      <div style="flex:1; min-width:0;">
+        <div class="sidebar-uname" id="sidebar-name">—</div>
+        <div class="sidebar-handle" id="sidebar-handle">@—</div>
       </div>
-      
-      <div class="profile-dropdown" id="profileDropdown">
-        <button class="dropdown-item" onclick="location.href='settings.html'">⚙️ Settings</button>
-        <button class="dropdown-item text-red" onclick="handleLogout()">⏻ Log out</button>
-      </div>
+      <div class="dropdown-icon">⋮</div>
     </div>
+    <div class="profile-dropdown" id="profileDropdown">
+      <button class="dropdown-item" onclick="location.href='settings.html'">⚙️ Settings</button>
+      <button class="dropdown-item text-red" onclick="handleLogout()">⏻ Log out</button>
+    </div>
+  </div>
 </aside>
 
 <div class="main">
@@ -349,18 +350,19 @@
     <!-- ══ PREFERENCES PANEL ══ -->
     <div class="settings-panel" id="panel-preferences">
 
-      <div class="scard">
+      <div class="scard" style="opacity:0.6;pointer-events:none;">
         <div class="scard-header">
           <span class="scard-icon">🌐</span>
-          <div>
+          <div style="flex:1;">
             <div class="scard-title">Language</div>
             <div class="scard-desc">Interface display language</div>
           </div>
+          <span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.25);padding:4px 10px;border-radius:20px;">Coming Soon</span>
         </div>
         <div class="scard-body">
           <div class="field-group">
             <label class="field-label">Language</label>
-            <select class="field-select" id="pref-language" onchange="savePref('language', this.value)">
+            <select class="field-select" id="pref-language" disabled>
               <option value="en">🇬🇧 English</option>
               <option value="tr">🇹🇷 Türkçe</option>
               <option value="de">🇩🇪 Deutsch</option>
@@ -375,18 +377,19 @@
         </div>
       </div>
 
-      <div class="scard">
+      <div class="scard" style="opacity:0.6;pointer-events:none;">
         <div class="scard-header">
           <span class="scard-icon">🕐</span>
-          <div>
+          <div style="flex:1;">
             <div class="scard-title">Timezone</div>
             <div class="scard-desc">Used to display timestamps correctly across the site</div>
           </div>
+          <span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.25);padding:4px 10px;border-radius:20px;">Coming Soon</span>
         </div>
         <div class="scard-body">
           <div class="field-group">
             <label class="field-label">Timezone</label>
-            <select class="field-select" id="pref-timezone" onchange="savePref('timezone', this.value)">
+            <select class="field-select" id="pref-timezone" disabled>
               <!-- Populated by JS -->
             </select>
             <div class="field-hint">Detected from your browser automatically. You can override it here.</div>
@@ -396,74 +399,75 @@
 
     </div>
 
-    <!-- ══ NOTIFICATIONS PANEL ══ -->
-    <div class="settings-panel" id="panel-notifications">
+   <!-- ══ NOTIFICATIONS PANEL ══ -->
+<div class="settings-panel" id="panel-notifications">
 
-      <div class="scard">
-        <div class="scard-header">
-          <span class="scard-icon">🔔</span>
-          <div>
-            <div class="scard-title">Notification Preferences</div>
-            <div class="scard-desc">Choose what you want to be notified about</div>
-          </div>
+  <div class="scard" style="opacity:0.6;pointer-events:none;">
+    <div class="scard-header">
+      <span class="scard-icon">🔔</span>
+      <div style="flex:1;">
+        <div class="scard-title">Notification Preferences</div>
+        <div class="scard-desc">Choose what you want to be notified about</div>
+      </div>
+      <span style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.25);padding:4px 10px;border-radius:20px;">Coming Soon</span>
+    </div>
+    <div class="scard-body">
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Replies to my threads</div>
+          <div class="toggle-sub">Get notified when someone replies to your discussion</div>
         </div>
-        <div class="scard-body">
-
-          <div class="toggle-row">
-            <div class="toggle-info">
-              <div class="toggle-label">Replies to my threads</div>
-              <div class="toggle-sub">Get notified when someone replies to your discussion</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="notif-replies" onchange="saveNotifPref('replies', this.checked)" checked>
-              <span class="toggle-track"></span>
-            </label>
-          </div>
-
-          <div class="toggle-row">
-            <div class="toggle-info">
-              <div class="toggle-label">Likes on my posts</div>
-              <div class="toggle-sub">Get notified when someone likes your thread or comment</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="notif-likes" onchange="saveNotifPref('likes', this.checked)">
-              <span class="toggle-track"></span>
-            </label>
-          </div>
-
-          <div class="toggle-row">
-            <div class="toggle-info">
-              <div class="toggle-label">New followers</div>
-              <div class="toggle-sub">Get notified when someone follows your profile</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="notif-followers" onchange="saveNotifPref('followers', this.checked)" checked>
-              <span class="toggle-track"></span>
-            </label>
-          </div>
-
-          <div class="toggle-row">
-            <div class="toggle-info">
-              <div class="toggle-label">Community announcements</div>
-              <div class="toggle-sub">Important updates and news from Frontier Community</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="notif-announcements" onchange="saveNotifPref('announcements', this.checked)" checked>
-              <span class="toggle-track"></span>
-            </label>
-          </div>
-
-        </div>
+        <label class="toggle">
+          <input type="checkbox" id="notif-replies" disabled checked>
+          <span class="toggle-track"></span>
+        </label>
       </div>
 
-      <div style="padding:12px 16px;background:rgba(77,184,255,0.06);border:1px solid rgba(77,184,255,0.15);border-radius:var(--r);font-size:12px;color:var(--text-muted);display:flex;gap:10px;align-items:flex-start;">
-        <span style="font-size:16px;flex-shrink:0;">ℹ️</span>
-        <span>Notification delivery is coming in a future update. Your preferences are saved and will be applied when the system launches.</span>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Likes on my posts</div>
+          <div class="toggle-sub">Get notified when someone likes your thread or comment</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="notif-likes" disabled>
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">New followers</div>
+          <div class="toggle-sub">Get notified when someone follows your profile</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="notif-followers" disabled checked>
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-label">Community announcements</div>
+          <div class="toggle-sub">Important updates and news from Frontier Community</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="notif-announcements" disabled checked>
+          <span class="toggle-track"></span>
+        </label>
       </div>
 
     </div>
-
   </div>
+
+  <div style="padding:12px 16px;background:rgba(77,184,255,0.06);border:1px solid rgba(77,184,255,0.15);border-radius:var(--r);font-size:12px;color:var(--text-muted);display:flex;gap:10px;align-items:flex-start;">
+    <span style="font-size:16px;flex-shrink:0;">ℹ️</span>
+    <span>Notification preferences will be configurable in a future update.</span>
+  </div>
+
+</div>
+
+</div>
 </div>
 
 <script src="app.js"></script>

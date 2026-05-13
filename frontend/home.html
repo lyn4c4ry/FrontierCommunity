@@ -11,190 +11,41 @@
       --border:rgba(74,144,226,0.10); --border2:rgba(74,144,226,0.22);
       --blue:#1a6fd4; --blue-light:#4db8ff; --blue-glow:rgba(26,111,212,0.35);
       --gold:#f5c518; --text:#dce8f5; --text-muted:#6a7f99; --text-dim:#2e3c50;
-      --red:#ff4060; --green:#22d47a;
+      --red:#ff4060; --green:#22d47a; --purple:#9b6dff;
       --r-sm:8px; --r:12px; --r-lg:18px;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;line-height:1.6;min-height:100vh;display:flex;overflow-x:hidden;}
 
     /* ── NOTIFICATION BELL ── */
-    #notif-bell {
-      position: fixed;
-      top: 18px;
-      right: 24px;
-      z-index: 5000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      background: var(--surface);
-      border: 1px solid var(--border2);
-      border-radius: 50%;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-    #notif-bell:hover { border-color: var(--blue); background: var(--surface2); }
-
-    #notif-badge {
-      position: absolute;
-      top: -4px;
-      right: -4px;
-      background: var(--red);
-      color: #fff;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 10px;
-      font-weight: 700;
-      min-width: 18px;
-      height: 18px;
-      border-radius: 9px;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 0 4px;
-      border: 2px solid var(--bg);
-      line-height: 1;
-    }
-    #notif-badge.visible { display: flex; }
-
-    #notif-dropdown {
-      position: fixed;
-      top: 66px;
-      right: 24px;
-      width: 340px;
-      max-height: 480px;
-      background: var(--surface);
-      border: 1px solid var(--border2);
-      border-radius: var(--r-lg);
-      box-shadow: 0 16px 48px rgba(0,0,0,0.5);
-      z-index: 4999;
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
-      animation: notifIn 0.2s cubic-bezier(.22,1,.36,1) both;
-    }
-    #notif-dropdown.open { display: flex; }
-    @keyframes notifIn {
-      from { opacity: 0; transform: translateY(-8px) scale(0.97); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .notif-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 16px 10px;
-      border-bottom: 1px solid var(--border);
-    }
-    .notif-header-title {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-    .notif-read-all {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--blue-light);
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      font-family: 'Nunito', sans-serif;
-      transition: opacity 0.15s;
-    }
-    .notif-read-all:hover { opacity: 0.7; }
-
-    .notif-list {
-      overflow-y: auto;
-      flex: 1;
-      scrollbar-width: thin;
-      scrollbar-color: var(--surface2) transparent;
-    }
-    .notif-list::-webkit-scrollbar { width: 4px; }
-    .notif-list::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 2px; }
-
-    .notif-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 11px 16px;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      transition: background 0.15s;
-      position: relative;
-    }
-    .notif-item:last-child { border-bottom: none; }
-    .notif-item:hover { background: var(--surface2); }
-    .notif-item.unread { background: rgba(26,111,212,0.05); }
-    .notif-item.unread::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background: var(--blue);
-      border-radius: 0 2px 2px 0;
-    }
-
-    .notif-avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1.5px solid var(--border2);
-      flex-shrink: 0;
-    }
-    .notif-avatar-placeholder {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: var(--surface2);
-      border: 1.5px solid var(--border2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      flex-shrink: 0;
-    }
-
-    .notif-body { flex: 1; min-width: 0; }
-    .notif-text {
-      font-size: 12px;
-      color: var(--text);
-      line-height: 1.5;
-      margin-bottom: 3px;
-    }
-    .notif-text strong { color: var(--blue-light); font-weight: 700; }
-    .notif-ref {
-      font-size: 11px;
-      color: var(--text-muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .notif-time { font-size: 10px; color: var(--text-dim); margin-top: 3px; }
-
-    .notif-empty {
-      padding: 36px 20px;
-      text-align: center;
-      color: var(--text-dim);
-      font-size: 13px;
-    }
-    .notif-empty-icon { font-size: 28px; margin-bottom: 8px; opacity: 0.35; }
-    .notif-header-actions {
-      display: flex;
-      gap: 16px;
-    }
-
-    .notif-clear-all {
-      color: #e74c3c !important;
-    }
+    #notif-bell{position:fixed;top:18px;right:24px;z-index:5000;display:flex;align-items:center;justify-content:center;width:40px;height:40px;background:var(--surface);border:1px solid var(--border2);border-radius:50%;cursor:pointer;transition:border-color 0.2s,background 0.2s;font-size:18px;flex-shrink:0;}
+    #notif-bell:hover{border-color:var(--blue);background:var(--surface2);}
+    #notif-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--bg);line-height:1;}
+    #notif-badge.visible{display:flex;}
+    #notif-dropdown{position:fixed;top:66px;right:24px;width:340px;max-height:480px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r-lg);box-shadow:0 16px 48px rgba(0,0,0,0.5);z-index:4999;display:none;flex-direction:column;overflow:hidden;animation:notifIn 0.2s cubic-bezier(.22,1,.36,1) both;}
+    #notif-dropdown.open{display:flex;}
+    @keyframes notifIn{from{opacity:0;transform:translateY(-8px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .notif-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--border);}
+    .notif-header-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);}
+    .notif-read-all{font-size:11px;font-weight:700;color:var(--blue-light);background:none;border:none;cursor:pointer;padding:0;font-family:'Nunito',sans-serif;transition:opacity 0.15s;}
+    .notif-read-all:hover{opacity:0.7;}
+    .notif-list{overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--surface2) transparent;}
+    .notif-list::-webkit-scrollbar{width:4px;}
+    .notif-list::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:2px;}
+    .notif-item{display:flex;align-items:flex-start;gap:10px;padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s;position:relative;}
+    .notif-item:last-child{border-bottom:none;}
+    .notif-item:hover{background:var(--surface2);}
+    .notif-item.unread{background:rgba(26,111,212,0.05);}
+    .notif-item.unread::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue);border-radius:0 2px 2px 0;}
+    .notif-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1.5px solid var(--border2);flex-shrink:0;}
+    .notif-body{flex:1;min-width:0;}
+    .notif-text{font-size:12px;color:var(--text);line-height:1.5;margin-bottom:3px;}
+    .notif-text strong{color:var(--blue-light);font-weight:700;}
+    .notif-time{font-size:10px;color:var(--text-dim);margin-top:3px;}
+    .notif-empty{padding:36px 20px;text-align:center;color:var(--text-dim);font-size:13px;}
+    .notif-empty-icon{font-size:28px;margin-bottom:8px;opacity:0.35;}
+    .notif-header-actions{display:flex;gap:16px;}
+    .notif-clear-all{color:#e74c3c !important;}
 
     body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.35;}
     ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:3px;}::-webkit-scrollbar-thumb:hover{background:var(--blue);}
@@ -229,30 +80,25 @@
     .logo-area{padding:22px 20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;}
     .logo-area img{width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(77,184,255,0.45));}
     .logo-text{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(90deg,var(--blue-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    
     .nav-section{padding:14px 10px 8px;flex:1;}
     .nav-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);padding:0 12px;margin-bottom:5px;display:block;}
     .nav-item{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:var(--r-sm);color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:600;transition:all 0.2s;margin-bottom:2px;}
     .nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
     .nav-item.active{background:rgba(26,111,212,0.12);color:var(--blue-light);}
     .nav-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
-    
-    /* ── YENİ SIDEBAR ALT PROFİL VE AÇILIR MENÜ (DROPDOWN) ── */
-    .sidebar-bottom { padding: 14px; border-top: 1px solid var(--border); position: relative; }
-    .sidebar-profile-box { padding: 10px; background: transparent; border-radius: 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: background 0.2s; margin: 0; user-select: none; }
-    .sidebar-profile-box:hover { background: rgba(255,255,255,0.04); }
-    .sidebar-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--blue); flex-shrink: 0; }
-    .sidebar-uname { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 14px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .sidebar-handle { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .dropdown-icon { margin-left: auto; color: var(--text-dim); font-size: 16px; font-weight: bold; transition: color 0.2s; }
-    .sidebar-profile-box:hover .dropdown-icon { color: var(--text-muted); }
-
-    .profile-dropdown { position: absolute; bottom: calc(100% + 5px); left: 14px; right: 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 6px; display: none; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 201; }
-    .profile-dropdown.open { display: flex; animation: fadeUp 0.2s ease; }
-    .dropdown-item { background: transparent; border: none; padding: 10px 12px; border-radius: 6px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 10px; transition: background 0.2s; }
-    .dropdown-item:hover { background: rgba(255,255,255,0.05); }
-    .dropdown-item.text-red { color: var(--red); }
-    .dropdown-item.text-red:hover { background: rgba(255,64,96,0.1); }
+    .sidebar-bottom{padding:14px;border-top:1px solid var(--border);position:relative;}
+    .sidebar-profile-box{padding:10px;background:transparent;border-radius:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background 0.2s;margin:0;user-select:none;}
+    .sidebar-profile-box:hover{background:rgba(255,255,255,0.04);}
+    .sidebar-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--blue);flex-shrink:0;}
+    .sidebar-uname{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .sidebar-handle{font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .dropdown-icon{margin-left:auto;color:var(--text-dim);font-size:16px;font-weight:bold;transition:color 0.2s;}
+    .profile-dropdown{position:absolute;bottom:calc(100% + 5px);left:14px;right:14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:6px;display:none;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,0.5);z-index:201;}
+    .profile-dropdown.open{display:flex;animation:fadeUp 0.2s ease;}
+    .dropdown-item{background:transparent;border:none;padding:10px 12px;border-radius:6px;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-align:left;display:flex;align-items:center;gap:10px;transition:background 0.2s;}
+    .dropdown-item:hover{background:rgba(255,255,255,0.05);}
+    .dropdown-item.text-red{color:var(--red);}
+    .dropdown-item.text-red:hover{background:rgba(255,64,96,0.1);}
 
     /* ── SEARCH ── */
     .search-wrapper{position:relative;padding:10px 13px 6px;}
@@ -272,7 +118,7 @@
     .search-mini-av{width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0;}
 
     /* ── MAIN ── */
-    .main{margin-left:228px;flex:1;display:flex;min-height:100vh;justify-content: center;}
+    .main{margin-left:228px;flex:1;display:flex;min-height:100vh;justify-content:center;}
 
     /* ── FEED ── */
     .feed{flex:1;max-width:740px;padding:28px 28px 80px;border-right:1px solid var(--border);}
@@ -291,22 +137,40 @@
     .compose-select{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 13px;color:var(--text-muted);font-family:'Nunito',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s;width:100%;cursor:pointer;appearance:none;-webkit-appearance:none;}
     .compose-select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,212,0.12);}
     .compose-select option{background:var(--surface2);color:var(--text);}
+    .compose-row-2{display:flex;gap:8px;}
+    .compose-row-2 .compose-select{flex:1;}
     .compose-footer{display:flex;justify-content:flex-end;margin-top:12px;}
     .btn-post{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--blue),#1255a8);border:none;padding:9px 24px;border-radius:var(--r-sm);cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px var(--blue-glow);}
     .btn-post:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 26px var(--blue-glow);}
     .btn-post:disabled{opacity:0.5;cursor:not-allowed;}
 
     /* ── FEED HEADER ── */
-    .feed-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+    .feed-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
     .feed-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;letter-spacing:1px;}
     .live-badge{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);background:rgba(34,212,122,0.08);border:1px solid rgba(34,212,122,0.18);padding:4px 10px;border-radius:20px;}
     .live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 
-    .category-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
-    .cat-chip{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text-muted);cursor:pointer;transition:all 0.18s;font-family:'Nunito',sans-serif;}
-    .cat-chip:hover{border-color:var(--border2);color:var(--text);}
-    .cat-chip.active{border-color:rgba(26,111,212,0.5);color:var(--blue-light);background:rgba(26,111,212,0.1);}
+    /* ── FILTER TOOLBAR (news-style) ── */
+    .filter-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
+    .filter-search-wrap{position:relative;flex:1;min-width:180px;}
+    .filter-search-wrap::before{content:'⌕';position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:16px;pointer-events:none;z-index:1;}
+    .filter-search-wrap input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 13px 8px 32px;color:var(--text);font-family:'Nunito',sans-serif;font-size:12px;outline:none;transition:border-color 0.2s;}
+    .filter-search-wrap input::placeholder{color:var(--text-dim);}
+    .filter-search-wrap input:focus{border-color:var(--blue);}
+    .filter-select-sm{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 11px;color:var(--text-muted);font-family:'Nunito',sans-serif;font-size:12px;outline:none;cursor:pointer;transition:border-color 0.2s;appearance:none;-webkit-appearance:none;}
+    .filter-select-sm:focus{border-color:var(--blue);color:var(--text);}
+    .filter-select-sm option{background:var(--surface2);}
+    .btn-clear-filter{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:7px 14px;border-radius:var(--r-sm);cursor:pointer;transition:all 0.2s;white-space:nowrap;display:none;}
+    .btn-clear-filter.visible{display:block;}
+    .btn-clear-filter:hover{border-color:var(--red);color:var(--red);}
+    .results-count{font-size:11px;color:var(--text-muted);white-space:nowrap;align-self:center;}
+
+    /* ── GENRE BAR (news-style) ── */
+    .genre-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+    .genre-chip{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;padding:5px 13px;border-radius:6px;cursor:pointer;transition:all 0.18s;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);}
+    .genre-chip:hover{border-color:var(--border2);color:var(--text);background:rgba(255,255,255,0.03);}
+    .genre-chip.active{background:rgba(26,111,212,0.15);border-color:rgba(26,111,212,0.5);color:var(--blue-light);}
 
     /* ── THREAD CARD ── */
     .thread-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:14px;overflow:hidden;transition:border-color 0.2s;animation:fadeUp 0.35s ease both;}
@@ -324,6 +188,13 @@
     .thread-time{font-size:11px;color:var(--text-muted);}
     .thread-cat{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:20px;color:var(--blue-light);background:rgba(26,111,212,0.1);border:1px solid rgba(26,111,212,0.18);}
     .thread-title{font-family:'Rajdhani',sans-serif;font-size:19px;font-weight:700;color:#fff;line-height:1.3;margin-bottom:7px;}
+
+    /* ── THREAD TAGS (game + genre) ── */
+    .thread-tag-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px;}
+    .thread-tag{font-size:9px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;padding:3px 8px;border-radius:5px;display:inline-flex;align-items:center;gap:4px;}
+    .tag-game{background:rgba(155,109,255,0.12);border:1px solid rgba(155,109,255,0.25);color:rgba(155,109,255,0.9);}
+    .tag-genre{background:rgba(26,111,212,0.1);border:1px solid rgba(26,111,212,0.2);color:rgba(77,184,255,0.85);}
+
     .thread-content{font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:15px;}
 
     /* ── ACTIONS ── */
@@ -370,8 +241,8 @@
     .show-more-comments:hover{opacity:0.7;}
 
     /* ── RIGHT SIDEBAR ── */
-    .sidebar-right{width:272px;flex-shrink:0;padding:26px 16px;display:flex;flex-direction:column;gap:13px;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width: none; margin-left: 0;}
-    .sidebar-ad::-webkit-scrollbar{display: none;}
+    .sidebar-right{width:272px;flex-shrink:0;padding:26px 16px;display:flex;flex-direction:column;gap:13px;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:none;margin-left:0;}
+    .sidebar-right::-webkit-scrollbar{display:none;}
     .widget{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;}
     .widget-title{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-dim);margin-bottom:13px;}
     .stat-row{display:flex;gap:8px;}
@@ -406,6 +277,18 @@
     .empty-state{padding:44px 20px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);}
     .empty-icon{font-size:36px;margin-bottom:10px;}
     .empty-state p{font-size:13px;color:var(--text-muted);}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ── AD SIDEBAR ── */
+    .sidebar-ad{width:480px;flex-shrink:0;padding:26px 20px;display:flex;flex-direction:column;gap:13px;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:none;}
+    .sidebar-ad::-webkit-scrollbar{display:none;}
+    .ad-slot{background:var(--surface);border:1px dashed rgba(74,144,226,0.2);border-radius:var(--r-lg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--text-dim);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-align:center;overflow:hidden;position:relative;}
+    .ad-slot.ad-banner{width:100%;height:220px;min-width:460px;}
+    .ad-slot.ad-square{width:100%;height:150px;min-width:460px;}
+    .ad-slot.ad-tall{width:100%;height:280px;min-width:460px;}
+    .ad-slot::before{content:'Advertisement';position:absolute;top:8px;font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);opacity:0.5;}
+    .ad-placeholder-icon{font-size:22px;opacity:0.25;margin-top:16px;display:block;text-align:center;width:100%;}
+    .ad-placeholder-text{font-size:9px;color:var(--text-dim);opacity:0.4;}
 
     @media(max-width:1100px){.sidebar-right{display:none;}.feed{max-width:100%;border-right:none;}}
     @media(max-width:700px){
@@ -416,61 +299,34 @@
       .sidebar-profile-box{justify-content:center;padding:10px;}
       .nav-item{justify-content:center;padding:10px;}
       .feed{padding:16px 12px 60px;}
-      .profile-dropdown { left: 5px; right: 5px; }
+      .profile-dropdown{left:5px;right:5px;}
     }
+    @media(max-width:1700px){.sidebar-ad{display:none;}}
 
-    /* ── AD SIDEBAR ── */
-    .sidebar-ad {
-      width: 480px;
-      flex-shrink: 0;
-      padding: 26px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 13px;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow-y: auto;
-      scrollbar-width: none;
-    }
-    .sidebar-ad::-webkit-scrollbar { display: none; }
+    /* ── COMPOSE GENRE CHIPS ── */
+.compose-genre-bar{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px;}
+.compose-genre-chip{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;padding:4px 11px;border-radius:6px;cursor:pointer;transition:all 0.18s;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);user-select:none;}
+.compose-genre-chip:hover{border-color:var(--border2);color:var(--text);}
+.compose-genre-chip.active{background:rgba(26,111,212,0.15);border-color:rgba(26,111,212,0.5);color:var(--blue-light);}
 
-    .ad-slot {
-      background: var(--surface);
-      border: 1px dashed rgba(74,144,226,0.2);
-      border-radius: var(--r-lg);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      color: var(--text-dim);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      text-align: center;
-      overflow: hidden;
-      position: relative;
-    }
-    .ad-slot.ad-banner    { width: 100%; height: 220px; min-width: 460px; }
-    .ad-slot.ad-square    { width: 100%; height: 150px; min-width: 460px; }
-    .ad-slot.ad-tall      { width: 100%; height: 280px; min-width: 460px; }
-    .ad-slot::before {
-      content: 'Advertisement';
-      position: absolute;
-      top: 8px;
-      font-size: 8px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      opacity: 0.5;
-    }
-    .ad-placeholder-icon { font-size: 22px; opacity: 0.25; margin-top: 16px;display: block;text-align: center;width: 100%;}
-    .ad-placeholder-text { font-size: 9px; color: var(--text-dim); opacity: 0.4; }
-    @media(max-width:1700px) { .sidebar-ad { display: none; } }
+/* ── FILTER MULTI-GENRE CHIPS ── */
+.filter-genre-bar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;}
+.filter-genre-chip{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;padding:4px 10px;border-radius:5px;cursor:pointer;transition:all 0.15s;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);user-select:none;}
+.filter-genre-chip:hover{border-color:var(--border2);color:var(--text);}
+.filter-genre-chip.active{background:rgba(26,111,212,0.15);border-color:rgba(26,111,212,0.5);color:var(--blue-light);}
 
+/* ── GAME AUTOCOMPLETE ── */
+.game-autocomplete-wrap{position:relative;width:100%;}
+.game-ac-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);z-index:500;max-height:260px;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,0.55);display:none;scrollbar-width:thin;scrollbar-color:var(--surface2) transparent;}
+.game-ac-dropdown.open{display:block;}
+.game-ac-item{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border);transition:background 0.13s;}
+.game-ac-item:last-child{border-bottom:none;}
+.game-ac-item:hover,.game-ac-item.focused{background:var(--surface2);}
+.game-ac-thumb{width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--surface2);}
+.game-ac-name{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.game-ac-meta{font-size:10px;color:var(--text-muted);margin-top:1px;}
+.game-ac-loading{padding:10px 14px;font-size:12px;color:var(--text-muted);}
+.game-ac-empty{padding:10px 14px;font-size:12px;color:var(--text-dim);}
   </style>
 </head>
 <body onload="initHome()">
@@ -484,8 +340,8 @@
   <div class="notif-header">
     <span class="notif-header-title">Notifications</span>
     <div class="notif-header-actions">
-        <button class="notif-read-all" onclick="markAllNotifRead()">Mark all read</button>
-        <button class="notif-read-all notif-clear-all" onclick="clearAllNotifs()">Clear all</button>
+      <button class="notif-read-all" onclick="markAllNotifRead()">Mark all read</button>
+      <button class="notif-read-all notif-clear-all" onclick="clearAllNotifs()">Clear all</button>
     </div>
   </div>
   <div class="notif-list" id="notif-list">
@@ -507,10 +363,12 @@
 </div>
 
 <aside class="sidebar-left">
-  <div class="logo-area">
-    <img src="logo_v1.png" alt="Frontier Logo" onerror="this.style.display='none'">
-    <span class="logo-text">Frontier</span>
-  </div>
+  <a href="home.html" style="text-decoration: none;">
+    <div class="logo-area">
+      <img src="logo_v1.png" alt="Frontier Logo" onerror="this.style.display='none'">
+      <span class="logo-text">Frontier</span>
+    </div>
+  </a>
 
   <div class="search-wrapper">
     <span class="search-icon">🔍</span>
@@ -524,17 +382,16 @@
     <a href="news.html" class="nav-item"><span class="nav-icon">🎮</span><span>Game News</span></a>
     <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span><span>Profile</span></a>
   </nav>
-  
+
   <div class="sidebar-bottom">
     <div class="sidebar-profile-box" onclick="toggleProfileDropdown(event)">
       <img id="sidebar-avatar" src="" class="sidebar-avatar" alt="avatar">
-      <div style="flex:1; min-width:0;">
+      <div style="flex:1;min-width:0;">
         <div class="sidebar-uname" id="sidebar-name">—</div>
         <div class="sidebar-handle" id="sidebar-handle">@—</div>
       </div>
       <div class="dropdown-icon">⋮</div>
     </div>
-    
     <div class="profile-dropdown" id="profileDropdown">
       <button class="dropdown-item" onclick="location.href='settings.html'">⚙️ Settings</button>
       <button class="dropdown-item text-red" onclick="handleLogout()">⏻ Log out</button>
@@ -544,29 +401,120 @@
 
 <div class="main">
   <section class="feed">
-    <div class="compose">
-      <span class="compose-label">New Discussion</span>
-      <div class="compose-row">
-        <img id="compose-avatar" src="" class="compose-avatar" alt="avatar">
-        <div class="compose-fields">
-          <input type="text" class="compose-input" id="thread-title" placeholder="Topic or game title..." maxlength="120">
-          <textarea class="compose-textarea" id="thread-content" placeholder="Share your thoughts with the community..." maxlength="2000"></textarea>
-          <select id="categorySelect" class="compose-select">
-            <option value="">Select a category (optional)</option>
-          </select>
+
+    <!-- COMPOSE -->
+<div class="compose">
+  <span class="compose-label">New Discussion</span>
+  <div class="compose-row">
+    <img id="compose-avatar" src="" class="compose-avatar" alt="avatar">
+    <div class="compose-fields">
+      <input type="text" class="compose-input" id="thread-title" placeholder="Topic or game title..." maxlength="120">
+      <textarea class="compose-textarea" id="thread-content" placeholder="Share your thoughts with the community..." maxlength="2000"></textarea>
+
+      <!-- Category -->
+      <select id="categorySelect" class="compose-select">
+        <option value="">Category (optional)</option>
+      </select>
+
+      <!-- Genre Multi-Select Chips -->
+      <div style="width:100%;">
+        <div style="font-size:10px;color:var(--text-dim);margin-bottom:5px;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Genre (multiple)</div>
+        <div class="compose-genre-bar" id="composeGenreBar">
+          <span class="compose-genre-chip" data-genre="Action" onclick="toggleComposeGenre(this)">Action</span>
+          <span class="compose-genre-chip" data-genre="Indie" onclick="toggleComposeGenre(this)">Indie</span>
+          <span class="compose-genre-chip" data-genre="Adventure" onclick="toggleComposeGenre(this)">Adventure</span>
+          <span class="compose-genre-chip" data-genre="RPG" onclick="toggleComposeGenre(this)">RPG</span>
+          <span class="compose-genre-chip" data-genre="Shooter" onclick="toggleComposeGenre(this)">Shooter</span>
+          <span class="compose-genre-chip" data-genre="Puzzle" onclick="toggleComposeGenre(this)">Puzzle</span>
+          <span class="compose-genre-chip" data-genre="Arcade" onclick="toggleComposeGenre(this)">Arcade</span>
+          <span class="compose-genre-chip" data-genre="Platformer" onclick="toggleComposeGenre(this)">Platformer</span>
+          <span class="compose-genre-chip" data-genre="Racing" onclick="toggleComposeGenre(this)">Racing</span>
+          <span class="compose-genre-chip" data-genre="Sports" onclick="toggleComposeGenre(this)">Sports</span>
+          <span class="compose-genre-chip" data-genre="Fighting" onclick="toggleComposeGenre(this)">Fighting</span>
+          <span class="compose-genre-chip" data-genre="Simulation" onclick="toggleComposeGenre(this)">Simulation</span>
+          <span class="compose-genre-chip" data-genre="Strategy" onclick="toggleComposeGenre(this)">Strategy</span>
+          <span class="compose-genre-chip" data-genre="Horror" onclick="toggleComposeGenre(this)">Horror</span>
+          <span class="compose-genre-chip" data-genre="MMORPG" onclick="toggleComposeGenre(this)">MMORPG</span>
+          <span class="compose-genre-chip" data-genre="Battle Royale" onclick="toggleComposeGenre(this)">Battle Royale</span>
+          <span class="compose-genre-chip" data-genre="Other" onclick="toggleComposeGenre(this)">Other</span>
         </div>
       </div>
-      <div class="compose-footer">
-        <button class="btn-post" id="btn-post" onclick="createThread()">Post →</button>
-      </div>
+
+     <!-- Game Autocomplete -->
+    <div class="game-autocomplete-wrap">
+      <input type="text" class="compose-input" id="gameNameInput"
+        placeholder="🎮 Oyun adı (örn. Elden Ring, League of Legends...)"
+        maxlength="100" autocomplete="off"
+        oninput="onGameInput()" onkeydown="onGameKeydown(event)">
+      <div class="game-ac-dropdown" id="gameAcDropdown"></div>
     </div>
 
+    </div>
+  </div>
+  <div class="compose-footer">
+    <button class="btn-post" id="btn-post" onclick="createThread()">Post →</button>
+  </div>
+</div>
+
+    <!-- FEED HEADER -->
     <div class="feed-header">
       <span class="feed-title">Recent Discussions</span>
       <span class="live-badge"><span class="live-dot"></span>Live</span>
     </div>
 
-    <div class="category-filter" id="category-filter"></div>
+    <!-- FILTER TOOLBAR (news-style) -->
+    <div class="filter-toolbar">
+      <div class="filter-search-wrap">
+        <input id="threadSearchInput" placeholder="Search discussions or games..." oninput="onThreadSearch()">
+      </div>
+      <select class="filter-select-sm" id="categoryFilterSelect" onchange="applyThreadFilters()">
+        <option value="">All Categories</option>
+      </select>
+      <select class="filter-select-sm" id="genreFilterSelect" onchange="applyThreadFilters()">
+        <option value="">All Genres</option>
+        <option value="Action">Action</option>
+        <option value="Indie">Indie</option>
+        <option value="Adventure">Adventure</option>
+        <option value="RPG">RPG</option>
+        <option value="Shooter">Shooter</option>
+        <option value="Puzzle">Puzzle</option>
+        <option value="Arcade">Arcade</option>
+        <option value="Platformer">Platformer</option>
+        <option value="Racing">Racing</option>
+        <option value="Sports">Sports</option>
+        <option value="Fighting">Fighting</option>
+        <option value="Simulation">Simulation</option>
+        <option value="Strategy">Strategy</option>
+        <option value="Horror">Horror</option>
+        <option value="MMORPG">MMORPG</option>
+        <option value="Battle Royale">Battle Royale</option>
+        <option value="Other">Other</option>
+      </select>
+      <button class="btn-clear-filter" id="btnClearFilter" onclick="clearAllFilters()">✕ Clear</button>
+      <span class="results-count" id="resultsCount"></span>
+    </div>
+
+    <!-- GENRE CHIP BAR -->
+    <!-- Filter Multi-Genre Bar -->
+    <div class="filter-genre-bar" id="filterGenreBar">
+      <span class="filter-genre-chip active" data-genre="ALL" onclick="toggleFilterGenre(this)">All</span>
+      <span class="filter-genre-chip" data-genre="Action" onclick="toggleFilterGenre(this)">Action</span>
+      <span class="filter-genre-chip" data-genre="Indie" onclick="toggleFilterGenre(this)">Indie</span>
+      <span class="filter-genre-chip" data-genre="Adventure" onclick="toggleFilterGenre(this)">Adventure</span>
+      <span class="filter-genre-chip" data-genre="RPG" onclick="toggleFilterGenre(this)">RPG</span>
+      <span class="filter-genre-chip" data-genre="Shooter" onclick="toggleFilterGenre(this)">Shooter</span>
+      <span class="filter-genre-chip" data-genre="Puzzle" onclick="toggleFilterGenre(this)">Puzzle</span>
+      <span class="filter-genre-chip" data-genre="Arcade" onclick="toggleFilterGenre(this)">Arcade</span>
+      <span class="filter-genre-chip" data-genre="Platformer" onclick="toggleFilterGenre(this)">Platformer</span>
+      <span class="filter-genre-chip" data-genre="Racing" onclick="toggleFilterGenre(this)">Racing</span>
+      <span class="filter-genre-chip" data-genre="Sports" onclick="toggleFilterGenre(this)">Sports</span>
+      <span class="filter-genre-chip" data-genre="Fighting" onclick="toggleFilterGenre(this)">Fighting</span>
+      <span class="filter-genre-chip" data-genre="Simulation" onclick="toggleFilterGenre(this)">Simulation</span>
+      <span class="filter-genre-chip" data-genre="Strategy" onclick="toggleFilterGenre(this)">Strategy</span>
+      <span class="filter-genre-chip" data-genre="Horror" onclick="toggleFilterGenre(this)">Horror</span>
+      <span class="filter-genre-chip" data-genre="MMORPG" onclick="toggleFilterGenre(this)">MMORPG</span>
+      <span class="filter-genre-chip" data-genre="Battle Royale" onclick="toggleFilterGenre(this)">Battle Royale</span>
+    </div>
 
     <div id="threads-list">
       <div class="loading-state"><div class="spinner"></div>Loading discussions...</div>
@@ -592,47 +540,42 @@
   </aside>
 
   <aside class="sidebar-ad">
-    <div class="ad-slot ad-banner">
-      <span class="ad-placeholder-icon">📢</span>
-      <span class="ad-placeholder-text">160 × 250</span>
-    </div>
-    <div class="ad-slot ad-square">
-      <span class="ad-placeholder-icon">🎮</span>
-      <span class="ad-placeholder-text">160 × 160</span>
-    </div>
-    <div class="ad-slot ad-tall">
-      <span class="ad-placeholder-icon">⚡</span>
-      <span class="ad-placeholder-text">160 × 400</span>
-    </div>
+    <div class="ad-slot ad-banner"><span class="ad-placeholder-icon">📢</span><span class="ad-placeholder-text">160 × 250</span></div>
+    <div class="ad-slot ad-square"><span class="ad-placeholder-icon">🎮</span><span class="ad-placeholder-text">160 × 160</span></div>
+    <div class="ad-slot ad-tall"><span class="ad-placeholder-icon">⚡</span><span class="ad-placeholder-text">160 × 400</span></div>
   </aside>
 </div>
 
 <script src="app.js"></script>
 <script>
-var hState = { userId: null, username: null, token: null, activeCategoryFilter: '' };
+var hState = {
+  userId: null, username: null, token: null,
+  activeCategoryFilter: '',
+  activeGenreFilter: new Set(),        // ← '' yerine Set olmalı
+  activeSearchQuery: '',
+  selectedComposeGenres: new Set(),    // ← bu satır hiç yok, ekle
+  allThreads: []
+};
 var hLikeCache = {};
 var hBookmarkCache = new Set();
 var hCommentCache = {};
 var hSTRIPES = ['stripe-blue','stripe-gold','stripe-green'];
 var hConfirmResolve = null;
 var hSearchTimer = null;
+var hFilterTimer = null;
 
-/* ══════════════════════════════════════════
-   TOAST
-══════════════════════════════════════════ */
+/* ═══════════════════════════════════ TOAST ═══════════════════════════════════ */
 function toast(msg, type='info') {
   const wrap = document.getElementById('toast');
-  const el   = document.createElement('div');
+  const el = document.createElement('div');
   el.className = `toast-msg ${type}`;
   el.innerHTML = `<span>${type==='success'?'✓':type==='error'?'✕':'ℹ'}</span> ${msg}`;
   wrap.appendChild(el);
   setTimeout(() => { el.classList.add('out'); el.addEventListener('animationend', () => el.remove()); }, 3000);
 }
 
-/* ══════════════════════════════════════════
-   CUSTOM CONFIRM MODAL
-══════════════════════════════════════════ */
-function showConfirm({ icon = '🗑', title = 'Are you sure?', msg = 'This action cannot be undone.', okLabel = 'Delete' } = {}) {
+/* ═══════════════════════════════════ CONFIRM ════════════════════════════════ */
+function showConfirm({ icon='🗑', title='Are you sure?', msg='This action cannot be undone.', okLabel='Delete' } = {}) {
   document.getElementById('confirm-icon').textContent  = icon;
   document.getElementById('confirm-title').textContent = title;
   document.getElementById('confirm-msg').textContent   = msg;
@@ -640,43 +583,34 @@ function showConfirm({ icon = '🗑', title = 'Are you sure?', msg = 'This actio
   document.getElementById('confirm-modal').classList.add('open');
   return new Promise(resolve => { hConfirmResolve = resolve; });
 }
-
-function closeConfirm(val = false) {
+function closeConfirm(val=false) {
   document.getElementById('confirm-modal').classList.remove('open');
   if (hConfirmResolve) { hConfirmResolve(val); hConfirmResolve = null; }
 }
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeConfirm(false); });
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeConfirm(false); });
-
-/* ── DROPDOWN & SIDEBAR LOGIC ── */
+/* ═══════════════════════════════════ DROPDOWN ═══════════════════════════════ */
 function toggleProfileDropdown(e) {
   e.stopPropagation();
   document.getElementById('profileDropdown').classList.toggle('open');
 }
-
-document.addEventListener('click', (e) => {
-  const dropdown = document.getElementById('profileDropdown');
-  if (dropdown && dropdown.classList.contains('open')) {
-    dropdown.classList.remove('open');
-  }
+document.addEventListener('click', () => {
+  document.getElementById('profileDropdown')?.classList.remove('open');
 });
 
-/* ══════════════════════════════════════════
-   INIT
-══════════════════════════════════════════ */
+/* ═══════════════════════════════════ INIT ═══════════════════════════════════ */
 async function initHome() {
   if (!localStorage.getItem('token')) { window.location.href = 'index.html'; return; }
-  
-  if (typeof syncUserAvatar === 'function') await syncUserAvatar(); 
-  
+  if (typeof syncUserAvatar === 'function') await syncUserAvatar();
+
   hState.userId   = localStorage.getItem('userId');
   hState.username = localStorage.getItem('username') || 'User';
   hState.token    = localStorage.getItem('token');
 
   const storedAvatar = localStorage.getItem('userAvatar');
-  const av = storedAvatar ? storedAvatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(hState.username)}&background=1a6fd4&color=fff&size=128&bold=true`;
+  const av = storedAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(hState.username)}&background=1a6fd4&color=fff&size=128&bold=true`;
   setAvatars(av);
-  
+
   document.getElementById('sidebar-name').textContent   = hState.username;
   document.getElementById('sidebar-handle').textContent = `@${hState.username.toLowerCase()}`;
 
@@ -687,12 +621,17 @@ async function initHome() {
       .catch(() => {});
   }
 
-  const prefill = sessionStorage.getItem('compose_prefill');
+  // Prefill from news page (game name auto-filled)
+  const prefill     = sessionStorage.getItem('compose_prefill');
+  const prefillGenre = sessionStorage.getItem('compose_genre');
   if (prefill) {
-    document.getElementById('thread-title').value = prefill;
+    document.getElementById('thread-title').value   = prefill;
+    document.getElementById('gameNameInput').value  = prefill;
+    if (prefillGenre) document.getElementById('genreSelect').value = prefillGenre;
     document.getElementById('thread-content').focus();
     sessionStorage.removeItem('compose_prefill');
-    document.querySelector('.compose').scrollIntoView({ behavior: 'smooth' });
+    sessionStorage.removeItem('compose_genre');
+    document.querySelector('.compose').scrollIntoView({ behavior:'smooth' });
   }
 
   loadCategories();
@@ -706,64 +645,108 @@ function setAvatars(src) {
   document.getElementById('sidebar-avatar').src  = src;
 }
 
-/* ══════════════════════════════════════════
-   CATEGORIES
-══════════════════════════════════════════ */
+/* ═══════════════════════════════════ CATEGORIES ═════════════════════════════ */
 async function loadCategories() {
   try {
     const cats = await fetch(`${API_URL}/threads/categories`).then(r => r.ok ? r.json() : []);
-
-    const sel = document.getElementById('categorySelect');
+    const sel  = document.getElementById('categorySelect');
+    const fsel = document.getElementById('categoryFilterSelect');
     cats.forEach(c => {
-      const opt = document.createElement('option');
-      opt.value = c.id;
-      opt.textContent = c.name;
-      sel.appendChild(opt);
+      const o1 = document.createElement('option'); o1.value = c.id; o1.textContent = c.name; sel.appendChild(o1);
+      const o2 = document.createElement('option'); o2.value = c.slug || c.id; o2.textContent = c.name; fsel.appendChild(o2);
     });
+  } catch (e) { console.warn('Categories load failed:', e); }
+}
 
-    const bar = document.getElementById('category-filter');
-    if (!bar) return;
+/* ═══════════════════════════════════ FILTER TOOLBAR ════════════════════════ */
+function onThreadSearch() {
+  clearTimeout(hFilterTimer);
+  hFilterTimer = setTimeout(() => {
+    hState.activeSearchQuery = document.getElementById('threadSearchInput').value.trim().toLowerCase();
+    updateClearBtn();
+    renderFilteredThreads();
+  }, 300);
+}
 
-    const allChip = document.createElement('button');
-    allChip.className = 'cat-chip active';
-    allChip.textContent = 'All';
-    allChip.onclick = () => selectCategoryChip(allChip, '');
-    bar.appendChild(allChip);
+function applyThreadFilters() {
+  hState.activeCategoryFilter = document.getElementById('categoryFilterSelect').value;
+  hState.activeGenreFilter    = document.getElementById('genreFilterSelect').value;
+  // Sync genre chip bar
+  document.querySelectorAll('#genre-bar .genre-chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.genre === hState.activeGenreFilter);
+  });
+  updateClearBtn();
+  renderFilteredThreads();
+}
 
-    cats.forEach(c => {
-      const chip = document.createElement('button');
-      chip.className = 'cat-chip';
-      chip.textContent = c.name;
-      chip.onclick = () => selectCategoryChip(chip, c.slug || c.id);
-      bar.appendChild(chip);
-    });
-  } catch (e) {
-    console.warn('Categories load failed:', e);
+function clearAllFilters() {
+  hState.activeCategoryFilter = '';
+  hState.activeGenreFilter.clear();
+  hState.activeSearchQuery    = '';
+  document.getElementById('categoryFilterSelect').value = '';
+  document.getElementById('genreFilterSelect').value    = '';
+  document.getElementById('threadSearchInput').value    = '';
+  document.querySelectorAll('#filterGenreBar .filter-genre-chip').forEach(c => {
+  c.classList.toggle('active', c.dataset.genre === 'ALL');
+  });
+  updateClearBtn();
+  renderFilteredThreads();
+}
+
+function updateClearBtn() {
+  const active = hState.activeCategoryFilter || hState.activeGenreFilter.size > 0 || hState.activeSearchQuery;
+  document.getElementById('btnClearFilter').classList.toggle('visible', !!active);
+}
+
+function renderFilteredThreads() {
+  const threads = hState.allThreads;
+  let filtered = threads;
+
+  if (hState.activeSearchQuery) {
+    const q = hState.activeSearchQuery;
+    filtered = filtered.filter(t =>
+      (t.title||'').toLowerCase().includes(q) ||
+      (t.content||'').toLowerCase().includes(q) ||
+      (t.game_name||'').toLowerCase().includes(q) ||
+      (t.username||'').toLowerCase().includes(q)
+    );
   }
+  if (hState.activeCategoryFilter) {
+    filtered = filtered.filter(t =>
+      String(t.category_id) === String(hState.activeCategoryFilter) ||
+      (t.category_slug||'') === hState.activeCategoryFilter
+    );
+  }
+  if (hState.activeGenreFilter.size > 0) {
+    filtered = filtered.filter(t => hState.activeGenreFilter.has(t.genre||''));
+  }
+
+  const el = document.getElementById('threads-list');
+  const count = document.getElementById('resultsCount');
+  count.textContent = filtered.length < threads.length ? `${filtered.length} / ${threads.length} discussions` : `${threads.length} discussions`;
+
+  if (!filtered.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><p>No discussions match your filters.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = '';
+  filtered.forEach((t, i) => {
+    el.appendChild(buildThreadCard(t, hCommentCache[t.id] || [], i));
+  });
 }
 
-function selectCategoryChip(btn, value) {
-  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  hState.activeCategoryFilter = value;
-  loadThreads(value);
-}
-
-/* ══════════════════════════════════════════
-   GLOBAL SEARCH
-══════════════════════════════════════════ */
+/* ═══════════════════════════════════ GLOBAL SEARCH (sidebar) ═══════════════ */
 function initSearch() {
   const input    = document.getElementById('globalSearch');
   const dropdown = document.getElementById('searchDropdown');
   if (!input) return;
-
   input.addEventListener('input', () => {
     clearTimeout(hSearchTimer);
     const q = input.value.trim();
     if (q.length < 2) { dropdown.classList.remove('open'); return; }
     hSearchTimer = setTimeout(() => doSearch(q), 400);
   });
-
   document.addEventListener('click', e => {
     if (!e.target.closest('.search-wrapper')) dropdown.classList.remove('open');
   });
@@ -773,70 +756,46 @@ async function doSearch(q) {
   const dropdown = document.getElementById('searchDropdown');
   dropdown.innerHTML = '<div class="search-result-item" style="color:var(--text-muted);cursor:default">Searching...</div>';
   dropdown.classList.add('open');
-
   try {
     const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(q)}`);
     if (!res.ok) throw new Error('Search failed');
     const data = await res.json();
-
-    if (!data.total) {
-      dropdown.innerHTML = '<div class="search-result-item" style="color:var(--text-muted);cursor:default">No results found.</div>';
-      return;
-    }
-
+    if (!data.total) { dropdown.innerHTML = '<div class="search-result-item" style="color:var(--text-muted);cursor:default">No results found.</div>'; return; }
     let html = '';
-
-    if (data.threads.length) {
+    if (data.threads?.length) {
       html += `<div class="search-result-item section-header">💬 Threads</div>`;
       data.threads.forEach(t => {
         const av = t.avatar_url ? escHtml(t.avatar_url) : `https://ui-avatars.com/api/?name=${encodeURIComponent(t.username||'U')}&background=1a6fd4&color=fff&size=48`;
-        html += `
-          <div class="search-result-item" onclick="location.href='thread.html?id=${t.id}'">
-            <img class="search-mini-av" src="${av}" alt="">
-            <div style="min-width:0;">
-              <div class="search-result-title">${escHtml(t.title)}</div>
-              <div class="search-result-meta">@${escHtml(t.username)} · 👍 ${t.like_count} · 💬 ${t.comment_count}</div>
-            </div>
-          </div>`;
+        html += `<div class="search-result-item" onclick="location.href='thread.html?id=${t.id}'">
+          <img class="search-mini-av" src="${av}" alt="">
+          <div style="min-width:0;">
+            <div class="search-result-title">${escHtml(t.title)}</div>
+            <div class="search-result-meta">@${escHtml(t.username)} · 👍 ${t.like_count} · 💬 ${t.comment_count}</div>
+          </div></div>`;
       });
     }
-
-    if (data.users.length) {
+    if (data.users?.length) {
       html += `<div class="search-result-item section-header">👤 Users</div>`;
       data.users.forEach(u => {
         const av = u.avatar_url ? escHtml(u.avatar_url) : `https://ui-avatars.com/api/?name=${encodeURIComponent(u.username||'U')}&background=161c2a&color=4db8ff&size=48`;
-        html += `
-          <div class="search-result-item" onclick="location.href='profile.html?userId=${u.id}'">
-            <img class="search-mini-av" src="${av}" alt="">
-            <div>
-              <div class="search-result-title">@${escHtml(u.username)}</div>
-              <div class="search-result-meta">View profile</div>
-            </div>
-          </div>`;
+        html += `<div class="search-result-item" onclick="location.href='profile.html?userId=${u.id}'">
+          <img class="search-mini-av" src="${av}" alt="">
+          <div><div class="search-result-title">@${escHtml(u.username)}</div><div class="search-result-meta">View profile</div></div>
+        </div>`;
       });
     }
-
     dropdown.innerHTML = html;
   } catch {
     dropdown.innerHTML = '<div class="search-result-item" style="color:var(--red);cursor:default">Search failed.</div>';
   }
 }
 
-/* ══════════════════════════════════════════
-   LOAD THREADS
-══════════════════════════════════════════ */
-async function loadThreads(categoryFilter) {
-  if (categoryFilter === undefined) categoryFilter = hState.activeCategoryFilter;
-
+/* ═══════════════════════════════════ LOAD THREADS ═══════════════════════════ */
+async function loadThreads() {
   const el = document.getElementById('threads-list');
   el.innerHTML = '<div class="loading-state"><div class="spinner"></div>Loading discussions...</div>';
-
   try {
-    const url = categoryFilter
-      ? `${API_URL}/threads?category=${encodeURIComponent(categoryFilter)}`
-      : `${API_URL}/threads`;
-
-    const threads = await fetch(url).then(r => {
+    const threads = await fetch(`${API_URL}/threads`).then(r => {
       if (!r.ok) throw new Error('Failed to fetch threads');
       return r.json();
     });
@@ -850,35 +809,30 @@ async function loadThreads(categoryFilter) {
     }
 
     const [commentResults, batchLikes] = await Promise.all([
-      Promise.all(
-        threads.map(t => fetch(`${API_URL}/comments/${t.id}`).then(r => r.ok ? r.json() : []).catch(() => []))
-      ),
+      Promise.all(threads.map(t => fetch(`${API_URL}/comments/${t.id}`).then(r => r.ok ? r.json() : []).catch(() => []))),
       fetchBatchLikes(threads.map(t => t.id))
     ]);
 
     const allCommentIds = commentResults.flat().map(c => c.id);
     if (allCommentIds.length && hState.userId) {
       const commentLikes = await fetch(`${API_URL}/likes/batch`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ threadIds: allCommentIds, userId: hState.userId, targetType: 'comment' })
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ threadIds: allCommentIds, userId: hState.userId, targetType:'comment' })
       }).then(r => r.ok ? r.json() : {}).catch(() => {});
       if (commentLikes) {
-        Object.entries(commentLikes).forEach(([id, data]) => {
-          hLikeCache[`comment_${id}`] = data;
-        });
+        Object.entries(commentLikes).forEach(([id, data]) => { hLikeCache[`comment_${id}`] = data; });
       }
     }
 
-    document.getElementById('stat-comments').textContent = commentResults.reduce((s, c) => s + c.length, 0);
+    document.getElementById('stat-comments').textContent = commentResults.reduce((s,c) => s+c.length, 0);
 
-    el.innerHTML = '';
     threads.forEach((t, i) => {
       hCommentCache[t.id] = commentResults[i] || [];
-      if (batchLikes[t.id]) { hLikeCache[`thread_${t.id}`] = batchLikes[t.id]; }
-      el.appendChild(buildThreadCard(t, hCommentCache[t.id], i));
+      if (batchLikes[t.id]) hLikeCache[`thread_${t.id}`] = batchLikes[t.id];
     });
 
+    hState.allThreads = threads;
+    renderFilteredThreads();
     loadSidebarWidgets(threads);
   } catch (e) {
     console.error('loadThreads error:', e);
@@ -887,26 +841,19 @@ async function loadThreads(categoryFilter) {
   }
 }
 
-/* ══════════════════════════════════════════
-   BATCH LIKES
-══════════════════════════════════════════ */
+/* ═══════════════════════════════════ BATCH LIKES ════════════════════════════ */
 async function fetchBatchLikes(threadIds) {
   if (!threadIds.length) return {};
   try {
     const res = await fetch(`${API_URL}/likes/batch`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ threadIds, userId: hState.userId })
     });
     return res.ok ? res.json() : {};
-  } catch {
-    return {};
-  }
+  } catch { return {}; }
 }
 
-/* ══════════════════════════════════════════
-   SIDEBAR WIDGETS
-══════════════════════════════════════════ */
+/* ═══════════════════════════════════ SIDEBAR WIDGETS ═══════════════════════ */
 async function loadSidebarWidgets(threads) {
   loadTopDiscussions(threads);
   loadNewMembers();
@@ -915,31 +862,25 @@ async function loadSidebarWidgets(threads) {
 async function loadTopDiscussions(threads) {
   const el = document.getElementById('widget-top-discussions');
   if (!threads.length) {
-    el.innerHTML = `<div class="widget-empty"><div class="widget-empty-icon">🔥</div><div class="widget-empty-text">No discussions yet.<br>Be the first to post!</div></div>`;
+    el.innerHTML = `<div class="widget-empty"><div class="widget-empty-icon">🔥</div><div class="widget-empty-text">No discussions yet.</div></div>`;
     return;
   }
-
   try {
     const batchLikes = await fetchBatchLikes(threads.map(t => t.id));
     const scored = threads.map(t => ({
       ...t,
-      score: (batchLikes[t.id]?.likes || 0) - (batchLikes[t.id]?.dislikes || 0),
-      likes: batchLikes[t.id]?.likes || 0
-    })).sort((a, b) => b.score - a.score).slice(0, 5);
-
-    const rankClasses = ['gold', 'silver', 'bronze', '', ''];
-    el.innerHTML = scored.map((t, i) => `
+      score: (batchLikes[t.id]?.likes||0) - (batchLikes[t.id]?.dislikes||0),
+      likes: batchLikes[t.id]?.likes||0
+    })).sort((a,b) => b.score - a.score).slice(0,5);
+    const rankClasses = ['gold','silver','bronze','',''];
+    el.innerHTML = scored.map((t,i) => `
       <div class="top-item" style="cursor:pointer" onclick="location.href='thread.html?id=${t.id}'">
-        <div class="top-rank ${rankClasses[i]}">${i + 1}</div>
+        <div class="top-rank ${rankClasses[i]}">${i+1}</div>
         <div class="top-info">
           <div class="top-title" title="${escHtml(t.title)}">${escHtml(t.title)}</div>
-          <div class="top-meta">
-            <span class="top-author">@${escHtml(t.username)}</span>
-            <span class="top-likes">👍 ${t.likes}</span>
-          </div>
+          <div class="top-meta"><span class="top-author">@${escHtml(t.username)}</span><span class="top-likes">👍 ${t.likes}</span></div>
         </div>
-      </div>
-    `).join('');
+      </div>`).join('');
   } catch {
     el.innerHTML = `<div class="widget-empty"><div class="widget-empty-icon">⚠️</div><div class="widget-empty-text">Could not load rankings.</div></div>`;
   }
@@ -949,64 +890,45 @@ async function loadNewMembers() {
   const el = document.getElementById('widget-new-members');
   try {
     const threads = await fetch(`${API_URL}/threads`).then(r => r.ok ? r.json() : []).catch(() => []);
-    if (!threads.length) {
-      el.innerHTML = `<div class="widget-empty"><div class="widget-empty-icon">👥</div><div class="widget-empty-text">No members yet.</div></div>`;
-      return;
-    }
-
-    const seen   = new Set();
-    const recent = [];
-    [...threads].reverse().forEach(t => {
-      if (!seen.has(t.user_id)) { seen.add(t.user_id); recent.push(t); }
-    });
-
-    const profiles = await Promise.all(
-      recent.slice(0, 5).map(t =>
-        fetch(`${API_URL}/auth/profile/${t.user_id}`).then(r => r.ok ? r.json() : null).catch(() => null)
-      )
-    );
-
-    const members = recent.slice(0, 5).map((t, i) => ({
-      userId:    t.user_id,
-      username:  profiles[i]?.username || t.username || 'User',
-      avatarUrl: profiles[i]?.avatar_url || null,
-      joinedAt:  profiles[i]?.created_at || t.created_at,
-    })).sort((a, b) => parseDateSafely(b.joinedAt) - parseDateSafely(a.joinedAt));
-
+    if (!threads.length) { el.innerHTML = `<div class="widget-empty"><div class="widget-empty-icon">👥</div><div class="widget-empty-text">No members yet.</div></div>`; return; }
+    const seen=[]; const recent=[];
+    [...threads].reverse().forEach(t => { if (!seen.includes(t.user_id)) { seen.push(t.user_id); recent.push(t); } });
+    const profiles = await Promise.all(recent.slice(0,5).map(t => fetch(`${API_URL}/auth/profile/${t.user_id}`).then(r => r.ok ? r.json() : null).catch(() => null)));
+    const members = recent.slice(0,5).map((t,i) => ({
+      userId: t.user_id,
+      username: profiles[i]?.username||t.username||'User',
+      avatarUrl: profiles[i]?.avatar_url||null,
+      joinedAt: profiles[i]?.created_at||t.created_at
+    })).sort((a,b) => parseDateSafely(b.joinedAt)-parseDateSafely(a.joinedAt));
     el.innerHTML = members.map(m => {
       const av = m.avatarUrl
         ? `<img class="member-av" src="${escHtml(m.avatarUrl)}" alt="${escHtml(m.username)}">`
         : `<img class="member-av" src="https://ui-avatars.com/api/?name=${encodeURIComponent(m.username)}&background=161c2a&color=4db8ff&size=60" alt="${escHtml(m.username)}">`;
-      const isNew = m.joinedAt && (Date.now() - parseDateSafely(m.joinedAt)) < 7 * 24 * 60 * 60 * 1000;
-      return `
-        <div class="member-item">
-          <a href="profile.html?userId=${m.userId}" style="display:contents;">${av}</a>
-          <div class="member-info">
-            <a href="profile.html?userId=${m.userId}" style="text-decoration:none;">
-              <div class="member-name">@${escHtml(m.username)}</div>
-            </a>
-            <div class="member-since">Joined ${timeAgo(m.joinedAt)}</div>
-          </div>
-          ${isNew ? '<span class="member-new">NEW</span>' : ''}
-        </div>`;
+      const isNew = m.joinedAt && (Date.now()-parseDateSafely(m.joinedAt)) < 7*24*60*60*1000;
+      return `<div class="member-item">
+        <a href="profile.html?userId=${m.userId}" style="display:contents;">${av}</a>
+        <div class="member-info">
+          <a href="profile.html?userId=${m.userId}" style="text-decoration:none;"><div class="member-name">@${escHtml(m.username)}</div></a>
+          <div class="member-since">Joined ${timeAgo(m.joinedAt)}</div>
+        </div>
+        ${isNew ? '<span class="member-new">NEW</span>' : ''}
+      </div>`;
     }).join('');
   } catch {
     el.innerHTML = `<div class="widget-empty"><div class="widget-empty-icon">⚠️</div><div class="widget-empty-text">Could not load members.</div></div>`;
   }
 }
 
-/* ══════════════════════════════════════════
-   BUILD THREAD CARD
-══════════════════════════════════════════ */
+/* ═══════════════════════════════════ BUILD THREAD CARD ═════════════════════ */
 function buildThreadCard(t, comments, i) {
   const av    = t.avatar_url ? escHtml(t.avatar_url) : `https://ui-avatars.com/api/?name=${encodeURIComponent(t.username||'U')}&background=1a6fd4&color=fff&size=64&bold=true`;
   const isOwn = String(t.user_id) === String(hState.userId);
-  const lk    = hLikeCache[`thread_${t.id}`] || { likes: 0, dislikes: 0, userVote: 0 };
+  const lk    = hLikeCache[`thread_${t.id}`] || { likes:0, dislikes:0, userVote:0 };
   const bk    = hBookmarkCache.has(t.id);
   const card  = document.createElement('div');
   card.className = 'thread-card';
   card.id = `card-${t.id}`;
-  card.style.animationDelay = `${i * 0.06}s`;
+  card.style.animationDelay = `${i*0.06}s`;
   card.style.cursor = 'pointer';
   card.addEventListener('click', e => {
     if (e.target.closest('button, input, a, select')) return;
@@ -1015,8 +937,19 @@ function buildThreadCard(t, comments, i) {
 
   const catLabel = t.category_name || 'Discussion';
 
+  // Game + genre tags
+  const gameName = t.game_name || '';
+  const genre    = t.genre || '';
+  let tagHtml = '';
+  if (gameName || genre) {
+    tagHtml = `<div class="thread-tag-row">`;
+    if (genre)    tagHtml += `<span class="thread-tag tag-genre">🎭 ${escHtml(genre)}</span>`;
+    if (gameName) tagHtml += `<span class="thread-tag tag-game">🎮 ${escHtml(gameName)}</span>`;
+    tagHtml += `</div>`;
+  }
+
   card.innerHTML = `
-    <div class="thread-stripe ${hSTRIPES[i % 3]}"></div>
+    <div class="thread-stripe ${hSTRIPES[i%3]}"></div>
     <div class="thread-inner">
       <div class="thread-top">
         <a href="profile.html?userId=${t.user_id}" onclick="event.stopPropagation()">
@@ -1031,105 +964,96 @@ function buildThreadCard(t, comments, i) {
         <span class="thread-cat">${escHtml(catLabel)}</span>
       </div>
       <div class="thread-title" style="cursor:pointer" onclick="event.stopPropagation();window.location.href='thread.html?id=${t.id}'">${escHtml(t.title)}</div>
+      ${tagHtml}
       <div class="thread-content">${escHtml(t.content)}</div>
       <div class="thread-actions">
-        <button class="action-btn like-btn ${lk.userVote===1?'liked':''}" id="tlike-${t.id}" onclick="event.stopPropagation(); voteThread(${t.id},1)">
-          👍 <span id="tlike-count-${t.id}" class="count">${lk.likes}</span>
+        <button class="action-btn like-btn ${lk.userVote===1?'liked':''}" id="tlike-${t.id}" onclick="event.stopPropagation();voteThread(${t.id},1)">
+          👍 <span id="tlike-count-${t.id}">${lk.likes}</span>
         </button>
-        <button class="action-btn dislike-btn ${lk.userVote===-1?'disliked':''}" id="tdislike-${t.id}" onclick="event.stopPropagation(); voteThread(${t.id},-1)">
-          👎 <span id="tdislike-count-${t.id}" class="count">${lk.dislikes}</span>
+        <button class="action-btn dislike-btn ${lk.userVote===-1?'disliked':''}" id="tdislike-${t.id}" onclick="event.stopPropagation();voteThread(${t.id},-1)">
+          👎 <span id="tdislike-count-${t.id}">${lk.dislikes}</span>
         </button>
-        <button class="action-btn ${bk?'bookmarked':''}" id="tbookmark-${t.id}" onclick="event.stopPropagation(); toggleBookmark(${t.id})">
+        <button class="action-btn ${bk?'bookmarked':''}" id="tbookmark-${t.id}" onclick="event.stopPropagation();toggleBookmark(${t.id})">
           🔖 <span id="tbm-label-${t.id}">${bk?'Saved':'Save'}</span>
         </button>
-        ${isOwn ? `<button class="action-btn delete-btn" onclick="event.stopPropagation(); deleteThread(${t.id})">🗑 Delete</button>` : ''}
+        ${isOwn ? `<button class="action-btn delete-btn" onclick="event.stopPropagation();deleteThread(${t.id})">🗑 Delete</button>` : ''}
       </div>
       <div class="thread-divider"></div>
       <div class="comments-section" id="comments-${t.id}">${buildCommentsHTML(comments, t.id)}</div>
       <div class="top-reply-row">
         <input class="reply-input" id="reply-${t.id}" placeholder="Write a reply..." maxlength="500" onclick="event.stopPropagation()">
-        <button class="btn-reply" onclick="event.stopPropagation(); postReply(${t.id},null)">Reply</button>
+        <button class="btn-reply" onclick="event.stopPropagation();postReply(${t.id},null)">Reply</button>
       </div>
     </div>`;
   return card;
 }
 
-/* ══════════════════════════════════════════
-   COMMENTS
-══════════════════════════════════════════ */
-function buildCommentsHTML(comments, threadId, parentId = null, depth = 0) {
-  const children = comments.filter(c => parentId === null
-    ? (c.parent_id == null || c.parent_id === undefined)
-    : String(c.parent_id) === String(parentId));
+/* ═══════════════════════════════════ COMMENTS ═══════════════════════════════ */
+function buildCommentsHTML(comments, threadId, parentId=null, depth=0) {
+  const children = comments.filter(c => parentId===null
+    ? (c.parent_id==null||c.parent_id===undefined)
+    : String(c.parent_id)===String(parentId));
   if (!children.length) return '';
-  const LIMIT   = 3;
-  const visible = parentId === null ? children.slice(0, LIMIT) : children;
-  const hidden  = parentId === null ? children.slice(LIMIT) : [];
+  const LIMIT=3;
+  const visible = parentId===null ? children.slice(0,LIMIT) : children;
+  const hidden  = parentId===null ? children.slice(LIMIT) : [];
   let html = '<div class="comment-tree">';
   visible.forEach(c => { html += buildCommentItem(c, comments, threadId, depth); });
-  if (hidden.length) html += `<button class="show-more-comments" onclick="showMore(this,${threadId},'${JSON.stringify(hidden.map(c=>c.id)).replace(/'/g,"\\'")}')">▾ Show ${hidden.length} more comment${hidden.length > 1 ? 's' : ''}</button>`;
+  if (hidden.length) html += `<button class="show-more-comments" onclick="showMore(this,${threadId},'${JSON.stringify(hidden.map(c=>c.id)).replace(/'/g,"\\'")}')">▾ Show ${hidden.length} more comment${hidden.length>1?'s':''}</button>`;
   html += '</div>';
   return html;
 }
 
 function buildCommentItem(c, all, threadId, depth) {
-  const isOwn   = String(c.user_id) === String(hState.userId);
-  const av      = c.avatar_url ? escHtml(c.avatar_url) : `https://ui-avatars.com/api/?name=${encodeURIComponent(c.username||'U')}&background=161c2a&color=4db8ff&size=48`;
-  const lk      = hLikeCache[`comment_${c.id}`] || { likes: 0, dislikes: 0, userVote: 0 };
+  const isOwn  = String(c.user_id)===String(hState.userId);
+  const av     = c.avatar_url ? escHtml(c.avatar_url) : `https://ui-avatars.com/api/?name=${encodeURIComponent(c.username||'U')}&background=161c2a&color=4db8ff&size=48`;
+  const lk     = hLikeCache[`comment_${c.id}`] || { likes:0, dislikes:0, userVote:0 };
   const deleted = c.is_deleted;
-  const indent  = depth > 0 ? `margin-left:${Math.min(depth * 18, 72)}px;` : '';
+  const indent = depth>0 ? `margin-left:${Math.min(depth*18,72)}px;` : '';
   return `<div class="comment-item" id="ci-${c.id}" style="${indent}">
     <div class="comment-right">
-      <div class="comment-bubble ${deleted ? 'deleted' : ''}">
+      <div class="comment-bubble ${deleted?'deleted':''}">
         <div class="comment-author"><img src="${av}" style="width:16px;height:16px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:4px;">@${escHtml(c.username)}</div>
-        <div class="comment-text">${deleted ? '<em>This comment was deleted.</em>' : escHtml(c.content)}</div>
+        <div class="comment-text">${deleted?'<em>This comment was deleted.</em>':escHtml(c.content)}</div>
       </div>
       <div class="comment-footer">
         <span class="comment-time">${timeAgo(c.created_at)}</span>
-        ${!deleted ? `
+        ${!deleted?`
           <button class="comment-action c-like ${lk.userVote===1?'active':''}" id="clike-${c.id}" onclick="voteComment(${c.id},1,${threadId})">👍 <span id="clike-count-${c.id}">${lk.likes}</span></button>
           <button class="comment-action c-dislike ${lk.userVote===-1?'active':''}" id="cdislike-${c.id}" onclick="voteComment(${c.id},-1,${threadId})">👎 <span id="cdislike-count-${c.id}">${lk.dislikes}</span></button>
           <button class="comment-action" onclick="toggleReplyForm('rf-${c.id}')">Reply</button>
-          ${isOwn ? `<button class="comment-action c-delete" onclick="deleteComment(${c.id},${threadId})">Delete</button>` : ''}
-        ` : ''}
+          ${isOwn?`<button class="comment-action c-delete" onclick="deleteComment(${c.id},${threadId})">Delete</button>`:''}
+        `:''}
       </div>
       <div class="reply-form" id="rf-${c.id}" style="display:none;">
         <input placeholder="Reply to @${escHtml(c.username)}..." maxlength="500" id="rfinput-${c.id}">
         <button onclick="postReply(${threadId},${c.id})">Send</button>
       </div>
-      ${buildCommentsHTML(all, threadId, c.id, depth + 1)}
+      ${buildCommentsHTML(all, threadId, c.id, depth+1)}
     </div>
   </div>`;
 }
 
 function showMore(btn, threadId, idsJson) {
-  const ids      = JSON.parse(idsJson);
-  const comments = hCommentCache[threadId] || [];
-  const toShow   = comments.filter(c => ids.includes(c.id));
-
+  const ids     = JSON.parse(idsJson);
+  const comments = hCommentCache[threadId]||[];
+  const toShow  = comments.filter(c => ids.includes(c.id));
   const wrapper = document.createElement('div');
   wrapper.className = 'extra-comments';
-
-  let html = '';
-  toShow.forEach(c => { html += buildCommentItem(c, comments, threadId, 0); });
+  let html = ''; toShow.forEach(c => { html += buildCommentItem(c, comments, threadId, 0); });
   wrapper.innerHTML = html;
-
   const hideBtn = document.createElement('button');
   hideBtn.className = 'show-more-comments';
-  hideBtn.textContent = `▴ Hide ${toShow.length} comment${toShow.length > 1 ? 's' : ''}`;
-  hideBtn.onclick = () => {
-    wrapper.remove();
-    hideBtn.replaceWith(btn);
-  };
-
+  hideBtn.textContent = `▴ Hide ${toShow.length} comment${toShow.length>1?'s':''}`;
+  hideBtn.onclick = () => { wrapper.remove(); hideBtn.replaceWith(btn); };
   btn.parentNode.insertBefore(wrapper, btn);
   btn.replaceWith(hideBtn);
 }
 
 function toggleReplyForm(id) {
   const el = document.getElementById(id); if (!el) return;
-  const v = el.style.display !== 'none';
-  el.style.display = v ? 'none' : 'flex';
+  const v = el.style.display!=='none';
+  el.style.display = v?'none':'flex';
   if (!v) el.querySelector('input')?.focus();
 }
 
@@ -1139,215 +1063,355 @@ async function refreshComments(threadId) {
     hCommentCache[threadId] = comments;
     const el = document.getElementById(`comments-${threadId}`);
     if (el) el.innerHTML = buildCommentsHTML(comments, threadId);
-    document.getElementById('stat-comments').textContent =
-      Object.values(hCommentCache).reduce((s, c) => s + c.length, 0);
-  } catch (e) { console.error(e); }
+    document.getElementById('stat-comments').textContent = Object.values(hCommentCache).reduce((s,c) => s+c.length, 0);
+  } catch(e) { console.error(e); }
 }
 
-/* ══════════════════════════════════════════
-   VOTE / BOOKMARK
-══════════════════════════════════════════ */
+/* ═══════════════════════════════════ VOTE / BOOKMARK ════════════════════════ */
 async function voteThread(threadId, value) {
-  if (!hState.userId) { toast('Please login.', 'error'); return; }
+  if (!hState.userId) { toast('Please login.','error'); return; }
   try {
     const res = await fetch(`${API_URL}/like`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hState.token}` },
-      body: JSON.stringify({ targetId: threadId, targetType: 'thread', value })
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${hState.token}`},
+      body: JSON.stringify({ targetId:threadId, targetType:'thread', value })
     }).then(r => r.json());
     hLikeCache[`thread_${threadId}`] = res;
     document.getElementById(`tlike-count-${threadId}`).textContent    = res.likes;
     document.getElementById(`tdislike-count-${threadId}`).textContent = res.dislikes;
-    document.getElementById(`tlike-${threadId}`).className    = `action-btn like-btn ${res.userVote === 1  ? 'liked'    : ''}`;
-    document.getElementById(`tdislike-${threadId}`).className = `action-btn dislike-btn ${res.userVote === -1 ? 'disliked' : ''}`;
-  } catch { toast('Failed to vote.', 'error'); }
+    document.getElementById(`tlike-${threadId}`).className    = `action-btn like-btn ${res.userVote===1?'liked':''}`;
+    document.getElementById(`tdislike-${threadId}`).className = `action-btn dislike-btn ${res.userVote===-1?'disliked':''}`;
+  } catch { toast('Failed to vote.','error'); }
 }
 
 async function voteComment(commentId, value, threadId) {
-  if (!hState.userId) { toast('Please login.', 'error'); return; }
+  if (!hState.userId) { toast('Please login.','error'); return; }
   try {
     const res = await fetch(`${API_URL}/like`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hState.token}` },
-      body: JSON.stringify({ targetId: commentId, targetType: 'comment', value })
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${hState.token}`},
+      body: JSON.stringify({ targetId:commentId, targetType:'comment', value })
     }).then(r => r.json());
     hLikeCache[`comment_${commentId}`] = res;
     document.getElementById(`clike-count-${commentId}`).textContent    = res.likes;
     document.getElementById(`cdislike-count-${commentId}`).textContent = res.dislikes;
-    document.getElementById(`clike-${commentId}`).className    = `comment-action c-like ${res.userVote === 1  ? 'active' : ''}`;
-    document.getElementById(`cdislike-${commentId}`).className = `comment-action c-dislike ${res.userVote === -1 ? 'active' : ''}`;
-  } catch { toast('Failed to vote.', 'error'); }
+    document.getElementById(`clike-${commentId}`).className    = `comment-action c-like ${res.userVote===1?'active':''}`;
+    document.getElementById(`cdislike-${commentId}`).className = `comment-action c-dislike ${res.userVote===-1?'active':''}`;
+  } catch { toast('Failed to vote.','error'); }
 }
 
 async function toggleBookmark(threadId) {
-  if (!hState.userId) { toast('Please login.', 'error'); return; }
+  if (!hState.userId) { toast('Please login.','error'); return; }
   try {
     const res = await fetch(`${API_URL}/bookmark`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hState.token}` },
+      method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${hState.token}`},
       body: JSON.stringify({ threadId })
     }).then(r => r.json());
     if (res.bookmarked) { hBookmarkCache.add(threadId); } else { hBookmarkCache.delete(threadId); }
-    document.getElementById(`tbookmark-${threadId}`).className = `action-btn ${res.bookmarked ? 'bookmarked' : ''}`;
-    document.getElementById(`tbm-label-${threadId}`).textContent = res.bookmarked ? 'Saved' : 'Save';
-    toast(res.bookmarked ? 'Saved to profile!' : 'Removed from saved.', res.bookmarked ? 'success' : 'info');
-  } catch { toast('Failed.', 'error'); }
+    document.getElementById(`tbookmark-${threadId}`).className = `action-btn ${res.bookmarked?'bookmarked':''}`;
+    document.getElementById(`tbm-label-${threadId}`).textContent = res.bookmarked?'Saved':'Save';
+    toast(res.bookmarked?'Saved to profile!':'Removed from saved.', res.bookmarked?'success':'info');
+  } catch { toast('Failed.','error'); }
 }
 
-/* ══════════════════════════════════════════
-   DELETE
-══════════════════════════════════════════ */
+/* ═══════════════════════════════════ DELETE ═════════════════════════════════ */
 async function deleteThread(threadId) {
-  const ok = await showConfirm({
-    icon: '🗑', title: 'Delete Discussion',
-    msg: 'This discussion and all its replies will be permanently removed.',
-    okLabel: 'Delete'
-  });
+  const ok = await showConfirm({ icon:'🗑', title:'Delete Discussion', msg:'This discussion and all its replies will be permanently removed.', okLabel:'Delete' });
   if (!ok) return;
   try {
     const res = await fetch(`${API_URL}/threads/${threadId}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hState.token}` }
+      method:'DELETE', headers:{'Content-Type':'application/json','Authorization':`Bearer ${hState.token}`}
     });
     if (!res.ok) throw new Error();
     document.getElementById(`card-${threadId}`)?.remove();
+    hState.allThreads = hState.allThreads.filter(t => t.id !== threadId);
     delete hCommentCache[threadId];
-    toast('Discussion deleted.', 'success');
-    const threads = await fetch(`${API_URL}/threads`).then(r => r.ok ? r.json() : []).catch(() => []);
+    toast('Discussion deleted.','success');
+    const threads = await fetch(`${API_URL}/threads`).then(r => r.ok?r.json():[]).catch(()=>[]);
     loadTopDiscussions(threads);
-  } catch { toast('Failed to delete.', 'error'); }
+  } catch { toast('Failed to delete.','error'); }
 }
 
 async function deleteComment(commentId, threadId) {
-  const ok = await showConfirm({
-    icon: '💬', title: 'Delete Comment',
-    msg: 'Your comment will be marked as deleted and hidden from others.',
-    okLabel: 'Delete'
-  });
+  const ok = await showConfirm({ icon:'💬', title:'Delete Comment', msg:'Your comment will be marked as deleted and hidden from others.', okLabel:'Delete' });
   if (!ok) return;
   try {
     const res = await fetch(`${API_URL}/comments/${commentId}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hState.token}` }
+      method:'DELETE', headers:{'Content-Type':'application/json','Authorization':`Bearer ${hState.token}`}
     });
     if (!res.ok) throw new Error();
     await refreshComments(threadId);
-    toast('Comment deleted.', 'success');
-  } catch { toast('Failed to delete.', 'error'); }
+    toast('Comment deleted.','success');
+  } catch { toast('Failed to delete.','error'); }
 }
 
-/* ══════════════════════════════════════════
-   CREATE THREAD / REPLY
-══════════════════════════════════════════ */
+/* ═══════════════════════════════════ CREATE THREAD ══════════════════════════ */
 async function createThread() {
-  const titleEl      = document.getElementById('thread-title');
-  const contentEl    = document.getElementById('thread-content');
-  const categoryId   = document.getElementById('categorySelect')?.value || null;
-  const btn          = document.getElementById('btn-post');
-  const title        = titleEl.value.trim();
-  const content      = contentEl.value.trim();
-  if (!title)   { toast('Please enter a title.', 'error'); titleEl.focus(); return; }
-  if (!content) { toast('Please write something.', 'error'); contentEl.focus(); return; }
-  if (!hState.userId) { toast('Session expired.', 'error'); return; }
-  btn.disabled = true; btn.textContent = 'Posting...';
+  const titleEl    = document.getElementById('thread-title');
+  const contentEl  = document.getElementById('thread-content');
+  const categoryId = document.getElementById('categorySelect')?.value||null;
+  const genre = [...hState.selectedComposeGenres].join(', ') || null;
+  const gameName   = document.getElementById('gameNameInput')?.value.trim()||null;
+  const btn        = document.getElementById('btn-post');
+  const title      = titleEl.value.trim();
+  const content    = contentEl.value.trim();
+  if (!title)   { toast('Please enter a title.','error'); titleEl.focus(); return; }
+  if (!content) { toast('Please write something.','error'); contentEl.focus(); return; }
+  if (!hState.userId) { toast('Session expired.','error'); return; }
+  btn.disabled=true; btn.textContent='Posting...';
   try {
     const res = await fetch(`${API_URL}/threads`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hState.token}` },
-      body: JSON.stringify({ title, content, categoryId })
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${hState.token}`},
+      body: JSON.stringify({ title, content, categoryId, genre, gameName })
     });
     if (!res.ok) throw new Error();
-    titleEl.value = ''; contentEl.value = '';
-    document.getElementById('categorySelect').value = '';
-    toast('Discussion posted!', 'success');
+    titleEl.value=''; contentEl.value='';
+    document.getElementById('categorySelect').value='';
+    document.getElementById('gameNameInput').value='';
+    hState.selectedComposeGenres.clear();
+    document.querySelectorAll('#composeGenreBar .compose-genre-chip').forEach(c => c.classList.remove('active'));
+    toast('Discussion posted!','success');
     await loadThreads();
-  } catch { toast('Failed to post.', 'error'); }
-  finally { btn.disabled = false; btn.textContent = 'Post →'; }
+  } catch { toast('Failed to post.','error'); }
+  finally { btn.disabled=false; btn.textContent='Post →'; }
 }
 
 async function postReply(threadId, parentId) {
   const inputId = parentId ? `rfinput-${parentId}` : `reply-${threadId}`;
   const input   = document.getElementById(inputId);
   const content = input?.value.trim();
-  if (!content)   { toast('Reply cannot be empty.', 'error'); return; }
-  if (!hState.userId) { toast('Session expired.', 'error'); return; }
+  if (!content)       { toast('Reply cannot be empty.','error'); return; }
+  if (!hState.userId) { toast('Session expired.','error'); return; }
   try {
     const res = await fetch(`${API_URL}/comments`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${hState.token}` },
-      body: JSON.stringify({ threadId, content, parentId: parentId || null })
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${hState.token}`},
+      body: JSON.stringify({ threadId, content, parentId:parentId||null })
     });
     if (!res.ok) throw new Error();
-    input.value = '';
-    if (parentId) { const f = document.getElementById(`rf-${parentId}`); if (f) f.style.display = 'none'; }
-    toast('Reply posted!', 'success');
+    input.value='';
+    if (parentId) { const f=document.getElementById(`rf-${parentId}`); if(f) f.style.display='none'; }
+    toast('Reply posted!','success');
     await refreshComments(threadId);
-  } catch { toast('Failed to reply.', 'error'); }
+  } catch { toast('Failed to reply.','error'); }
 }
 
-/* ══════════════════════════════════════════
-   HELPERS
-══════════════════════════════════════════ */
-function handleLogout() { localStorage.clear(); window.location.href = 'index.html'; }
+/* ═══════════════════════════════════ HELPERS ════════════════════════════════ */
+function handleLogout() { localStorage.clear(); window.location.href='index.html'; }
 
 function parseDateSafely(d) {
   if (!d) return new Date();
-  if (d instanceof Date) return isNaN(d.getTime()) ? new Date() : d; 
+  if (d instanceof Date) return isNaN(d.getTime()) ? new Date() : d;
   let dStr = String(d);
-  if (dStr.endsWith('Z') || dStr.includes('+') || dStr.includes('GMT')) {
-    let parsed = new Date(dStr);
-    if (!isNaN(parsed.getTime())) return parsed;
-  }
-  dStr = dStr.replace(' ', 'T');
-  if (!dStr.includes('T')) dStr += 'T00:00:00';
-  if (!dStr.endsWith('Z')) dStr += 'Z';
-  let parsedZ = new Date(dStr);
-  return isNaN(parsedZ.getTime()) ? new Date(d) : parsedZ;
+  if (dStr.endsWith('Z')||dStr.includes('+')||dStr.includes('GMT')) { let p=new Date(dStr); if(!isNaN(p.getTime())) return p; }
+  dStr = dStr.replace(' ','T');
+  if (!dStr.includes('T')) dStr+='T00:00:00';
+  if (!dStr.endsWith('Z')) dStr+='Z';
+  let pZ = new Date(dStr);
+  return isNaN(pZ.getTime()) ? new Date(d) : pZ;
 }
 
 function timeAgo(d) {
   if (!d) return '';
   const date = parseDateSafely(d);
-  if (isNaN(date.getTime())) return ''; 
+  if (isNaN(date.getTime())) return '';
+  const now=new Date(); const diffMs=now-date; const diffMins=Math.floor(diffMs/60000); const diffHours=Math.floor(diffMs/3600000);
+  if (diffMins<1&&diffMs>=0) return 'just now';
+  if (diffMins<60&&diffMs>=0) return `${diffMins}m ago`;
+  const userTZ = localStorage.getItem('fc_pref_timezone')||Intl.DateTimeFormat().resolvedOptions().timeZone||undefined;
+  const userLocale = navigator.language||undefined;
+  if (diffHours<24&&diffMs>=0) return new Intl.DateTimeFormat(userLocale,{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:userTZ}).format(date);
+  const today=new Date(now.toLocaleString('en-US',{timeZone:userTZ}));
+  const targetDate=new Date(date.toLocaleString('en-US',{timeZone:userTZ}));
+  today.setHours(0,0,0,0); targetDate.setHours(0,0,0,0);
+  const dayDiff=Math.round((today-targetDate)/86400000);
+  if (dayDiff===1) return 'Yesterday';
+  if (dayDiff<7&&dayDiff>0) return `${dayDiff} days ago`;
+  return new Intl.DateTimeFormat(userLocale,{day:'numeric',month:'short',year:'numeric',timeZone:userTZ}).format(date);
+}
 
-  const now      = new Date();
-  const diffMs   = now - date;
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+/* ══════════════ COMPOSE GENRE MULTI-SELECT ══════════════ */
+function toggleComposeGenre(chip) {
+  const g = chip.dataset.genre;
+  if (hState.selectedComposeGenres.has(g)) {
+    hState.selectedComposeGenres.delete(g);
+    chip.classList.remove('active');
+  } else {
+    hState.selectedComposeGenres.add(g);
+    chip.classList.add('active');
+  }
+}
 
-  if (diffMins < 1 && diffMs >= 0) return 'just now';
-  if (diffMins < 60 && diffMs >= 0) return `${diffMins}m ago`;
+/* ══════════════ FILTER GENRE MULTI-SELECT ══════════════ */
+function toggleFilterGenre(chip) {
+  const g = chip.dataset.genre;
 
-  const userTZ = localStorage.getItem('fc_pref_timezone') || Intl.DateTimeFormat().resolvedOptions().timeZone || undefined;
-  const userLocale = navigator.language || undefined;
+  if (g === 'ALL') {
+    // "All" seçilince diğerlerini temizle
+    hState.activeGenreFilter.clear();
+    document.querySelectorAll('#filterGenreBar .filter-genre-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.genre === 'ALL');
+    });
+  } else {
+    // "All" chip'ini pasif yap
+    const allChip = document.querySelector('#filterGenreBar [data-genre="ALL"]');
+    if (allChip) allChip.classList.remove('active');
 
-  if (diffHours < 24 && diffMs >= 0) {
-    return new Intl.DateTimeFormat(userLocale, {
-      hour: '2-digit', minute: '2-digit',
-      hour12: false,
-      timeZone: userTZ
-    }).format(date);
+    if (hState.activeGenreFilter.has(g)) {
+      hState.activeGenreFilter.delete(g);
+      chip.classList.remove('active');
+    } else {
+      hState.activeGenreFilter.add(g);
+      chip.classList.add('active');
+    }
+
+    // Hiç seçili kalmadıysa "All"'a dön
+    if (hState.activeGenreFilter.size === 0) {
+      if (allChip) allChip.classList.add('active');
+    }
   }
 
-  const today = new Date(now.toLocaleString('en-US', { timeZone: userTZ }));
-  const targetDate = new Date(date.toLocaleString('en-US', { timeZone: userTZ }));
-  today.setHours(0,0,0,0);
-  targetDate.setHours(0,0,0,0);
-
-  const dayDiff = Math.round((today - targetDate) / 86400000);
-
-  if (dayDiff === 1) return 'Yesterday';
-  if (dayDiff < 7 && dayDiff > 0) return `${dayDiff} days ago`;
-
-  return new Intl.DateTimeFormat(userLocale, {
-    day: 'numeric', month: 'short', year: 'numeric',
-    timeZone: userTZ
-  }).format(date);
+  updateClearBtn();
+  renderFilteredThreads();
 }
 
-function escHtml(str) {
-  const d = document.createElement('div'); d.textContent = str || ''; return d.innerHTML;
+/* ══════════════ renderFilteredThreads — genre kısmını güncelle ══════════════ */
+// Mevcut renderFilteredThreads'teki genre filtre satırını şununla değiştir:
+// ESKİ:  if (hState.activeGenreFilter) { filtered = filtered.filter(t => ...) }
+// YENİ:
+//   if (hState.activeGenreFilter.size > 0) {
+//     filtered = filtered.filter(t => hState.activeGenreFilter.has(t.genre||''));
+//   }
+
+/* ══════════════ clearAllFilters güncelle ══════════════ */
+// ESKİ: hState.activeGenreFilter = '';
+// YENİ:
+//   hState.activeGenreFilter.clear();
+//   document.querySelectorAll('#filterGenreBar .filter-genre-chip').forEach(c => {
+//     c.classList.toggle('active', c.dataset.genre === 'ALL');
+//   });
+
+/* ══════════════ updateClearBtn güncelle ══════════════ */
+// ESKİ: const active = hState.activeCategoryFilter || hState.activeGenreFilter || ...
+// YENİ:
+//   const active = hState.activeCategoryFilter || hState.activeGenreFilter.size > 0 || hState.activeSearchQuery;
+
+/* ══════════════ createThread — genres gönder ══════════════ */
+// body içindeki genre satırını değiştir:
+// ESKİ: genre
+// YENİ: genres: [...hState.selectedComposeGenres]
+// (backend tek genre bekliyorsa: genre: [...hState.selectedComposeGenres][0] || null)
+
+/* ══════════════ GAME AUTOCOMPLETE ══════════════ */
+var _gameAcTimer = null;
+var _gameAcIndex = -1;
+var _gameAcItems = [];
+
+function onGameInput() {
+  clearTimeout(_gameAcTimer);
+  const q = document.getElementById('gameNameInput').value.trim();
+  if (q.length < 2) { closeGameAc(); return; }
+  _gameAcTimer = setTimeout(() => fetchGameSuggestions(q), 350);
 }
+
+async function fetchGameSuggestions(q) {
+  const drop = document.getElementById('gameAcDropdown');
+  drop.innerHTML = '<div class="game-ac-loading">🔍 Aranıyor...</div>';
+  drop.classList.add('open');
+  _gameAcIndex = -1;
+  _gameAcItems = [];
+
+  try {
+    // RAWG public API — API key olmadan da çalışır
+    const url = `https://api.rawg.io/api/games?search=${encodeURIComponent(q)}&page_size=7&ordering=-rating`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const results = data.results || [];
+
+    if (!results.length) {
+      drop.innerHTML = '<div class="game-ac-empty">Sonuç bulunamadı.</div>';
+      return;
+    }
+
+    _gameAcItems = results;
+    drop.innerHTML = results.map((g, i) => {
+      const thumb = g.background_image
+        ? `<img class="game-ac-thumb" src="${escHtml(g.background_image)}" alt="">`
+        : `<div class="game-ac-thumb" style="border-radius:6px;"></div>`;
+      const year = g.released ? g.released.slice(0,4) : '—';
+      const rating = g.rating ? `⭐ ${g.rating.toFixed(1)}` : '';
+      const genres = (g.genres||[]).slice(0,2).map(x=>x.name).join(', ');
+      return `<div class="game-ac-item" data-index="${i}" onclick="selectGame(${i})">
+        ${thumb}
+        <div style="min-width:0;">
+          <div class="game-ac-name">${escHtml(g.name)}</div>
+          <div class="game-ac-meta">${year}${genres?' · '+escHtml(genres):''}${rating?' · '+rating:''}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch {
+    drop.innerHTML = '<div class="game-ac-empty">Yüklenemedi. Manuel yazabilirsiniz.</div>';
+  }
+}
+
+function selectGame(index) {
+  const g = _gameAcItems[index];
+  if (!g) return;
+  document.getElementById('gameNameInput').value = g.name;
+
+  // Oyunun genre'larını compose chip bar'da otomatik seç
+  const rawgGenres = (g.genres||[]).map(x => x.name);
+  const genreMap = {
+    'Action':'Action','Indie':'Indie','Adventure':'Adventure',
+    'Role playing games':'RPG','RPG':'RPG','Shooter':'Shooter',
+    'Puzzle':'Puzzle','Arcade':'Arcade','Platformer':'Platformer',
+    'Racing':'Racing','Sports':'Sports','Fighting':'Fighting',
+    'Simulation':'Simulation','Strategy':'Strategy',
+    'Massively multiplayer':'MMORPG','Horror':'Horror'
+  };
+  rawgGenres.forEach(rg => {
+    const mapped = genreMap[rg];
+    if (mapped && !hState.selectedComposeGenres.has(mapped)) {
+      const chip = document.querySelector(`#composeGenreBar [data-genre="${mapped}"]`);
+      if (chip) { chip.classList.add('active'); hState.selectedComposeGenres.add(mapped); }
+    }
+  });
+
+  closeGameAc();
+}
+
+function onGameKeydown(e) {
+  const drop = document.getElementById('gameAcDropdown');
+  if (!drop.classList.contains('open')) return;
+  const items = drop.querySelectorAll('.game-ac-item');
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    _gameAcIndex = Math.min(_gameAcIndex + 1, items.length - 1);
+    items.forEach((el,i) => el.classList.toggle('focused', i === _gameAcIndex));
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    _gameAcIndex = Math.max(_gameAcIndex - 1, 0);
+    items.forEach((el,i) => el.classList.toggle('focused', i === _gameAcIndex));
+  } else if (e.key === 'Enter' && _gameAcIndex >= 0) {
+    e.preventDefault();
+    selectGame(_gameAcIndex);
+  } else if (e.key === 'Escape') {
+    closeGameAc();
+  }
+}
+
+function closeGameAc() {
+  const drop = document.getElementById('gameAcDropdown');
+  if (drop) { drop.classList.remove('open'); drop.innerHTML = ''; }
+  _gameAcIndex = -1;
+}
+
+// Dropdown dışına tıklayınca kapat
+document.addEventListener('click', e => {
+  if (!e.target.closest('.game-autocomplete-wrap')) closeGameAc();
+});
+
+function escHtml(str) { const d=document.createElement('div'); d.textContent=str||''; return d.innerHTML; }
 </script>
 </body>
 </html>
