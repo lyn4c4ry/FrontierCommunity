@@ -770,7 +770,33 @@ function scrollToGame(gameId) {
 
 // Navigate to home with game name pre-filled in the compose box
 function openDiscuss(gameName) {
+  const game = state.games.find(g => g.name === gameName);
+
+  // gameNameInput: Pre-fill the compose box with the game name for context
   sessionStorage.setItem('compose_prefill', gameName);
+
+  // Genre: RAWG genre mapping (if available) — this helps seed the discussion with relevant tags
+  if (game?.genres?.length) {
+    const genreMap = {
+      'Action':'Action','Indie':'Indie','Adventure':'Adventure',
+      'Role playing games':'RPG','RPG':'RPG','Shooter':'Shooter',
+      'Puzzle':'Puzzle','Arcade':'Arcade','Platformer':'Platformer',
+      'Racing':'Racing','Sports':'Sports','Fighting':'Fighting',
+      'Simulation':'Simulation','Strategy':'Strategy',
+      'Massively multiplayer':'MMORPG','Horror':'Horror'
+    };
+    const mappedGenres = game.genres
+      .map(g => genreMap[g.name])
+      .filter(Boolean);
+    if (mappedGenres.length) {
+      sessionStorage.setItem('compose_genre', mappedGenres.join(','));
+    }
+  }
+
+  // Category: Gaming News 
+  sessionStorage.setItem('compose_category', 'gaming-news');
+  sessionStorage.removeItem('compose_title');
+
   window.location.href = 'home.html';
 }
 

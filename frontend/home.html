@@ -622,16 +622,45 @@ async function initHome() {
   }
 
   // Prefill from news page (game name auto-filled)
-  const prefill     = sessionStorage.getItem('compose_prefill');
+  const prefill      = sessionStorage.getItem('compose_prefill');
   const prefillGenre = sessionStorage.getItem('compose_genre');
+  const prefillCat   = sessionStorage.getItem('compose_category');
+
   if (prefill) {
-    document.getElementById('thread-title').value   = prefill;
-    document.getElementById('gameNameInput').value  = prefill;
-    if (prefillGenre) document.getElementById('genreSelect').value = prefillGenre;
+    document.getElementById('gameNameInput').value = prefill;
+    document.getElementById('thread-title').value  = '';
+
+    // choose genre chips based on prefillGenre (comma-separated)
+    if (prefillGenre) {
+      const genres = prefillGenre.split(',').map(g => g.trim()).filter(Boolean);
+      genres.forEach(g => {
+        const chip = document.querySelector(`#composeGenreBar [data-genre="${g}"]`);
+        if (chip && !hState.selectedComposeGenres.has(g)) {
+          chip.classList.add('active');
+          hState.selectedComposeGenres.add(g);
+        }
+      });
+    }
+
+    // Category: select based on prefillCat (match by name, case-insensitive, partial match)
+    if (prefillCat) {
+      // Categories API call might not have completed yet, so delay this a bit
+      setTimeout(() => {
+        const sel = document.getElementById('categorySelect');
+        const opts = [...sel.options];
+        const match = opts.find(o =>
+          o.text.toLowerCase().includes('gaming news') ||
+          o.text.toLowerCase().includes('news')
+        );
+        if (match) sel.value = match.value;
+      }, 600);
+    }
+
     document.getElementById('thread-content').focus();
     sessionStorage.removeItem('compose_prefill');
     sessionStorage.removeItem('compose_genre');
-    document.querySelector('.compose').scrollIntoView({ behavior:'smooth' });
+    sessionStorage.removeItem('compose_category');
+    document.querySelector('.compose').scrollIntoView({ behavior: 'smooth' });
   }
 
   loadCategories();
