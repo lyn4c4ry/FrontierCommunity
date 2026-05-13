@@ -2,9 +2,39 @@
 const API_URL = 'http://localhost:5000/api';
 console.log("APP.JS YUKLENDI");
 
+// ── REMEMBER ME ──────────────────────────────────────────────────────────────
+if (sessionStorage.getItem('no_remember_pending') === '1') {
+  sessionStorage.removeItem('no_remember_pending');
+  sessionStorage.setItem('no_remember', '1');
+}
+
+// Sayfa yüklenince kontrol: token var ama no_remember flag'i yoksa
+// (yani tab kapanıp yeniden açılmış) — localStorage'ı temizle
+if (localStorage.getItem('token') && !sessionStorage.getItem('no_remember') && !sessionStorage.getItem('no_remember_pending')) {
+  // Eğer hiç no_remember flag'i yoksa bu kullanıcı ya remember me ile giriş yaptı
+  // ya da tab kapanmış. Bunu ayırt etmek için remember_me kalıcı flag'i kontrol et.
+  if (localStorage.getItem('fc_no_remember') === '1') {
+    clearAuthStorage();
+    localStorage.removeItem('fc_no_remember');
+  }
+}
+
+// ─── AUTH STORAGE HELPERS ────────────────────────────────────────────────────
+function getToken()      { return localStorage.getItem('token')      || sessionStorage.getItem('token'); }
+function getUserId()     { return localStorage.getItem('userId')     || sessionStorage.getItem('userId'); }
+function getUsername()   { return localStorage.getItem('username')   || sessionStorage.getItem('username'); }
+function getUserAvatar() { return localStorage.getItem('userAvatar') || sessionStorage.getItem('userAvatar'); }
+
+function clearAuthStorage() {
+  ['token', 'username', 'userId', 'userAvatar', 'userBio', 'userJoined'].forEach(k => {
+    localStorage.removeItem(k);
+    sessionStorage.removeItem(k);
+  });
+}
+
 // ─── PROFILE UI ──────────────────────────────────────────────────────────────
 function updateProfileUI() {
-  const username = localStorage.getItem('username');
+  const username = getUsername();
   if (document.getElementById('display-username')) {
     document.getElementById('display-username').innerText = `@${username}`;
   }
@@ -15,7 +45,7 @@ function updateProfileUI() {
 
 // ─── LOGOUT ──────────────────────────────────────────────────────────────────
 function handleLogout() {
-  localStorage.clear();
+  clearAuthStorage();
   window.location.href = 'index.html';
 }
 
@@ -55,7 +85,7 @@ if (typeof createThread === 'undefined') {
   window.createThread = async function () {
     const title   = document.getElementById('thread-title').value;
     const content = document.getElementById('thread-content').value;
-    const userId  = localStorage.getItem('userId');
+    const userId  = getUserId();
     await fetch(`${API_URL}/threads`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -105,7 +135,7 @@ if (typeof loadThreads === 'undefined') {
 if (typeof postReply === 'undefined') {
   window.postReply = async function (threadId) {
     const content = document.getElementById(`reply-${threadId}`).value;
-    const userId  = localStorage.getItem('userId');
+    const userId  = getUserId();
     await fetch(`${API_URL}/comments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -255,10 +285,11 @@ function initNotifications() {
 }
 
 async function fetchUnreadCount() {
-  if (!localStorage.getItem('token')) return;
+  const token = getToken();
+  if (!token) return;
   try {
     const res = await fetch(`${API_URL}/notifications/unread-count`, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      headers: { 'Authorization': `Bearer ${token}` }
     });
     if (!res.ok) return;
     const { count } = await res.json();
@@ -292,7 +323,7 @@ async function loadNotifications() {
   list.innerHTML = '<div class="notif-empty"><div class="spinner" style="margin:0 auto 8px;"></div>Loading...</div>';
   try {
     const res = await fetch(`${API_URL}/notifications`, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      headers: { 'Authorization': `Bearer ${getToken()}` }
     });
     if (!res.ok) throw new Error();
     const items = await res.json();
@@ -359,7 +390,7 @@ async function openNotif(id, href) {
   try {
     await fetch(`${API_URL}/notifications/read/${id}`, {
       method: 'PUT',
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      headers: { 'Authorization': `Bearer ${getToken()}` }
     });
   } catch {}
   if (href && href !== '#') window.location.href = href;
@@ -369,7 +400,7 @@ async function markAllNotifRead() {
   try {
     const res = await fetch(`${API_URL}/notifications/read-all`, {
       method: 'PUT',
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      headers: { 'Authorization': `Bearer ${getToken()}` }
     });
     if (!res.ok) throw new Error();
     document.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
@@ -383,7 +414,7 @@ async function clearAllNotifs() {
   try {
     const res = await fetch(`${API_URL}/notifications/clear-all`, {
       method: 'DELETE',
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      headers: { Authorization: `Bearer ${getToken()}` }
     });
     if (!res.ok) throw new Error();
     const list = document.getElementById('notif-list');
@@ -394,19 +425,26 @@ async function clearAllNotifs() {
 }
 
 async function syncUserAvatar() {
-  if (localStorage.getItem('userAvatar')) return;
-  const token = localStorage.getItem('token');
+  if (getUserAvatar()) return;
+  const token = getToken();
   if (!token) return;
   try {
     const res = await fetch(`${API_URL}/auth/profile`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
-    if (data.avatar_url) localStorage.setItem('userAvatar', data.avatar_url);
+    if (data.avatar_url) {
+      // Write to whichever storage the token lives in
+      if (localStorage.getItem('token')) {
+        localStorage.setItem('userAvatar', data.avatar_url);
+      } else {
+        sessionStorage.setItem('userAvatar', data.avatar_url);
+      }
+    }
   } catch {}
 }
 
-// ─── YARDIMCI ────────────────────────────────────────────────────────────────
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
 function escHtml(str) {
   if (!str) return '';
   return String(str)

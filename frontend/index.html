@@ -446,6 +446,48 @@
     .forgot-link:hover { color: var(--blue-light); }
     /* Hide tab bar on forgot/reset panels */
     .hide-tabs .auth-tabs { display: none; }
+    
+    .remember-wrap {
+      margin: 10px 0 2px;
+    }
+    .remember-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .remember-label input[type="checkbox"] {
+      display: none;
+    }
+    .remember-box {
+      width: 15px;
+      height: 15px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      flex-shrink: 0;
+      position: relative;
+      transition: all 0.2s;
+    }
+    .remember-label input:checked + .remember-box {
+      background: rgba(26,111,212,0.4);
+      border-color: rgba(26,111,212,0.6);
+    }
+    .remember-label input:checked + .remember-box::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 10px;
+      color: var(--blue-light);
+      line-height: 1;
+    }
+    .remember-text {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
   </style>
 </head>
 <body>
@@ -510,6 +552,14 @@
             <span class="field-icon">🔒</span>
             <input class="input" type="password" id="login-password" placeholder="••••••••">
           </div>
+        </div>
+        <!-- Login formunda password field'ının altına, forgot-link-wrap'tan önce ekle -->
+        <div class="remember-wrap">
+          <label class="remember-label">
+            <input type="checkbox" id="remember-me" checked>
+            <span class="remember-box"></span>
+            <span class="remember-text">Remember me</span>
+          </label>
         </div>
         <div class="forgot-link-wrap">
           <button class="forgot-link" onclick="switchTab('forgot')">Forgot your password?</button>
@@ -729,40 +779,48 @@
        LOGIN
     ══════════════════════════════════════════ */
     async function handleLogin() {
-      const email    = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
-      const msg      = document.getElementById('login-message');
-      try {
-        const res  = await fetch(`${API_URL}/auth/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          // Login — email ve password inputlarına
-          document.getElementById('login-email').addEventListener('keydown', e => {
-            if (e.key === 'Enter') document.getElementById('loginBtn').click();
-          });
-          document.getElementById('login-password').addEventListener('keydown', e => {
-            if (e.key === 'Enter') document.getElementById('loginBtn').click();
-          });
-          localStorage.setItem('token',    data.token);
-          localStorage.setItem('username', data.user.username);
-          localStorage.setItem('userId',   data.user.id);
-          localStorage.setItem('userAvatar', data.user.avatar_url || '');
-          msg.className = 'form-message success';
-          msg.innerText = '✓ Welcome back! Loading...';
-          setTimeout(() => window.location.href = 'home.html', 800);
+    const email      = document.getElementById('login-email').value;
+    const password   = document.getElementById('login-password').value;
+    const rememberMe = document.getElementById('remember-me').checked;
+    const msg        = document.getElementById('login-message');
+    try {
+      const res  = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('token',      data.token);
+        localStorage.setItem('username',   data.user.username);
+        localStorage.setItem('userId',     data.user.id);
+        localStorage.setItem('userAvatar', data.user.avatar_url || '');
+        // Remember me kapalıysa flag koy — tab kapanınca temizlenecek
+        if (!rememberMe) {
+          sessionStorage.setItem('no_remember', '1');
         } else {
-          msg.className = 'form-message error';
-          msg.innerText = data.message || 'Login failed.';
+          sessionStorage.removeItem('no_remember');
         }
-      } catch {
+        msg.className = 'form-message success';
+        msg.innerText = '✓ Welcome back! Loading...';
+        setTimeout(() => {
+        if (!rememberMe) {
+          localStorage.setItem('fc_no_remember', '1');
+          sessionStorage.setItem('no_remember_pending', '1');
+        } else {
+          localStorage.removeItem('fc_no_remember');
+        }
+        window.location.href = 'home.html';
+      }, 800);
+      } else {
         msg.className = 'form-message error';
-        msg.innerText = 'Server unreachable.';
+        msg.innerText = data.message || 'Login failed.';
       }
+    } catch {
+      msg.className = 'form-message error';
+      msg.innerText = 'Server unreachable.';
     }
+  }
 
 
     /* ══════════════════════════════════════════
