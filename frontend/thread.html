@@ -44,25 +44,36 @@
     .confirm-ok{padding:9px 22px;border-radius:var(--r);border:none;background:var(--red);color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:opacity 0.18s;}
     .confirm-ok:hover{opacity:0.82;}
 
-    /* LEFT SIDEBAR */
-    .sidebar-left{position:fixed;top:0;left:0;width:228px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;overflow-y:auto;}
+    /* ── LEFT SIDEBAR ── */
+    .sidebar-left{position:fixed;top:0;left:0;width:228px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:200;}
     .logo-area{padding:22px 20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;}
     .logo-area img{width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(77,184,255,0.45));}
-    .logo-text{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(90deg,var(--blue-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .sidebar-profile{margin:16px 13px 6px;padding:12px 14px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color 0.2s;text-decoration:none;}
-    .sidebar-profile:hover{border-color:var(--blue);}
-    .sidebar-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--blue);flex-shrink:0;}
-    .sidebar-uname{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--text);}
-    .sidebar-handle{font-size:11px;color:var(--text-muted);}
-    .nav-section{padding:14px 10px 8px;flex:1;}
+    .logo-text{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(90deg,var(--blue-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    
+    .nav-section{padding:14px 10px 8px;flex:1; margin-top: 10px;}
     .nav-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);padding:0 12px;margin-bottom:5px;display:block;}
-    .nav-item{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:var(--r-sm);color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:600;transition:all 0.2s;margin-bottom:2px;}
+    .nav-item{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:8px;color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:600;margin-bottom:2px;transition:all 0.2s;}
     .nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
     .nav-item.active{background:rgba(26,111,212,0.12);color:var(--blue-light);}
-    .nav-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
-    .sidebar-bottom{padding:14px;border-top:1px solid var(--border);}
-    .btn-logout{width:100%;padding:9px;background:rgba(255,64,96,0.07);border:1px solid rgba(255,64,96,0.18);border-radius:var(--r-sm);color:var(--red);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;}
-    .btn-logout:hover{background:rgba(255,64,96,0.16);border-color:rgba(255,64,96,0.4);}
+    .nav-icon{font-size:16px;width:22px;text-align:center;}
+    
+    /* ── YENİ SIDEBAR ALT PROFİL VE AÇILIR MENÜ (DROPDOWN) ── */
+    .sidebar-bottom { padding: 14px; border-top: 1px solid var(--border); position: relative; }
+    .sidebar-profile-box { padding: 10px; background: transparent; border-radius: 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: background 0.2s; margin: 0; user-select: none; }
+    .sidebar-profile-box:hover { background: rgba(255,255,255,0.04); }
+    .sidebar-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--blue-mid); flex-shrink: 0; }
+    .sidebar-uname { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 14px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-handle { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dropdown-icon { margin-left: auto; color: var(--text-dim); font-size: 16px; font-weight: bold; transition: color 0.2s; }
+    .sidebar-profile-box:hover .dropdown-icon { color: var(--text-muted); }
+
+    .profile-dropdown { position: absolute; bottom: calc(100% + 5px); left: 14px; right: 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 6px; display: none; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 201; }
+    .profile-dropdown.open { display: flex; animation: fadeUp 0.2s ease; }
+    .dropdown-item { background: transparent; border: none; padding: 10px 12px; border-radius: 6px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 10px; transition: background 0.2s; }
+    .dropdown-item:hover { background: rgba(255,255,255,0.05); }
+    .dropdown-item.text-red { color: var(--red); }
+    .dropdown-item.text-red:hover { background: rgba(255,64,96,0.1); }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
     /* MAIN */
     .main{margin-left:228px;flex:1;display:flex;min-height:100vh;justify-content:center;}
@@ -378,13 +389,6 @@
     <img src="logo_v1.png" alt="Frontier Logo" onerror="this.style.display='none'">
     <span class="logo-text">Frontier</span>
   </div>
-  <a href="profile.html" class="sidebar-profile">
-    <img id="sidebar-avatar" src="" class="sidebar-avatar" alt="avatar">
-    <div>
-      <div class="sidebar-uname" id="sidebar-name">—</div>
-      <div class="sidebar-handle" id="sidebar-handle">@—</div>
-    </div>
-  </a>
   <div class="search-wrapper">
     <span class="search-icon">🔍</span>
     <input type="text" id="globalSearch" class="search-input" placeholder="Search threads, users...">
@@ -395,11 +399,22 @@
     <a href="home.html" class="nav-item"><span class="nav-icon">🏠</span><span>Home</span></a>
     <a href="news.html" class="nav-item"><span class="nav-icon">🎮</span><span>Game News</span></a>
     <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span><span>Profile</span></a>
-    <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span><span>Settings</span></a>
   </nav>
-  <div class="sidebar-bottom">
-    <button class="btn-logout" onclick="handleLogout()">⏻ &nbsp;Logout</button>
-  </div>
+<div class="sidebar-bottom">
+      <div class="sidebar-profile-box" onclick="toggleProfileDropdown(event)">
+        <img id="sidebar-avatar" src="" class="sidebar-avatar" alt="avatar">
+        <div style="flex:1; min-width:0;">
+          <div class="sidebar-uname" id="sidebar-name">—</div>
+          <div class="sidebar-handle" id="sidebar-handle">@—</div>
+        </div>
+        <div class="dropdown-icon">⋮</div>
+      </div>
+      
+      <div class="profile-dropdown" id="profileDropdown">
+        <button class="dropdown-item" onclick="location.href='settings.html'">⚙️ Settings</button>
+        <button class="dropdown-item text-red" onclick="handleLogout()">⏻ Log out</button>
+      </div>
+    </div>
 </aside>
 
 <div class="main">
@@ -740,6 +755,19 @@ function fullDate(d) {
 function escHtml(str) {
   const d = document.createElement('div'); d.textContent = str || ''; return d.innerHTML;
 }
+
+/* ── DROPDOWN AÇ/KAPAT MANTIĞI ── */
+    function toggleProfileDropdown(e) {
+      e.stopPropagation();
+      document.getElementById('profileDropdown').classList.toggle('open');
+    }
+
+    document.addEventListener('click', (e) => {
+      const dropdown = document.getElementById('profileDropdown');
+      if (dropdown && dropdown.classList.contains('open')) {
+        dropdown.classList.remove('open');
+      }
+    });
 
 function handleLogout() { localStorage.clear(); window.location.href = 'index.html'; }
 

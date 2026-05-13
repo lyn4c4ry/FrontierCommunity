@@ -34,20 +34,31 @@
     .logo-area{padding:22px 20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;}
     .logo-area img{width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(77,184,255,0.45));}
     .logo-text{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:17px;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(90deg,var(--blue-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .sidebar-profile{margin:16px 13px 6px;padding:12px 14px;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);display:flex;align-items:center;gap:10px;cursor:pointer;transition:border-color 0.2s;text-decoration:none;}
-    .sidebar-profile:hover{border-color:var(--blue);}
-    .sidebar-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--blue);flex-shrink:0;}
-    .sidebar-uname{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--text);}
-    .sidebar-handle{font-size:11px;color:var(--text-muted);}
-    .nav-section{padding:14px 10px 8px;flex:1;}
+    
+    .nav-section{padding:14px 10px 8px;flex:1; margin-top: 10px;}
     .nav-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);padding:0 12px;margin-bottom:5px;display:block;}
     .nav-item{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:var(--r-sm);color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:600;transition:all 0.2s;margin-bottom:2px;cursor:pointer;border:none;background:none;width:100%;text-align:left;}
     .nav-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
     .nav-item.active{background:rgba(26,111,212,0.12);color:var(--blue-light);}
     .nav-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
-    .sidebar-bottom{padding:14px;border-top:1px solid var(--border);}
-    .btn-logout{width:100%;padding:9px;background:rgba(255,64,96,0.07);border:1px solid rgba(255,64,96,0.18);border-radius:var(--r-sm);color:var(--red);font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;}
-    .btn-logout:hover{background:rgba(255,64,96,0.16);border-color:rgba(255,64,96,0.4);}
+    
+    /* ── YENİ SIDEBAR ALT PROFİL VE AÇILIR MENÜ (DROPDOWN) ── */
+    .sidebar-bottom { padding: 14px; border-top: 1px solid var(--border); position: relative; }
+    .sidebar-profile-box { padding: 10px; background: transparent; border-radius: 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: background 0.2s; margin: 0; user-select: none; }
+    .sidebar-profile-box:hover { background: rgba(255,255,255,0.04); }
+    .sidebar-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--blue); flex-shrink: 0; }
+    .sidebar-uname { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 14px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-handle { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dropdown-icon { margin-left: auto; color: var(--text-dim); font-size: 16px; font-weight: bold; transition: color 0.2s; }
+    .sidebar-profile-box:hover .dropdown-icon { color: var(--text-muted); }
+
+    .profile-dropdown { position: absolute; bottom: calc(100% + 5px); left: 14px; right: 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 6px; display: none; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 201; }
+    .profile-dropdown.open { display: flex; animation: fadeUp 0.2s ease; }
+    .dropdown-item { background: transparent; border: none; padding: 10px 12px; border-radius: 6px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 10px; transition: background 0.2s; }
+    .dropdown-item:hover { background: rgba(255,255,255,0.05); }
+    .dropdown-item.text-red { color: var(--red); }
+    .dropdown-item.text-red:hover { background: rgba(255,64,96,0.1); }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
     /* MAIN */
     .main{margin-left:228px;flex:1;display:flex;min-height:100vh;}
@@ -94,7 +105,6 @@
     .game-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;transition:border-color 0.22s,transform 0.18s,box-shadow 0.22s;animation:fadeUp 0.35s ease both;cursor:default;position:relative;}
     .game-card:hover{border-color:rgba(74,144,226,0.3);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.4);}
     .game-card.followed{border-color:rgba(245,197,24,0.25);}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
     /* cover */
     .cover-wrap{position:relative;overflow:hidden;height:130px;}
@@ -196,14 +206,15 @@
     @media(max-width:1100px){.sidebar-right{display:none;}.content{border-right:none;}}
     @media(max-width:900px){.game-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));}}
     @media(max-width:700px){
-      .sidebar-left{width:56px;}
-      .logo-text,.sidebar-uname,.sidebar-handle,.nav-item span,.nav-label{display:none;}
-      .main{margin-left:56px;}
+      .sidebar-left{width:68px;}
+      .logo-text,.sidebar-uname,.sidebar-handle,.nav-item span,.nav-label,.dropdown-icon{display:none;}
+      .main{margin-left:68px;}
       .logo-area{justify-content:center;padding:14px 8px;}
-      .sidebar-profile{justify-content:center;padding:10px;}
+      .sidebar-profile-box{justify-content:center;padding:10px;}
       .nav-item{justify-content:center;padding:10px;}
       .content{padding:12px 10px 60px;}
       .game-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+      .profile-dropdown { left: 5px; right: 5px; }
     }
   </style>
 </head>
@@ -216,22 +227,28 @@
     <img src="logo_v1.png" alt="Frontier Logo">
     <span class="logo-text">Frontier</span>
   </div>
-  <a href="profile.html" class="sidebar-profile">
-    <img id="sidebar-avatar" src="" class="sidebar-avatar" alt="avatar">
-    <div>
-      <div class="sidebar-uname" id="sidebar-name">—</div>
-      <div class="sidebar-handle" id="sidebar-handle">@—</div>
-    </div>
-  </a>
+
   <nav class="nav-section">
     <span class="nav-label">Navigate</span>
     <a href="home.html" class="nav-item"><span class="nav-icon">🏠</span><span>Home</span></a>
     <a href="news.html" class="nav-item active"><span class="nav-icon">🎮</span><span>Game News</span></a>
     <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span><span>Profile</span></a>
-    <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span><span>Settings</span></a>
   </nav>
+  
   <div class="sidebar-bottom">
-    <button class="btn-logout" onclick="handleLogout()">⏻ &nbsp;Logout</button>
+    <div class="sidebar-profile-box" onclick="toggleProfileDropdown(event)">
+      <img id="sidebar-avatar" src="" class="sidebar-avatar" alt="avatar">
+      <div style="flex:1; min-width:0;">
+        <div class="sidebar-uname" id="sidebar-name">—</div>
+        <div class="sidebar-handle" id="sidebar-handle">@—</div>
+      </div>
+      <div class="dropdown-icon">⋮</div>
+    </div>
+    
+    <div class="profile-dropdown" id="profileDropdown">
+      <button class="dropdown-item" onclick="location.href='settings.html'">⚙️ Settings</button>
+      <button class="dropdown-item text-red" onclick="handleLogout()">⏻ Log out</button>
+    </div>
   </div>
 </aside>
 
@@ -481,7 +498,7 @@ function buildGameCard(g, idx) {
       <button class="follow-btn ${followed ? 'active' : ''}" id="fb-${g.id}" onclick="toggleFollow(${g.id})">${followed ? '⭐' : '☆'}</button>
       <div class="cover-overlay"></div>
       <div class="cover-actions">
-        <button class="btn-discuss" onclick="openDiscuss(${safeGameName})">💬 Discuss</button>
+        <button class="btn-discuss" onclick='openDiscuss(${safeGameName})'>💬 Discuss</button>
       </div>
     </div>
     <div class="game-body">
@@ -521,7 +538,7 @@ function buildListItem(g, idx) {
       </div>
     </div>
     <div class="list-actions">
-      <button class="list-discuss-btn" onclick="openDiscuss(${safeGameName})">💬 Discuss</button>
+      <button class="list-discuss-btn" onclick='openDiscuss(${safeGameName})'>💬 Discuss</button>
       <button class="list-follow-btn ${followed ? 'active' : ''}" id="fb-${g.id}" onclick="toggleFollow(${g.id})">${followed ? '⭐' : '☆'}</button>
     </div>`;
   return item;
@@ -605,6 +622,19 @@ function showStaticFallback() {
 }
 
 function handleLogout() { localStorage.clear(); window.location.href = 'index.html'; }
+
+/* ── DROPDOWN & SIDEBAR LOGIC ── */
+function toggleProfileDropdown(e) {
+  e.stopPropagation();
+  document.getElementById('profileDropdown').classList.toggle('open');
+}
+
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('profileDropdown');
+  if (dropdown && dropdown.classList.contains('open')) {
+    dropdown.classList.remove('open');
+  }
+});
 
 function toast(msg, type = 'info') {
   const wrap = document.getElementById('toast');
