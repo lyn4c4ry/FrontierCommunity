@@ -3,7 +3,21 @@ const router = express.Router();
 const pool = require('../config/db');
 const authMiddleware = require('../middleware/authMiddleware');
 
-// GET /api/notifications — kendi bildirimlerini çek (son 30)
+// GET /api/notifications/unread-count — must be before GET / to avoid route conflicts
+router.get('/unread-count', authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
+  try {
+    const result = await pool.query(
+      `SELECT COUNT(*) FROM notifications WHERE user_id = $1 AND read = FALSE`,
+      [userId]
+    );
+    res.json({ count: parseInt(result.rows[0].count) });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// GET /api/notifications — fetch last 30 notifications for current user
 router.get('/', authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   try {
@@ -38,21 +52,21 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
-// GET /api/notifications/unread-count
-router.get('/unread-count', authMiddleware, async (req, res) => {
+// PUT /api/notifications/read-all — must be before PUT /read/:id to avoid route conflicts
+router.put('/read-all', authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   try {
-    const result = await pool.query(
-      `SELECT COUNT(*) FROM notifications WHERE user_id = $1 AND read = FALSE`,
+    await pool.query(
+      `UPDATE notifications SET read = TRUE WHERE user_id = $1 AND read = FALSE`,
       [userId]
     );
-    res.json({ count: parseInt(result.rows[0].count) });
+    res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// PUT /api/notifications/read/:id — tekini oku
+// PUT /api/notifications/read/:id — mark a single notification as read
 router.put('/read/:id', authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   const { id } = req.params;
@@ -67,21 +81,7 @@ router.put('/read/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// PUT /api/notifications/read-all — hepsini oku
-router.put('/read-all', authMiddleware, async (req, res) => {
-  const userId = req.user.userId;
-  try {
-    await pool.query(
-      `UPDATE notifications SET read = TRUE WHERE user_id = $1 AND read = FALSE`,
-      [userId]
-    );
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// DELETE /api/notifications/clear-all — hepsini sil
+// DELETE /api/notifications/clear-all — delete all notifications for current user
 router.delete('/clear-all', authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   try {
@@ -92,12 +92,12 @@ router.delete('/clear-all', authMiddleware, async (req, res) => {
   }
 });
 
-// Yardımcı fonksiyon — diğer route'lardan import edilip kullanılır
+// Helper function — imported and used by other routes to create notifications
 async function createNotification({ userId, actorId, type, refId, refType }) {
-  // Kendi kendine bildirim gönderme
+  // Do not send a notification to yourself
   if (userId === actorId) return;
   try {
-    // Aynı bildirim zaten varsa tekrar ekleme (like için)
+    // Prevent duplicate like notifications
     if (type === 'like') {
       const existing = await pool.query(
         `SELECT id FROM notifications WHERE user_id=$1 AND actor_id=$2 AND type=$3 AND ref_id=$4 AND ref_type=$5`,
